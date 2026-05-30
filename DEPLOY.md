@@ -27,7 +27,7 @@ git push -u origin main
 
 1. [vercel.com](https://vercel.com) → **Add New** → **Project** → import your GitHub repo.
 2. **Project name:** e.g. `kardosh-landing`
-3. **Root Directory:** `kardosh/Landing` (if the repo root is the parent of `kardosh`, use `Landing` only when the repo root *is* `kardosh/`).
+3. **Root Directory:** `Landing` (repo root is this monorepo folder).
 4. Framework: **Vite** (or use existing `Landing/vercel.json`).
 5. **Build Command:** `npm run build`
 6. **Output Directory:** `dist`
