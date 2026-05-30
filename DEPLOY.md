@@ -78,12 +78,11 @@ Create a **second** Vercel project from the **same** GitHub repo.
 
 | Variable | Required | Notes |
 |----------|----------|--------|
+| `REELLY_API_KEY` | Yes | Same as Landing — powers `/api/reelly` for Communities / off-plan |
 | `VITE_SUPABASE_URL` | Yes | Admin data |
 | `VITE_SUPABASE_ANON_KEY` | Yes | Same project as Landing |
-| `VITE_MAIN_SITE_URL` | Yes | Production Landing URL, e.g. `https://kardoshrealty.ae` |
+| `VITE_MAIN_SITE_URL` | Yes | Production Landing URL, e.g. `https://kardosh-realty.vercel.app` |
 | `VITE_APP_NAME` | Optional | |
-
-`REELLY_API_KEY` is **not** required on the Dashboard project unless you add server routes there.
 
 ### Dashboard domain
 

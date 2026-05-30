@@ -6,7 +6,10 @@
       class="mt-6 rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/40 p-4 text-sm text-red-700 dark:text-red-200"
     >
       {{ error }}
-      <span class="block text-xs mt-1 opacity-80">Make sure <code>REELLY_API_KEY</code> is set in <code>kardosh/.env</code> and restart the dev server.</span>
+      <span class="block text-xs mt-1 opacity-80">
+        On Vercel: add <code>REELLY_API_KEY</code> to this Dashboard project and redeploy (same key as Landing).
+        Locally: set it in <code>kardosh/.env</code> and restart <code>npm run dev:dashboard</code>.
+      </span>
     </div>
 
     <!-- Supabase connected but table read/write failed (usually: table not created yet) -->
