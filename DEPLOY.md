@@ -1,6 +1,6 @@
 # Deploy Kardosh (GitHub + Vercel)
 
-Use **one GitHub repository** for the whole `kardosh/` folder, then **two Vercel projects** (Landing + Dashboard). This keeps the public site and admin separate and matches how the apps are built today.
+Use **one GitHub repository** (this folder as repo root), then **two Vercel projects** (Landing + Dashboard). This keeps the public site and admin separate.
 
 ## 1. Create the GitHub repository
 
@@ -51,7 +51,7 @@ Set in **Settings → Environment Variables** (Production + Preview):
 | `VITE_HERO_VIDEO_URL` | Optional | e.g. `/videos/dubai-hero.mp4` |
 | `VITE_HERO_VIDEO_POSTER` | Optional | |
 
-Copy values from local `kardosh/.env`.
+Copy values from local `.env`.
 
 ### Landing domain
 
@@ -68,7 +68,7 @@ Create a **second** Vercel project from the **same** GitHub repo.
 
 1. **Add New** → **Project** → same repository.
 2. **Project name:** e.g. `kardosh-dashboard`
-3. **Root Directory:** `kardosh/Dashboard` (or `Dashboard` if repo root is `kardosh/`).
+3. **Root Directory:** `Dashboard`
 4. Framework: **Vite**
 5. **Build Command:** `npm run build`
 6. **Output Directory:** `dist`
@@ -106,27 +106,23 @@ Restrict access in Supabase (RLS + auth) — the dashboard is a static SPA; secu
 - [ ] Leads, blog, notifications work against Supabase
 - [ ] “View site” / preview links use `VITE_MAIN_SITE_URL`
 
-**Supabase**
+**Supabase** (managed in Supabase dashboard / CLI, not in this repo)
 
-- [ ] All migrations in `supabase/migrations/` applied
-- [ ] Edge function `notify-new-lead` deployed + secrets set (see `supabase/functions/notify-new-lead/README.md`)
+- [ ] Database migrations applied
+- [ ] Edge functions and secrets configured (e.g. new-lead notifications)
 
-## 5. Optional — Welcome app
+## 5. Vercel root directories
 
-Third Vercel project, **Root Directory:** `kardosh/Welcome`, if you still use the coming-soon site. See `Welcome/README.md`.
-
-## 6. Root directory cheat sheet
-
-| Your GitHub repo contains… | Landing Root Directory | Dashboard Root Directory |
-|---------------------------|------------------------|---------------------------|
-| Only `kardosh/` folder (recommended) | `Landing` | `Dashboard` |
-| Parent repo with `kardosh/` subfolder | `kardosh/Landing` | `kardosh/Dashboard` |
+| Project | Root Directory |
+|---------|----------------|
+| Landing | `Landing` |
+| Dashboard | `Dashboard` |
 
 ## Local vs production
 
 | | Local | Vercel Landing |
 |---|--------|----------------|
 | Reelly API | Vite dev proxy in `Landing/vite.config.js` | `api/proxy-reelly.js` + `REELLY_API_KEY` |
-| Env file | `kardosh/.env` | Dashboard env vars (no file in git) |
+| Env file | `.env` (local only) | Per-project env vars in Vercel |
 
 For questions about a single-domain setup (`/admin`), see the earlier note in chat — two projects is still the recommended path.
