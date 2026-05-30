@@ -2,6 +2,17 @@
 
 Use **one GitHub repository** (this folder as repo root), then **two Vercel projects** (Landing + Dashboard). This keeps the public site and admin separate.
 
+## Live URLs (Vercel)
+
+| App | URL |
+|-----|-----|
+| **Landing** | https://kardosh-realty.vercel.app |
+| **Dashboard** | https://kardosh-realty-i3jl.vercel.app (login: `/login`) |
+
+**Dashboard env:** `VITE_MAIN_SITE_URL=https://kardosh-realty.vercel.app` (no trailing slash, no `/login`).
+
+**Supabase Edge Function secret:** `DASHBOARD_URL=https://kardosh-realty-i3jl.vercel.app` (base URL only).
+
 ## 1. Create the GitHub repository
 
 From your machine (PowerShell), in the `kardosh` folder:
