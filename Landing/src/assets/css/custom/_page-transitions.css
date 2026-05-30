@@ -1,0 +1,49 @@
+/* Route transitions — App.vue <Transition name="page-cross"> */
+/* Crossfade + subtle zoom — editorial / luxury feel */
+
+.page-view {
+    width: 100%;
+    min-height: 100%;
+}
+
+.page-cross-enter-active {
+    transition:
+        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+        filter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+}
+
+.page-cross-leave-active {
+    transition:
+        opacity 0.32s cubic-bezier(0.4, 0, 1, 1),
+        transform 0.38s cubic-bezier(0.4, 0, 1, 1),
+        filter 0.32s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.page-cross-enter-from {
+    opacity: 0;
+    transform: scale(0.965);
+    filter: blur(6px);
+}
+
+.page-cross-leave-to {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-cross-enter-active {
+        transition: opacity 0.2s ease;
+    }
+
+    .page-cross-leave-active {
+        transition: opacity 0.15s ease;
+    }
+
+    .page-cross-enter-from,
+    .page-cross-leave-to {
+        transform: none;
+        filter: none;
+    }
+}

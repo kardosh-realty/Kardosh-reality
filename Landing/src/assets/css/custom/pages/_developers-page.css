@@ -1,0 +1,411 @@
+/*********************************/
+/*       Developers page         */
+/*===============================*/
+
+/* Stats strip — glass panel overlapping hero */
+.developers-stats.listings-search-glass {
+    position: relative;
+    z-index: 10;
+}
+
+.developers-stats.listings-search-glass > li {
+    position: relative;
+    z-index: 1;
+}
+
+.developers-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: rgb(15 23 42);
+}
+
+.developers-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(71 85 105);
+}
+
+.dark .developers-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: #ffffff;
+}
+
+.dark .developers-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(203 213 225);
+}
+
+/* Directory header — centered */
+.developers-directory {
+    margin-inline: auto;
+    max-width: 48rem;
+    text-align: center;
+}
+
+/* Glossy search panel */
+.developers-search-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    margin-inline: auto;
+    max-width: 40rem;
+    width: 100%;
+}
+
+.developers-search-panel .developers-search {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.developers-search-panel .developers-search__input {
+    width: 100%;
+    padding: 0.6875rem 1rem 0.6875rem 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(203 213 225);
+    background: #ffffff;
+    color: rgb(15 23 42);
+    font-size: 0.875rem;
+    line-height: 1.25;
+    outline: none;
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+}
+
+.developers-search-panel .developers-search__input::placeholder {
+    color: rgb(100 116 139);
+    opacity: 1;
+}
+
+.developers-search-panel .developers-search__input:focus {
+    border-color: rgb(15 23 42);
+    box-shadow: 0 0 0 3px rgb(15 23 42 / 0.08);
+}
+
+.developers-search-panel .developers-search__icon {
+    color: rgb(100 116 139);
+}
+
+.developers-search-panel .developers-search__count {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgb(71 85 105);
+    text-align: center;
+}
+
+.dark .developers-search-panel .developers-search__input {
+    background: rgb(15 23 42);
+    border-color: rgb(71 85 105);
+    color: rgb(248 250 252);
+}
+
+.dark .developers-search-panel .developers-search__input::placeholder {
+    color: rgb(148 163 184);
+}
+
+.dark .developers-search-panel .developers-search__input:focus {
+    border-color: rgb(148 163 184);
+    box-shadow: 0 0 0 3px rgb(255 255 255 / 0.08);
+}
+
+.dark .developers-search-panel .developers-search__icon {
+    color: rgb(148 163 184);
+}
+
+.dark .developers-search-panel .developers-search__count {
+    color: rgb(203 213 225);
+}
+
+.developer-card__body {
+    min-width: 0;
+}
+
+.developer-card__footer.community-card__footer {
+    margin-top: auto;
+    padding-top: 1.125rem;
+    border-top: none;
+}
+
+.developer-card.community-card--luxury .kardosh-property-card__price-value {
+    font-size: clamp(0.8125rem, 1.8vw, 0.9375rem);
+}
+
+/* ——— Top pipelines leaderboard ——— */
+.developers-leaderboard {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        rgb(241 245 249) 0%,
+        rgb(248 250 252) 50%,
+        rgb(241 245 249) 100%
+    );
+    border-block: 1px solid rgb(226 232 240);
+}
+
+.developers-leaderboard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse 70% 45% at 50% 0%,
+        rgb(15 23 42 / 0.04) 0%,
+        transparent 70%
+    );
+    pointer-events: none;
+}
+
+.dark .developers-leaderboard {
+    background: linear-gradient(
+        180deg,
+        rgb(15 23 42) 0%,
+        rgb(2 6 23) 50%,
+        rgb(15 23 42) 100%
+    );
+    border-block-color: rgb(30 41 59);
+}
+
+.dark .developers-leaderboard::before {
+    background: radial-gradient(
+        ellipse 70% 45% at 50% 0%,
+        rgb(255 255 255 / 0.05) 0%,
+        transparent 70%
+    );
+}
+
+.developers-leaderboard__intro {
+    position: relative;
+    z-index: 1;
+    max-width: 42rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.developers-leaderboard__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: rgb(15 23 42);
+}
+
+.dark .developers-leaderboard__title {
+    color: #ffffff;
+}
+
+.developers-leaderboard__lead {
+    margin: 0.875rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: rgb(71 85 105);
+}
+
+.dark .developers-leaderboard__lead {
+    color: rgb(203 213 225);
+}
+
+.developers-leaderboard__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+    .developers-leaderboard__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .developers-leaderboard__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+.developers-leaderboard-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 100%;
+    padding: 1.5rem 1.25rem 1.375rem;
+    text-decoration: none;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.developers-leaderboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgb(15 23 42 / 0.12),
+        0 8px 16px rgb(15 23 42 / 0.06);
+}
+
+.dark .developers-leaderboard-card:hover {
+    box-shadow:
+        0 20px 40px rgb(0 0 0 / 0.4),
+        0 8px 16px rgb(0 0 0 / 0.25);
+}
+
+.developers-leaderboard-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.developers-leaderboard-card__rank {
+    position: absolute;
+    top: 0.875rem;
+    inset-inline-start: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: rgb(248 250 252);
+    background: linear-gradient(160deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
+    border: 1px solid rgb(51 65 85);
+    box-shadow: 0 2px 8px rgb(15 23 42 / 0.2);
+}
+
+.developers-leaderboard-card__rank--first {
+    background: linear-gradient(160deg, rgb(15 23 42) 0%, rgb(51 65 85) 100%);
+    border-color: rgb(71 85 105);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.28);
+}
+
+.dark .developers-leaderboard-card__rank {
+    background: linear-gradient(160deg, rgb(248 250 252) 0%, rgb(226 232 240) 100%);
+    border-color: rgb(226 232 240);
+    color: rgb(15 23 42);
+}
+
+.developers-leaderboard-card__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-top: 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(203 213 225);
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.dark .developers-leaderboard-card__logo {
+    border-color: rgb(71 85 105);
+    background: rgb(15 23 42);
+}
+
+.developers-leaderboard-card__initial {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgb(15 23 42);
+}
+
+.dark .developers-leaderboard-card__initial {
+    color: rgb(248 250 252);
+}
+
+.developers-leaderboard-card__name {
+    margin: 1rem 0 0;
+    width: 100%;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: rgb(15 23 42);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.dark .developers-leaderboard-card__name {
+    color: #ffffff;
+}
+
+.developers-leaderboard-card__meta {
+    margin: 0.375rem 0 0;
+    font-size: 0.75rem;
+    color: rgb(71 85 105);
+}
+
+.dark .developers-leaderboard-card__meta {
+    color: rgb(148 163 184);
+}
+
+.developers-leaderboard-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid rgb(203 213 225 / 0.65);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgb(15 23 42);
+}
+
+.dark .developers-leaderboard-card__cta {
+    border-top-color: rgb(71 85 105 / 0.65);
+    color: rgb(248 250 252);
+}
+
+.developers-leaderboard-card:hover .developers-leaderboard-card__cta {
+    color: rgb(15 23 42);
+}
+
+.dark .developers-leaderboard-card:hover .developers-leaderboard-card__cta {
+    color: #ffffff;
+}
+
+/* CTA — blur vignette panel (matches communities page) */
+.developers-cta__vignette {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.2),
+        0 8px 16px rgb(15 23 42 / 0.1);
+}
+
+.dark .developers-cta__vignette {
+    border-color: rgb(71 85 105 / 0.5);
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 8px 16px rgb(0 0 0 / 0.3);
+}
+
+.developers-cta__content {
+    pointer-events: auto;
+}
+
+.developers-cta__content .btn {
+    position: relative;
+    z-index: 1;
+}
+
+.developers-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}
+
+.dark .developers-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+    background: var(--kardosh-paper, #fafafa) !important;
+}
+
+.dark .developers-cta__btn-primary:hover {
+    background: rgb(245 245 245) !important;
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}

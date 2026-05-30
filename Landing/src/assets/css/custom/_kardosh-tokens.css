@@ -1,0 +1,32 @@
+/*********************************/
+/*  Kardosh design tokens        */
+/*  (optional — theme in tailwind.css) */
+/*********************************/
+
+:root {
+    --color-primary: #00a63e;
+    --color-primary-dark: #008f34;
+    --kardosh-ink: #0f172a;
+    --kardosh-muted: #64748b;
+    --kardosh-paper: #ffffff;
+    --kardosh-surface: #ffffff;
+    --kardosh-surface-muted: #f4f6f8;
+    --kardosh-page: #f8fafb;
+    --kardosh-border: #e2e8f0;
+    --kardosh-primary-tint: rgb(0 166 62 / 0.08);
+    --kardosh-primary-border: rgb(0 166 62 / 0.2);
+}
+
+.dark {
+    --color-primary: #00cc4b;
+    --color-primary-dark: #00a63e;
+    --kardosh-ink: #f8fafc;
+    --kardosh-muted: #94a3b8;
+    --kardosh-paper: #f8fafc;
+    --kardosh-surface: #1e293b;
+    --kardosh-surface-muted: #0f172a;
+    --kardosh-page: #0f172a;
+    --kardosh-border: #334155;
+    --kardosh-primary-tint: rgb(0 204 75 / 0.12);
+    --kardosh-primary-border: rgb(0 204 75 / 0.28);
+}

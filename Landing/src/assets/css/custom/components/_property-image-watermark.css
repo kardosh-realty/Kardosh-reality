@@ -1,0 +1,107 @@
+/* Light Kardosh trademark overlay on property photos */
+
+.protected-property-image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.protected-property-image--fill {
+    width: 100%;
+    height: 100%;
+}
+
+.protected-property-image--fill .protected-property-image__img,
+.protected-property-image--fill > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.property-image-watermark {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+.property-image-watermark__mark {
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.44;
+    filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgb(0 0 0 / 0.3));
+}
+
+.property-image-watermark--xs .property-image-watermark__mark {
+    max-width: 2.5rem;
+    max-height: 2.5rem;
+    opacity: 0.48;
+}
+
+.property-image-watermark--sm .property-image-watermark__mark {
+    max-width: min(58%, 8rem);
+    max-height: 52%;
+    opacity: 0.46;
+}
+
+.property-image-watermark--md .property-image-watermark__mark {
+    max-width: min(72%, 14rem);
+    max-height: 58%;
+    opacity: 0.44;
+}
+
+.property-image-watermark--lg .property-image-watermark__mark {
+    max-width: min(78%, 18rem);
+    max-height: 62%;
+    opacity: 0.42;
+}
+
+/* Thumbnail / small tiles */
+.property-image-watermark--thumb .property-image-watermark__mark {
+    max-width: min(78%, 5.5rem);
+    max-height: 62%;
+    opacity: 0.46;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .property-image-watermark__mark {
+        filter: brightness(0) invert(1);
+    }
+}
+
+/* Full-screen lightbox (vue-easy-lightbox) — watermark on zoom/pan image */
+.vel-modal .vel-img-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+    background-image: url('/kardosh-logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: min(72%, 16rem) auto;
+    opacity: 0.44;
+    filter: brightness(0) invert(1) drop-shadow(0 2px 10px rgb(0 0 0 / 0.35));
+}
+
+@media (min-width: 768px) {
+    .vel-modal .vel-img-wrapper::after {
+        background-size: min(78%, 20rem) auto;
+        opacity: 0.42;
+    }
+}
+
+.vel-modal .vel-img {
+    position: relative;
+    z-index: 1;
+}

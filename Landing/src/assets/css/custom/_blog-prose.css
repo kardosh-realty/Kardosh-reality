@@ -1,0 +1,45 @@
+/* Published blog post HTML from rich editor */
+.kardosh-blog-prose h2 {
+  @apply text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white mt-10 mb-4;
+}
+
+.kardosh-blog-prose h3 {
+  @apply text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mt-8 mb-3;
+}
+
+.kardosh-blog-prose h4 {
+  @apply text-lg font-semibold text-slate-800 dark:text-slate-100 mt-6 mb-2;
+}
+
+.kardosh-blog-prose p {
+  @apply text-slate-600 dark:text-slate-300 leading-relaxed mb-4;
+}
+
+.kardosh-blog-prose strong,
+.kardosh-blog-prose b {
+  @apply font-semibold text-slate-800 dark:text-slate-100;
+}
+
+.kardosh-blog-prose ul {
+  @apply list-disc ps-6 mb-4 space-y-2 text-slate-600 dark:text-slate-300;
+}
+
+.kardosh-blog-prose ol {
+  @apply list-decimal ps-6 mb-4 space-y-2 text-slate-600 dark:text-slate-300;
+}
+
+.kardosh-blog-prose blockquote {
+  @apply border-s-4 border-primary ps-4 my-6 italic text-slate-500 dark:text-slate-400;
+}
+
+.kardosh-blog-prose a {
+  @apply text-primary underline hover:text-primary-dark;
+}
+
+.kardosh-blog-prose img {
+  @apply w-full h-auto rounded-xl my-6 shadow-sm;
+}
+
+.kardosh-blog-prose hr {
+  @apply my-8 border-gray-200 dark:border-gray-700;
+}

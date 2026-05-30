@@ -1,0 +1,101 @@
+import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
+import { formatAed } from '@/config/uae'
+import { normalizePaymentPlans } from '@/utils/parsePaymentPlans'
+import { extractProjectBedrooms } from './mapProject'
+
+export function formatCompactAed(amount) {
+  const n = Math.round(Number(amount) || 0)
+  if (!n) return null
+  if (n >= 1_000_000) {
+    const m = n / 1_000_000
+    const s = m >= 10 ? String(Math.round(m)) : m.toFixed(1).replace(/\.0$/, '')
+    return `${s}M AED`
+  }
+  if (n >= 1000) return `${Math.round(n / 1000)}K AED`
+  return formatAed(n)
+}
+
+export function formatMapLocationLine(location = {}, projectName = '') {
+  const parts = []
+  const add = (v) => {
+    const s = v && String(v).trim()
+    if (!s) return
+    if (!parts.some((p) => p.toLowerCase() === s.toLowerCase())) parts.push(s)
+  }
+  add(location.city)
+  add(location.region)
+  add(location.district)
+  add(location.area)
+  add(location.subregion)
+  if (projectName) add(projectName)
+  return parts.join(', ') || 'UAE'
+}
+
+export function formatPaymentPlanBadge(plans) {
+  const plan = plans?.[0]
+  if (!plan) return null
+  if (plan.showSplitRatio && plan.splitBefore != null && plan.splitAfter != null) {
+    return `${plan.splitBefore}/${plan.splitAfter}`
+  }
+  const parts = [
+    Math.round(plan.onBooking || 0),
+    Math.round(plan.duringConstruction || 0),
+    Math.round(plan.onHandover || 0),
+  ].filter((x) => x > 0)
+  if (parts.length >= 2) return parts.join('/')
+  return null
+}
+
+export function formatBedroomsLabel(bedrooms = []) {
+  if (!bedrooms?.length) return null
+  const sorted = [...bedrooms].sort((a, b) => a - b)
+  return sorted.map((n) => (n === 0 ? 'Studio' : String(n))).join(',')
+}
+
+function collectImages(raw) {
+  const urls = []
+  const push = (url) => {
+    if (url && typeof url === 'string' && !urls.includes(url)) urls.push(url)
+  }
+  push(raw.cover_image?.url)
+  push(raw.image)
+  for (const img of raw.images || raw.gallery || []) {
+    push(typeof img === 'string' ? img : img?.url)
+  }
+  return urls.length ? urls : [DUBAI_PROPERTY_FALLBACK]
+}
+
+/** Map marker + popup card fields from Reelly list or markers API payload. */
+export function enrichMapMarker(raw) {
+  const location = raw.location || {}
+  const paymentPlans = normalizePaymentPlans(raw.payment_plans)
+  const bedrooms = extractProjectBedrooms(raw)
+  const minPrice = Math.round(Number(raw.min_price ?? raw.minPrice) || 0)
+  const title = raw.name || raw.title || 'Project'
+  const developer =
+    typeof raw.developer === 'object' ? raw.developer?.name : raw.developer
+
+  return {
+    id: raw.id,
+    slug: raw.slug_name || raw.slug,
+    title,
+    name: title,
+    latitude: location.latitude ?? raw.latitude,
+    longitude: location.longitude ?? raw.longitude,
+    location,
+    locationLine: formatMapLocationLine(location, title),
+    image: raw.cover_image?.url || raw.image || DUBAI_PROPERTY_FALLBACK,
+    images: collectImages(raw),
+    minPrice,
+    launchPrice: formatCompactAed(minPrice),
+    priceLabel: minPrice ? `From ${formatAed(minPrice)}` : 'Price on request',
+    developer,
+    developerId: typeof raw.developer === 'object' ? raw.developer?.id : raw.developer_id,
+    completionDate: raw.completion_date || raw.completionDate || null,
+    saleStatus: raw.sale_status || raw.saleStatus,
+    bedrooms,
+    bedroomsLabel: formatBedroomsLabel(bedrooms),
+    paymentPlanBadge: formatPaymentPlanBadge(paymentPlans),
+    listingType: 'off-plan',
+  }
+}

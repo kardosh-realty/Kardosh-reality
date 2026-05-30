@@ -1,0 +1,86 @@
+/*********************************/
+/* Site-wide readability/contrast */
+/*===============================*/
+
+/* Slightly larger default copy */
+html:not(.dark) body {
+    color: rgb(30 41 59);
+}
+
+/* Marketing pages — darker muted text than default slate-500 */
+html:not(.dark) .page-view .text-slate-500 {
+    color: rgb(71 85 105);
+}
+
+html:not(.dark) .page-view .text-slate-400 {
+    color: rgb(100 116 139);
+}
+
+html:not(.dark) .page-view .text-slate-600 {
+    color: rgb(51 65 85);
+}
+
+/* Section eyebrows use text-primary (brand green) */
+
+/* Lead paragraphs */
+.kardosh-lead,
+.about-lead {
+    color: rgb(51 65 85);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+}
+
+.dark .kardosh-lead,
+.dark .about-lead {
+    color: rgb(203 213 225);
+}
+
+/* Alternating section bands */
+.kardosh-section-band,
+.about-page__band {
+    background-color: var(--kardosh-surface-muted, rgb(244 246 248));
+}
+
+.dark .kardosh-section-band,
+.dark .about-page__band {
+    background-color: var(--kardosh-surface-muted, rgb(15 23 41));
+}
+
+/* Emphasis cards (differentiators, mission, etc.) */
+.kardosh-highlight-card,
+.about-highlight-card,
+.about-page__mission-card {
+    background: rgb(255 255 255);
+    border: 2px solid rgb(203 213 225);
+    box-shadow: 0 8px 28px -12px rgb(15 23 42 / 0.14);
+}
+
+.kardosh-highlight-card:hover,
+.about-highlight-card:hover {
+    border-color: rgb(148 163 184);
+    box-shadow: 0 14px 36px -14px rgb(15 23 42 / 0.18);
+}
+
+.dark .kardosh-highlight-card,
+.dark .about-highlight-card,
+.dark .about-page__mission-card {
+    background: rgb(15 23 42);
+    border-color: rgb(71 85 105);
+    box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.45);
+}
+
+/* Softer section backgrounds → clearer separation */
+html:not(.dark) .page-view section.bg-slate-50,
+html:not(.dark) .page-view section.bg-slate-50\/50,
+html:not(.dark) .page-view section.bg-slate-50\/60 {
+    background-color: rgb(241 245 249) !important;
+}
+
+html:not(.dark) .page-view .border-slate-200 {
+    border-color: rgb(203 213 225);
+}
+
+html:not(.dark) .page-view article.rounded-2xl.border.bg-white,
+html:not(.dark) .page-view .rounded-2xl.border.bg-white {
+    box-shadow: 0 6px 20px -10px rgb(15 23 42 / 0.12);
+}

@@ -1,0 +1,166 @@
+/*********************************/
+/*   Kardosh brand overrides     */
+/*===============================*/
+
+/* Primary buttons — solid brand green */
+.btn.bg-primary,
+.btn.bg-primary:hover {
+   @apply border-primary text-white;
+}
+
+.dark .btn.bg-primary,
+.dark .btn.bg-primary:hover {
+   @apply bg-primary text-white border-primary;
+}
+
+.dark .btn.bg-primary:hover {
+   @apply bg-primary-dark;
+}
+
+/* Badges/chips: primary fill is light in dark mode — use dark label text */
+.dark .bg-primary.text-white:not(.btn) {
+   color: rgb(15 23 42);
+}
+
+/* Kardosh logo & icon from /public */
+.kardosh-brand-img {
+   width: auto;
+   max-width: 100%;
+   object-fit: contain;
+}
+
+.kardosh-brand-img--nav {
+   max-height: 2.5rem;
+}
+
+.kardosh-brand-img {
+   opacity: 0;
+   transition: opacity 0.2s ease-out;
+}
+
+.kardosh-brand-img--loaded {
+   opacity: 1;
+}
+
+.kardosh-brand-img--footer {
+   max-height: 4.25rem;
+}
+
+.kardosh-brand-img--inline {
+   max-height: 2.25rem;
+}
+
+.kardosh-brand-img--icon {
+   max-height: 2.75rem;
+   max-width: 2.75rem;
+}
+
+/* On dark surfaces (footer, welcome hero) — invert in light + dark page themes */
+.kardosh-brand-img--invert-dark {
+   filter: brightness(0) invert(1);
+}
+
+/* Nav/header: only invert when .dark is on (see _kardosh-header.css for hero) */
+.dark .kardosh-brand-img--invert-dark.kardosh-brand-img--nav {
+   filter: brightness(0) invert(1);
+}
+
+/* Slim header — logo, nav, enquire on one line */
+#topnav {
+   padding-top: max(0.375rem, env(safe-area-inset-top, 0px));
+}
+
+#topnav .nav-bar-inner {
+   @apply flex flex-nowrap items-center justify-between gap-2;
+   min-height: 3.5rem;
+   padding-top: 0.375rem;
+   padding-bottom: 0.375rem;
+}
+
+#topnav .buy-button .btn {
+   @apply py-2 text-sm;
+   min-height: 2.25rem;
+}
+
+#topnav .logo {
+   float: none !important;
+   line-height: 1;
+   padding-top: 0 !important;
+   padding-bottom: 0 !important;
+}
+
+#topnav .buy-button {
+   float: none !important;
+   line-height: 1;
+}
+
+@media (min-width: 992px) {
+   #topnav .nav-bar-inner {
+      min-height: 3.75rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+   }
+
+   #topnav .menu-extras {
+      display: none !important;
+   }
+}
+
+/* Nav logo: always visible (template hid .l-dark until scroll) */
+#topnav .logo .kardosh-brand-img {
+   display: inline-block !important;
+}
+
+/* Legacy topnav logo filters — KardoshHeader uses _kardosh-header.css instead */
+#topnav:not(.kardosh-header):not(.nav-sticky) .logo .kardosh-brand-img--nav {
+   filter: brightness(0) invert(1);
+}
+
+#topnav:not(.kardosh-header).nav-sticky .logo .kardosh-brand-img--nav {
+   filter: none;
+}
+
+.dark #topnav:not(.kardosh-header).nav-sticky .logo .kardosh-brand-img--nav {
+   filter: brightness(0) invert(1);
+}
+
+/* Centered menu: logo left · links center · enquire right (flex, one line) */
+@media (min-width: 992px) {
+   #topnav #navigation {
+      @apply flex flex-1 min-w-0 items-center justify-center;
+      position: static !important;
+      transform: none !important;
+      display: flex !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      pointer-events: auto !important;
+   }
+
+   #topnav #navigation .navigation-menu {
+      @apply flex flex-nowrap items-center justify-center m-0!;
+   }
+
+   #topnav .navigation-menu > li {
+      float: none !important;
+      @apply my-0!;
+   }
+
+   #topnav .navigation-menu > li > a {
+      @apply py-0 leading-none text-[0.9375rem];
+   }
+
+   #topnav .navigation-menu > li {
+      @apply mx-1.5!;
+   }
+}
+
+@media (max-width: 991px) {
+   #topnav #navigation:not(.nav-open) {
+      display: none !important;
+   }
+
+   #topnav #navigation.nav-open {
+      display: block !important;
+   }
+}

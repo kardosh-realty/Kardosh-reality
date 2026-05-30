@@ -1,0 +1,218 @@
+/*********************************/
+/*  Property details — gooey tabs  */
+/*********************************/
+
+.property-gooey-tabs {
+    position: relative;
+    width: 100%;
+}
+
+/* ——— Tab track ——— */
+.property-gooey-tabs__track {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.property-gooey-tabs__morph {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.property-gooey-tabs__morph-tabs {
+    display: flex;
+    width: 100%;
+    height: 2.75rem;
+}
+
+@media (min-width: 768px) {
+    .property-gooey-tabs__morph-tabs {
+        height: 3rem;
+    }
+}
+
+.property-gooey-tabs__morph-cell {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.property-gooey-tabs__morph-pill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2.75rem;
+    box-sizing: border-box;
+    border-radius: 9999px;
+    background: var(--color-primary, #00a63e);
+    transition:
+        transform 0.42s cubic-bezier(0.34, 1.2, 0.64, 1),
+        width 0.42s cubic-bezier(0.34, 1.2, 0.64, 1),
+        opacity 0.2s ease;
+    will-change: transform, width;
+    /* Keep goo inside tab bounds so the pill does not look larger than siblings */
+    transform-origin: left center;
+}
+
+@media (min-width: 768px) {
+    .property-gooey-tabs__morph-pill {
+        height: 3rem;
+    }
+}
+
+.dark .property-gooey-tabs__morph-pill {
+    background: var(--color-primary, #00cc4b);
+}
+
+.property-gooey-tabs__morph-panel {
+    display: none;
+}
+
+.property-gooey-tabs__labels {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+@media (max-width: 639px) {
+    .property-gooey-tabs__labels {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 0.375rem;
+        padding-bottom: 0.125rem;
+    }
+
+    .property-gooey-tabs__labels::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.property-gooey-tabs__tab {
+    position: relative;
+    box-sizing: border-box;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 2.75rem;
+    padding: 0 0.625rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid var(--kardosh-border, #e2e8f0);
+    background: var(--kardosh-surface, #ffffff);
+    color: var(--kardosh-ink, #0f172a);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        color 0.25s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+@media (min-width: 768px) {
+    .property-gooey-tabs__tab {
+        height: 3rem;
+        padding: 0 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+.property-gooey-tabs__tab:hover:not(.property-gooey-tabs__tab--active) {
+    border-color: rgb(148 163 184);
+    box-shadow: 0 2px 8px rgb(15 23 42 / 0.06);
+}
+
+/* Same box model as inactive — only colors change (green pill is behind) */
+.property-gooey-tabs__tab--active {
+    border: 1px solid transparent;
+    background: transparent;
+    color: #ffffff;
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.dark .property-gooey-tabs__tab:not(.property-gooey-tabs__tab--active) {
+    background: var(--kardosh-surface, #1e293b);
+    border-color: var(--kardosh-border, #334155);
+    color: var(--kardosh-ink, #f8fafc);
+}
+
+/* ——— Content panel ——— */
+.property-gooey-tabs__panel {
+    margin-top: 1rem;
+    padding: 1.25rem 1.375rem;
+    border-radius: 1rem;
+    border: 1px solid var(--kardosh-border, #e2e8f0);
+    background: var(--kardosh-surface, #ffffff);
+    box-shadow:
+        0 1px 3px rgb(15 23 42 / 0.04),
+        0 8px 24px rgb(15 23 42 / 0.05);
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .property-gooey-tabs__panel {
+        margin-top: 1.25rem;
+        padding: 1.5rem 1.625rem;
+        border-radius: 1.25rem;
+    }
+}
+
+.dark .property-gooey-tabs__panel {
+    border-color: var(--kardosh-border, #334155);
+    background: var(--kardosh-surface, #1e293b);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+}
+
+.property-gooey-tabs__panel-inner {
+    min-height: 4rem;
+}
+
+/* Panel content transition */
+.property-gooey-panel-enter-active,
+.property-gooey-panel-leave-active {
+    transition:
+        opacity 0.22s ease,
+        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.22s ease;
+}
+
+.property-gooey-panel-enter-from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(6px);
+}
+
+.property-gooey-panel-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .property-gooey-tabs__morph-pill {
+        transition: none;
+    }
+
+    .property-gooey-panel-enter-active,
+    .property-gooey-panel-leave-active {
+        transition: opacity 0.15s ease;
+    }
+
+    .property-gooey-panel-enter-from,
+    .property-gooey-panel-leave-to {
+        transform: none;
+        filter: none;
+    }
+}

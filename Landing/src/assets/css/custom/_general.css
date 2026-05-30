@@ -1,0 +1,70 @@
+/*********************************/
+/*             General            */
+/*===============================*/
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+body {
+    @apply font-league text-base text-slate-900 dark:text-white w-full!;
+    background-color: var(--kardosh-page, #f8fafb);
+}
+
+.dark body {
+    background-color: var(--kardosh-page, #0c1220);
+}
+
+/* Kardosh: wider content area than default template (1140px) */
+.container {
+    @apply w-full mx-auto! px-4 sm:px-6 lg:px-8;
+    max-width: min(100% - 2rem, 1280px);
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: min(100% - 3rem, 1440px);
+    }
+}
+
+@media (min-width: 1536px) {
+    .container {
+        max-width: min(100% - 4rem, 1520px);
+    }
+}
+
+.container-fluid {
+    @apply w-full mx-auto! px-4 sm:px-6 lg:px-8 xl:px-10;
+    max-width: min(100% - 2rem, 1440px);
+    box-sizing: border-box;
+}
+
+@media (min-width: 1280px) {
+    .container-fluid {
+        max-width: min(100% - 3rem, 1600px);
+    }
+}
+
+@media (min-width: 1536px) {
+    .container-fluid {
+        max-width: min(100% - 4rem, 1680px);
+    }
+}
+
+p {
+    @apply leading-relaxed;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    @apply font-league leading-normal;
+}
+
+::selection {
+    @apply bg-primary/90 text-white;
+}

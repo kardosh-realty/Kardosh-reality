@@ -1,0 +1,145 @@
+/*********************************/
+/*             Contact           */
+/*===============================*/
+
+/* Contact page enquiry block — flat panel, spaced columns */
+.contact-enquiry-panel {
+    box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+    .contact-enquiry__grid {
+        column-gap: 3.5rem;
+    }
+
+    .contact-enquiry__form-col {
+        padding-inline-start: 0.5rem;
+        border-inline-start: 1px solid rgb(226 232 240);
+    }
+
+    .dark .contact-enquiry__form-col {
+        border-inline-start-color: rgb(71 85 105);
+    }
+}
+
+@media (min-width: 1280px) {
+    .contact-enquiry__grid {
+        column-gap: 4rem;
+    }
+
+    .contact-enquiry__form-col {
+        padding-inline-start: 1rem;
+    }
+}
+
+.contact-enquiry__form {
+    box-shadow: none;
+}
+
+.contact-enquiry__social {
+    padding-top: 0.25rem;
+}
+
+.contact-enquiry__map {
+    position: relative;
+    z-index: 1;
+}
+
+/* CTA — blur vignette panel (matches communities / developers / about) */
+.contact-cta__vignette {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.2),
+        0 8px 16px rgb(15 23 42 / 0.1);
+}
+
+.dark .contact-cta__vignette {
+    border-color: rgb(71 85 105 / 0.5);
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 8px 16px rgb(0 0 0 / 0.3);
+}
+
+.contact-cta__content {
+    pointer-events: auto;
+}
+
+.contact-cta__content .btn {
+    position: relative;
+    z-index: 1;
+}
+
+.contact-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}
+
+.dark .contact-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+    background: var(--kardosh-paper, #fafafa) !important;
+}
+
+.dark .contact-cta__btn-primary:hover {
+    background: rgb(245 245 245) !important;
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}
+
+.form-input {
+    @apply w-full py-2 px-3 border border-inherit  dark:border-gray-800 dark:bg-slate-900 dark:text-slate-200 rounded-sm h-10 outline-none bg-transparent;
+    &:focus {
+        @apply border-primary shadow-none ring-0;
+    }
+    &.textarea {
+        @apply h-28;
+    }
+}
+
+/* Validation */
+.error {
+    @apply my-2 mx-0 hidden text-red-600;
+}
+  
+#ajaxsuccess {
+    @apply text-base w-full hidden clear-both my-2 mx-0;
+}
+
+.error_message,
+#success_page {
+    @apply p-2.5 mb-5 text-center rounded-md;
+}
+
+.error_message {
+    @apply bg-red-600/5 text-red-600;
+}
+
+.contact-loader {
+    @apply hidden;
+}
+  
+#success_page {
+    @apply bg-primary/5 text-primary;
+}
+
+
+/*****************/
+/* Subscribe Form */
+/*****************/
+.subcribe-form {
+    form {
+        input {
+            @apply pt-4 pe-40 pb-4 ps-6 w-full h-12.5 outline-none text-slate-900 dark:text-white;
+        }
+        .btn {
+            @apply absolute top-0.5 inset-e-0.75 h-11.5;
+        }
+    }
+}
+
+
+/*****************/
+/* Job search form */
+/*****************/
+.filter-input-box,
+.filter-input-box.form-select,
+.filter-search-form .choices__inner {
+    @apply shadow-none border-0 rounded-none text-[15px] h-15 pt-3.25 pe-1.5 pb-3.75 ps-11.25;
+}

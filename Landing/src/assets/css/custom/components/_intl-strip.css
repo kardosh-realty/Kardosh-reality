@@ -1,0 +1,319 @@
+.intl-strip {
+    margin-top: 3rem;
+    padding: 0;
+}
+
+@media (min-width: 1024px) {
+    .intl-strip {
+        margin-top: 4rem;
+    }
+}
+
+.about-page .intl-strip--about-page {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+    .about-page .intl-strip--about-page {
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.intl-strip__panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow:
+        0 4px 6px rgb(0 0 0 / 0.04),
+        0 24px 48px rgb(15 23 42 / 0.18);
+}
+
+.intl-strip__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+    opacity: 0.35;
+}
+
+.intl-strip__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        125deg,
+        rgb(15 23 42 / 0.97) 0%,
+        rgb(15 23 42 / 0.92) 42%,
+        rgb(30 41 59 / 0.88) 100%
+    );
+}
+
+.dark .intl-strip__overlay {
+    background: linear-gradient(
+        125deg,
+        rgb(2 6 23 / 0.98) 0%,
+        rgb(15 23 42 / 0.94) 50%,
+        rgb(30 41 59 / 0.9) 100%
+    );
+}
+
+.intl-strip__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2rem;
+    padding: 1.75rem 1.5rem 2rem;
+}
+
+@media (min-width: 1024px) {
+    .intl-strip__content {
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: center;
+        gap: 2.5rem 3rem;
+        padding: 2.5rem 2.75rem;
+    }
+}
+
+.intl-strip__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    background: rgb(255 255 255 / 0.08);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.9);
+}
+
+.intl-strip__title {
+    margin: 1rem 0 0;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: rgb(255 255 255);
+}
+
+.intl-strip__title-accent {
+    display: block;
+    margin-top: 0.15em;
+    color: rgb(255 255 255 / 0.72);
+    font-weight: 500;
+}
+
+.intl-strip__body {
+    margin: 1rem 0 0;
+    max-width: 34rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: rgb(203 213 225);
+}
+
+.intl-strip__founder {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.intl-strip__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background: rgb(255 255 255);
+    color: rgb(15 23 42);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.intl-strip__founder-name {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(255 255 255);
+}
+
+.intl-strip__founder-role {
+    margin: 0.15rem 0 0;
+    font-size: 0.8125rem;
+    color: rgb(148 163 184);
+}
+
+.intl-strip__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.intl-strip__cta .kardosh-slide-btn {
+    color: rgb(15 23 42);
+    background: rgb(255 255 255);
+    box-shadow: 0 4px 20px rgb(0 0 0 / 0.25);
+}
+
+.intl-strip__cta .kardosh-slide-btn:hover {
+    background: rgb(248 250 252);
+    color: rgb(15 23 42);
+}
+
+.intl-strip__about-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.85);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.intl-strip__about-link:hover {
+    color: rgb(255 255 255);
+}
+
+/* Markets column */
+.intl-strip__markets {
+    display: grid;
+    gap: 0.75rem;
+    align-content: center;
+}
+
+.intl-strip__market {
+    padding: 1.125rem 1.25rem;
+    border-radius: 1rem;
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    backdrop-filter: blur(8px);
+}
+
+.intl-strip__market-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.intl-strip__market-icon {
+    color: rgb(255 255 255 / 0.85);
+}
+
+.intl-strip__market-region {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(148 163 184);
+}
+
+.intl-strip__market-stat {
+    margin: 0.5rem 0 0;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: rgb(255 255 255);
+    font-variant-numeric: tabular-nums;
+}
+
+.intl-strip__market-label {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    color: rgb(203 213 225);
+}
+
+.intl-strip__connector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+}
+
+.intl-strip__connector-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+}
+
+.intl-strip__connector-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    background: rgb(255 255 255 / 0.1);
+    color: rgb(255 255 255);
+}
+
+.intl-strip__rera {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: rgb(203 213 225);
+    background: rgb(0 0 0 / 0.2);
+    border: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.intl-strip__rera svg {
+    margin-top: 0.1rem;
+    color: rgb(255 255 255);
+}
+
+@media (max-width: 1023px) {
+    .intl-strip__markets {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            'florida dubai'
+            'connector connector'
+            'rera rera';
+    }
+
+    .intl-strip__market--florida {
+        grid-area: florida;
+    }
+
+    .intl-strip__market--dubai {
+        grid-area: dubai;
+    }
+
+    .intl-strip__connector {
+        grid-area: connector;
+        padding-block: 0.25rem;
+    }
+
+    .intl-strip__rera {
+        grid-area: rera;
+    }
+
+    .intl-strip__connector-line {
+        display: none;
+    }
+
+    .intl-strip__connector-dot {
+        margin-inline: auto;
+    }
+}

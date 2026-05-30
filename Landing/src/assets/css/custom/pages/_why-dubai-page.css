@@ -1,0 +1,458 @@
+/*********************************/
+/*       Why Dubai page          */
+/*===============================*/
+
+.why-dubai-stats.listings-search-glass {
+    position: relative;
+    z-index: 10;
+}
+
+.why-dubai-stats.listings-search-glass > li {
+    position: relative;
+    z-index: 1;
+}
+
+.why-dubai-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: rgb(15 23 42);
+}
+
+.why-dubai-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(71 85 105);
+}
+
+.dark .why-dubai-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: #ffffff;
+}
+
+.dark .why-dubai-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(203 213 225);
+}
+
+.why-dubai-intro__cta .kardosh-slide-btn {
+    width: 100%;
+}
+
+/* Investment advantages — centered intro, 4-col grid */
+.why-dubai-advantages__intro {
+    margin-inline: auto;
+    max-width: 48rem;
+    text-align: center;
+}
+
+@media (min-width: 1024px) {
+    /* Center the last row when 6 cards sit in a 4-column grid */
+    .why-dubai-advantages__grid > article:nth-child(5) {
+        grid-column: 2;
+    }
+
+    .why-dubai-advantages__grid > article:nth-child(6) {
+        grid-column: 3;
+    }
+}
+
+/* Advantage cards — icon box (avoid primary token flip in dark mode) */
+.why-dubai-advantage-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: rgb(241 245 249);
+    color: rgb(15 23 42);
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+.why-dubai-advantage-card__icon svg {
+    color: currentColor;
+    stroke: currentColor;
+}
+
+.dark .why-dubai-advantage-card__icon {
+    background: rgb(51 65 85);
+    color: rgb(248 250 252);
+}
+
+.why-dubai-advantage-card:hover .why-dubai-advantage-card__icon {
+    background: rgb(15 23 42);
+    color: #ffffff;
+}
+
+.dark .why-dubai-advantage-card:hover .why-dubai-advantage-card__icon {
+    background: rgb(248 250 252);
+    color: rgb(15 23 42);
+}
+
+/* Buyer journey — centered intro, prominent glass cards */
+.why-dubai-journey__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.why-dubai-journey__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .why-dubai-journey__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .why-dubai-journey__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+.why-dubai-journey-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 0;
+    overflow: hidden;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.why-dubai-journey-card.listings-search-glass {
+    padding: 0;
+}
+
+.why-dubai-journey-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .why-dubai-journey-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.why-dubai-journey-card__step {
+    position: absolute;
+    top: 1rem;
+    inset-inline-start: 1rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: rgb(248 250 252);
+    background: linear-gradient(160deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
+    border: 1px solid rgb(51 65 85);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.22);
+}
+
+.dark .why-dubai-journey-card__step {
+    color: rgb(15 23 42);
+    background: linear-gradient(160deg, rgb(248 250 252) 0%, rgb(226 232 240) 100%);
+    border-color: rgb(226 232 240);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+}
+
+.why-dubai-journey-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 3.25rem 1.375rem 1.5rem;
+}
+
+.why-dubai-journey-card__title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+}
+
+.dark .why-dubai-journey-card__title {
+    color: #ffffff;
+}
+
+.why-dubai-journey-card__text {
+    margin: 0.625rem 0 0;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgb(71 85 105);
+}
+
+.dark .why-dubai-journey-card__text {
+    color: rgb(203 213 225);
+}
+
+/* RERA safeguards — centered intro, prominent glass cards */
+.why-dubai-rera__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.why-dubai-rera__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .why-dubai-rera__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .why-dubai-rera__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+.why-dubai-rera-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 1.375rem 1.25rem 1.5rem;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+@media (min-width: 768px) {
+    .why-dubai-rera-card {
+        padding: 1.5rem 1.375rem 1.625rem;
+    }
+}
+
+.why-dubai-rera-card.listings-search-glass {
+    padding: 1.375rem 1.25rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .why-dubai-rera-card.listings-search-glass {
+        padding: 1.5rem 1.375rem 1.625rem;
+    }
+}
+
+.why-dubai-rera-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .why-dubai-rera-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.why-dubai-rera-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: rgb(241 245 249);
+    color: rgb(15 23 42);
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+.why-dubai-rera-card__icon svg {
+    color: currentColor;
+    stroke: currentColor;
+}
+
+.dark .why-dubai-rera-card__icon {
+    background: rgb(51 65 85);
+    color: rgb(248 250 252);
+}
+
+.why-dubai-rera-card:hover .why-dubai-rera-card__icon {
+    background: rgb(15 23 42);
+    color: #ffffff;
+}
+
+.dark .why-dubai-rera-card:hover .why-dubai-rera-card__icon {
+    background: rgb(248 250 252);
+    color: rgb(15 23 42);
+}
+
+.why-dubai-rera-card__title {
+    margin: 1rem 0 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+}
+
+.dark .why-dubai-rera-card__title {
+    color: #ffffff;
+}
+
+.why-dubai-rera-card__text {
+    margin: 0.625rem 0 0;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgb(71 85 105);
+}
+
+.dark .why-dubai-rera-card__text {
+    color: rgb(203 213 225);
+}
+
+/* Investment corridors — centered intro, glass cards, Visit pill */
+.why-dubai-districts__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.why-dubai-districts__all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(15 23 42);
+    transition: gap 0.2s ease;
+}
+
+.why-dubai-districts__all-link:hover {
+    gap: 0.5rem;
+}
+
+.dark .why-dubai-districts__all-link {
+    color: rgb(248 250 252);
+}
+
+.why-dubai-districts__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .why-dubai-districts__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .why-dubai-districts__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Center the last row when 6 cards sit in a 4-column grid */
+    .why-dubai-districts__grid > article:nth-child(5) {
+        grid-column: 2;
+    }
+
+    .why-dubai-districts__grid > article:nth-child(6) {
+        grid-column: 3;
+    }
+}
+
+.why-dubai-district-card {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.why-dubai-district-card.listings-search-glass {
+    padding: 0;
+}
+
+.why-dubai-district-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .why-dubai-district-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.why-dubai-district-card__content {
+    position: relative;
+    z-index: 1;
+    padding: 1.375rem 1.25rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .why-dubai-district-card__content {
+        padding: 1.5rem 1.375rem 1.375rem;
+    }
+}
+
+.why-dubai-district-card__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+    transition: color 0.2s ease;
+}
+
+.why-dubai-district-card__title:hover {
+    color: rgb(51 65 85);
+}
+
+.dark .why-dubai-district-card__title {
+    color: #ffffff;
+}
+
+.dark .why-dubai-district-card__title:hover {
+    color: rgb(226 232 240);
+}
+
+.why-dubai-district-card__tagline {
+    margin: 0.625rem 0 0;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgb(71 85 105);
+}
+
+.dark .why-dubai-district-card__tagline {
+    color: rgb(203 213 225);
+}
+
+.why-dubai-district-card .community-card__footer {
+    border-top-color: rgb(226 232 240);
+}
+
+.dark .why-dubai-district-card .community-card__footer {
+    border-top-color: rgb(71 85 105 / 0.65);
+}

@@ -1,0 +1,116 @@
+/*********************************/
+/*   About section pillar slides */
+/*===============================*/
+
+/* About copy column — full width on laptop so lines don’t clip */
+.about-kardosh__content {
+    max-width: 100%;
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .about-kardosh__content h2 {
+        font-size: 2.125rem;
+        line-height: 1.25;
+    }
+
+    .about-kardosh__content p {
+        max-width: 36rem;
+    }
+}
+
+/* Shared inline section headlines (Get in touch, etc.) */
+.about-kardosh__headline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.5rem;
+}
+
+.about-kardosh__headline.justify-center {
+    justify-content: center;
+}
+
+.about-kardosh__headline-word {
+    white-space: nowrap;
+}
+
+.about-pillars-carousel {
+    position: relative;
+    margin-top: 2rem;
+}
+
+.about-pillars-carousel__swiper {
+    overflow: visible;
+}
+
+.about-pillars-carousel__swiper .swiper-slide {
+    height: auto;
+    box-sizing: border-box;
+}
+
+.about-pillars-carousel__card {
+    height: 100%;
+    min-height: 9.5rem;
+}
+
+.about-pillars-carousel__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-top: -1.25rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(228 228 231);
+    background: rgb(255 255 255 / 0.96);
+    color: rgb(15 23 42);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.08);
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dark .about-pillars-carousel__nav {
+    border-color: rgb(63 63 70);
+    background: rgb(15 23 42 / 0.96);
+    color: rgb(248 250 252);
+}
+
+.about-pillars-carousel__nav:hover:not(:disabled) {
+    border-color: var(--color-primary, #0a0a0a);
+    transform: scale(1.04);
+}
+
+.about-pillars-carousel__nav:disabled,
+.about-pillars-carousel__nav.swiper-button-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+    .about-pillars-carousel {
+        padding-inline: 2.25rem;
+    }
+
+    .about-pillars-carousel__nav {
+        display: inline-flex;
+    }
+
+    .about-pillars-carousel__nav--prev {
+        inset-inline-start: 0;
+    }
+
+    .about-pillars-carousel__nav--next {
+        inset-inline-end: 0;
+    }
+}
+
+@media (max-width: 639px) {
+    .about-kardosh__headline {
+        font-size: 1.625rem;
+    }
+}

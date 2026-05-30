@@ -1,0 +1,32 @@
+.testimonials-section__inner {
+   max-width: min(100% - 1rem, 1720px);
+}
+
+@media (min-width: 1280px) {
+   .testimonials-section__inner {
+      max-width: min(100% - 2rem, 1800px);
+   }
+}
+
+@keyframes testimonials-marquee {
+   from {
+      transform: translateY(0);
+   }
+   to {
+      transform: translateY(-50%);
+   }
+}
+
+.testimonials-column__track {
+   animation: testimonials-marquee linear infinite;
+}
+
+.testimonials-columns:hover .testimonials-column__track {
+   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .testimonials-column__track {
+      animation: none;
+   }
+}

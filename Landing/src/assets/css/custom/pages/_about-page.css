@@ -1,0 +1,666 @@
+/* About page — glossy stats bar (below hero) */
+.about-stats.listings-search-glass {
+    position: relative;
+    z-index: 10;
+}
+
+.about-stats.listings-search-glass > li {
+    position: relative;
+    z-index: 1;
+}
+
+.about-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: rgb(15 23 42);
+    font-weight: 700;
+}
+
+.about-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(51 65 85);
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.dark .about-stats.listings-search-glass .kardosh-profile-stats__value {
+    color: #ffffff;
+}
+
+.dark .about-stats.listings-search-glass .kardosh-profile-stats__label {
+    color: rgb(203 213 225);
+}
+
+/* Glossy band — team through testimonials */
+.about-glossy-zone {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        rgb(241 245 249) 0%,
+        rgb(248 250 252) 35%,
+        rgb(241 245 249) 100%
+    );
+    border-block: 1px solid rgb(226 232 240);
+}
+
+.about-glossy-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse 85% 45% at 50% 0%,
+        rgb(15 23 42 / 0.05) 0%,
+        transparent 65%
+    );
+    pointer-events: none;
+}
+
+.dark .about-glossy-zone {
+    background: linear-gradient(
+        180deg,
+        rgb(15 23 42) 0%,
+        rgb(30 41 59) 40%,
+        rgb(15 23 42) 100%
+    );
+    border-block-color: rgb(51 65 85);
+}
+
+.dark .about-glossy-zone::before {
+    background: radial-gradient(
+        ellipse 85% 45% at 50% 0%,
+        rgb(255 255 255 / 0.06) 0%,
+        transparent 65%
+    );
+}
+
+.about-glossy-zone > section {
+    position: relative;
+    z-index: 1;
+}
+
+/* About page — What we do services grid */
+
+.about-services__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.about-services__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .about-services__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .about-services__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .about-services__grid > article:nth-child(5) {
+        grid-column: 2;
+    }
+
+    .about-services__grid > article:nth-child(6) {
+        grid-column: 3;
+    }
+}
+
+.about-service-card {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.about-service-card.listings-search-glass {
+    padding: 0;
+}
+
+.about-service-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .about-service-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.about-service-card__content {
+    position: relative;
+    z-index: 1;
+    padding: 1.375rem 1.25rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .about-service-card__content {
+        padding: 1.5rem 1.375rem 1.375rem;
+    }
+}
+
+.about-service-card__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+    transition: color 0.2s ease;
+}
+
+.about-service-card__title:hover {
+    color: rgb(51 65 85);
+}
+
+.dark .about-service-card__title {
+    color: #ffffff;
+}
+
+.dark .about-service-card__title:hover {
+    color: rgb(226 232 240);
+}
+
+.about-service-card__desc {
+    margin: 0.625rem 0 0;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgb(71 85 105);
+}
+
+.dark .about-service-card__desc {
+    color: rgb(203 213 225);
+}
+
+.about-service-card .community-card__footer {
+    border-top-color: rgb(226 232 240);
+}
+
+.dark .about-service-card .community-card__footer {
+    border-top-color: rgb(71 85 105 / 0.65);
+}
+
+.about-service-card .kardosh-property-card__price-value {
+    font-size: clamp(0.75rem, 1.6vw, 0.875rem);
+}
+
+/* How we work — centered intro, prominent glass step cards */
+.about-process__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.about-process__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .about-process__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .about-process__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+.about-process-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 0;
+    overflow: hidden;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.about-process-card.listings-search-glass {
+    padding: 0;
+}
+
+.about-process-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .about-process-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.about-process-card__step {
+    position: absolute;
+    top: 1rem;
+    inset-inline-start: 1rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: rgb(248 250 252);
+    background: linear-gradient(160deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
+    border: 1px solid rgb(51 65 85);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.22);
+}
+
+.dark .about-process-card__step {
+    color: rgb(15 23 42);
+    background: linear-gradient(160deg, rgb(248 250 252) 0%, rgb(226 232 240) 100%);
+    border-color: rgb(226 232 240);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+}
+
+.about-process-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 3.25rem 1.375rem 1.5rem;
+}
+
+.about-process-card__title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+}
+
+.dark .about-process-card__title {
+    color: #ffffff;
+}
+
+.about-process-card__text {
+    margin: 0.625rem 0 0;
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgb(71 85 105);
+}
+
+.dark .about-process-card__text {
+    color: rgb(203 213 225);
+}
+
+/* Metrics — blur vignette panel (ui-layouts) */
+.about-metrics__vignette {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.2),
+        0 8px 16px rgb(15 23 42 / 0.1);
+}
+
+.dark .about-metrics__vignette {
+    border-color: rgb(71 85 105 / 0.5);
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 8px 16px rgb(0 0 0 / 0.3);
+}
+
+.about-metrics__content {
+    pointer-events: auto;
+}
+
+.about-metrics__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .about-metrics__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2.5rem;
+    }
+}
+
+.about-metrics__value {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: #ffffff;
+}
+
+.about-metrics__label {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: rgb(255 255 255 / 0.82);
+}
+
+@media (min-width: 768px) {
+    .about-metrics__label {
+        font-size: 1rem;
+    }
+}
+
+/* Team — centered intro, 4-col glass cards */
+.about-team__intro {
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.about-team-card {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    text-align: center;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.about-team-card.listings-search-glass {
+    padding: 0;
+}
+
+.about-team-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.14),
+        0 10px 20px rgb(15 23 42 / 0.08);
+}
+
+.dark .about-team-card:hover {
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 10px 20px rgb(0 0 0 / 0.3);
+}
+
+.about-team-card__media {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 1;
+    overflow: hidden;
+    margin: 0.75rem 0.75rem 0;
+    border-radius: 0.875rem;
+    background: rgb(241 245 249);
+}
+
+.dark .about-team-card__media {
+    background: rgb(30 41 59);
+}
+
+.about-team-card__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-team-card:hover .about-team-card__photo {
+    transform: scale(1.04);
+}
+
+.about-team-card__body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1.125rem 1.25rem;
+}
+
+.about-team-card__name {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(15 23 42);
+}
+
+.dark .about-team-card__name {
+    color: #ffffff;
+}
+
+.about-team-card__role {
+    margin: 0.375rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: rgb(71 85 105);
+}
+
+.dark .about-team-card__role {
+    color: rgb(203 213 225);
+}
+
+.about-team-card__socials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    width: 100%;
+    border-top: 1px solid rgb(226 232 240);
+}
+
+.dark .about-team-card__socials {
+    border-top-color: rgb(71 85 105 / 0.65);
+}
+
+.about-team-card__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    color: rgb(15 23 42);
+    background: rgb(241 245 249);
+    border: 1px solid rgb(226 232 240);
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.about-team-card__social-link:hover {
+    background: rgb(15 23 42);
+    border-color: rgb(15 23 42);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.dark .about-team-card__social-link {
+    color: rgb(248 250 252);
+    background: rgb(51 65 85);
+    border-color: rgb(71 85 105);
+}
+
+.dark .about-team-card__social-link:hover {
+    background: rgb(248 250 252);
+    border-color: rgb(248 250 252);
+    color: rgb(15 23 42);
+}
+
+.about-team-card__social-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    color: rgb(148 163 184);
+    background: rgb(248 250 252 / 0.6);
+    border: 1px dashed rgb(203 213 225);
+    opacity: 0.65;
+}
+
+.dark .about-team-card__social-slot {
+    color: rgb(100 116 139);
+    background: rgb(15 23 42 / 0.4);
+    border-color: rgb(71 85 105);
+}
+
+/* Testimonials inside glossy band */
+.about-testimonial-card {
+    position: relative;
+    z-index: 1;
+    padding: 1.375rem 1.25rem;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.about-testimonial-card.listings-search-glass {
+    padding: 1.375rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .about-testimonial-card.listings-search-glass {
+        padding: 1.5rem 1.375rem;
+    }
+}
+
+.about-testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgb(15 23 42 / 0.12),
+        0 8px 16px rgb(15 23 42 / 0.06);
+}
+
+.dark .about-testimonial-card:hover {
+    box-shadow:
+        0 20px 40px rgb(0 0 0 / 0.4),
+        0 8px 16px rgb(0 0 0 / 0.25);
+}
+
+.about-testimonial-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.about-testimonial-card .border-t {
+    border-top-color: rgb(226 232 240) !important;
+}
+
+.dark .about-testimonial-card .border-t {
+    border-top-color: rgb(71 85 105 / 0.65) !important;
+}
+
+/* Contact — spacing before bottom CTA */
+.about-contact {
+    position: relative;
+    z-index: 1;
+}
+
+.about-contact .get-in-touch-panel {
+    margin-bottom: 0;
+}
+
+/* CTA — blur vignette panel (matches communities / developers) */
+.about-cta {
+    padding-top: 0;
+}
+
+.about-cta__vignette {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+        0 24px 48px rgb(15 23 42 / 0.2),
+        0 8px 16px rgb(15 23 42 / 0.1);
+}
+
+.dark .about-cta__vignette {
+    border-color: rgb(71 85 105 / 0.5);
+    box-shadow:
+        0 24px 48px rgb(0 0 0 / 0.45),
+        0 8px 16px rgb(0 0 0 / 0.3);
+}
+
+.about-cta__content {
+    pointer-events: auto;
+}
+
+.about-cta__content .btn {
+    position: relative;
+    z-index: 1;
+}
+
+.about-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}
+
+.dark .about-cta__btn-primary {
+    color: var(--kardosh-ink, #0a0a0a) !important;
+    background: var(--kardosh-paper, #fafafa) !important;
+}
+
+.dark .about-cta__btn-primary:hover {
+    background: rgb(245 245 245) !important;
+    color: var(--kardosh-ink, #0a0a0a) !important;
+}
+
+/* About page — extra emphasis on stats / pillars */
+.about-page .about-stats.listings-search-glass {
+    border-width: 2px;
+    box-shadow: 0 12px 36px -18px rgb(15 23 42 / 0.16);
+}
+
+.about-page .about-service-card__desc,
+.about-page .about-process-card__text {
+    color: rgb(51 65 85);
+    font-size: 0.9375rem;
+}
+
+.about-page .about-pillars-carousel__card {
+    background: rgb(255 255 255);
+    border-color: rgb(203 213 225) !important;
+    box-shadow: 0 4px 16px -8px rgb(15 23 42 / 0.1);
+}
+
+.about-page .about-kardosh__content h2 span {
+    color: rgb(30 41 59);
+}
+
+.about-glossy-zone {
+    background: linear-gradient(
+        180deg,
+        rgb(226 232 240) 0%,
+        rgb(241 245 249) 45%,
+        rgb(226 232 240) 100%
+    );
+    border-block-color: rgb(203 213 225);
+}
+
+.dark .about-glossy-zone {
+    background: linear-gradient(
+        180deg,
+        rgb(15 23 42) 0%,
+        rgb(30 41 59) 50%,
+        rgb(15 23 42) 100%
+    );
+    border-block-color: rgb(51 65 85);
+}

@@ -1,0 +1,33 @@
+# Environment (never commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Dependencies & build output
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+dist-welcome/
+coverage/
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sw?
+
+# Vite / tooling
+*.timestamp-*-*.mjs
+.eslintcache
+__screenshots__/
+
+# Optional: large local media (uncomment if you do not want videos in git)
+# Landing/public/videos/*.mp4

@@ -1,0 +1,79 @@
+/*********************************/
+/*  Why invest — advantage cards */
+/*===============================*/
+
+/* Fallback if utility classes are purged — scoped to home section */
+.why-invest-section .why-invest-advantage-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 13.5rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 2px solid rgb(203 213 225);
+    background-color: #ffffff;
+    box-shadow: 0 12px 32px rgb(15 23 42 / 0.12);
+}
+
+.dark .why-invest-section .why-invest-advantage-card {
+    border-color: rgb(51 65 85);
+    background-color: var(--kardosh-surface, #1a2332);
+    box-shadow: 0 12px 36px rgb(0 0 0 / 0.45);
+}
+
+.why-invest-section .why-invest-advantages-grid {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(226 232 240);
+    background-color: rgb(241 245 249);
+}
+
+@media (min-width: 640px) {
+    .why-invest-section .why-invest-advantages-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .why-invest-section .why-invest-advantages-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+}
+
+.dark .why-invest-section .why-invest-advantages-grid {
+    border-color: rgb(51 65 85);
+    background-color: var(--kardosh-surface-muted, rgb(15 23 41));
+}
+
+.why-invest-section .why-invest-advantage-card__icon.bg-primary {
+    border: 1px solid var(--color-primary-dark, #008f34);
+    background: var(--color-primary, #00a63e) !important;
+    color: #ffffff !important;
+}
+
+.dark .why-invest-section .why-invest-advantage-card__icon.bg-primary {
+    border-color: var(--color-primary-dark, #00a63e);
+    color: #ffffff !important;
+}
+
+.why-invest-section .why-invest-advantage-card:hover {
+    border-color: rgb(0 166 62 / 0.45);
+}
+
+.dark .why-invest-section .why-invest-advantage-card:hover {
+    border-color: rgb(0 204 75 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .why-invest-section .why-invest-advantage-card {
+        transition: none;
+    }
+
+    .why-invest-section .why-invest-advantage-card:hover {
+        transform: none;
+    }
+}

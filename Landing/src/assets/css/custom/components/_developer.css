@@ -1,0 +1,46 @@
+.developer-card__logo img {
+  transition: transform 0.4s ease;
+}
+
+.developer-card:hover .developer-card__logo img {
+  transform: scale(1.05);
+}
+
+.developer-profile__logo-wrap {
+  background: linear-gradient(145deg, #fff 0%, #f8fafc 100%);
+}
+
+.dark .developer-profile__logo-wrap {
+  background: linear-gradient(145deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
+}
+
+.developer-profile__desc {
+  white-space: pre-line;
+}
+
+.developer-offices__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid rgb(226 232 240);
+  color: rgb(51 65 85);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.dark .developer-offices__chip {
+  border-color: rgb(51 65 85);
+  color: rgb(203 213 225);
+}
+
+.developer-offices__chip:hover {
+  border-color: var(--color-primary, #c2410c);
+  color: var(--color-primary, #c2410c);
+}
+
+.developer-offices__chip--wa:hover {
+  border-color: #25d366;
+  color: #15803d;
+}

@@ -1,0 +1,47 @@
+/* Site-wide RTL — toggled via html[dir="rtl"] from useLanguage */
+
+html[dir="rtl"] {
+   direction: rtl;
+}
+
+html[dir="rtl"] body {
+   direction: rtl;
+   text-align: start;
+}
+
+/* Forms & inputs */
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+   text-align: start;
+}
+
+html[dir="rtl"] .form-input,
+html[dir="rtl"] .form-select {
+   text-align: start;
+}
+
+/* Property gallery arrows swap sides */
+html[dir="rtl"] .property-gallery-prev {
+   left: auto;
+   right: 0.75rem;
+}
+
+html[dir="rtl"] .property-gallery-next {
+   right: auto;
+   left: 0.75rem;
+}
+
+/* Footer language dropdown — wider labels for Arabic */
+html[dir="rtl"] .footer-lang-dropdown__wrap {
+   min-width: 9rem;
+}
+
+html[dir="rtl"] .footer-lang-dropdown__label {
+   text-align: center;
+}
+
+/* Testimonials marquee columns: keep vertical scroll, respect RTL page flow */
+html[dir="rtl"] .testimonials-columns {
+   direction: rtl;
+}

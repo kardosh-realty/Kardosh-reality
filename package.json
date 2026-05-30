@@ -1,0 +1,16 @@
+{
+  "name": "kardosh-realty",
+  "private": true,
+  "description": "Kardosh Realty — Landing, Dashboard, Welcome, Supabase",
+  "scripts": {
+    "dev:landing": "npm run dev --prefix Landing",
+    "dev:dashboard": "npm run dev --prefix Dashboard",
+    "dev:welcome": "npm run dev --prefix Welcome",
+    "build:landing": "npm run build --prefix Landing",
+    "build:dashboard": "npm run build --prefix Dashboard",
+    "build:welcome": "npm run build --prefix Welcome",
+    "install:all": "npm install --prefix Landing && npm install --prefix Dashboard",
+    "preview:landing": "npm run preview --prefix Landing",
+    "preview:dashboard": "npm run preview --prefix Dashboard"
+  }
+}

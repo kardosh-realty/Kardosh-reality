@@ -1,0 +1,299 @@
+/*********************************/
+/*  Kardosh button system        */
+/*********************************/
+
+/* Base — prevent clipped borders on rounded controls */
+.btn {
+    box-sizing: border-box;
+    overflow: visible;
+    line-height: 1.25;
+    font-weight: 600;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.btn.rounded-full,
+.btn.rounded-full\! {
+    min-height: 2.5rem;
+    padding-inline: 1.25rem;
+    border-radius: 9999px !important;
+}
+
+/* ——— Secondary (outline slate) ——— */
+.btn-secondary,
+.page-view .btn.border.border-slate-200,
+.page-view a.btn.border.border-slate-200,
+.page-view button.btn.border.border-slate-200 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.625rem !important;
+    border-color: rgb(203 213 225) !important;
+    background: #ffffff !important;
+    color: rgb(51 65 85) !important;
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dark .btn-secondary,
+.dark .page-view .btn.border.border-slate-200,
+.dark .page-view a.btn.border.border-slate-200,
+.dark .page-view button.btn.border.border-slate-200 {
+    border-color: rgb(71 85 105) !important;
+    background: rgb(30 41 59) !important;
+    color: rgb(226 232 240) !important;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}
+
+.btn-secondary:hover,
+.page-view .btn.border.border-slate-200:hover,
+.page-view a.btn.border.border-slate-200:hover,
+.page-view button.btn.border.border-slate-200:hover {
+    border-color: var(--color-primary, #00a63e) !important;
+    background: rgb(236 253 245) !important;
+    color: var(--color-primary-dark, #008f34) !important;
+    box-shadow: 0 4px 14px rgb(5 150 105 / 0.12);
+    transform: translateY(-1px);
+}
+
+.dark .btn-secondary:hover,
+.dark .page-view .btn.border.border-slate-200:hover,
+.dark .page-view a.btn.border.border-slate-200:hover,
+.dark .page-view button.btn.border.border-slate-200:hover {
+    border-color: var(--color-primary, #34d399) !important;
+    background: rgb(6 78 59 / 0.35) !important;
+    color: var(--color-primary-300, #6ee7b7) !important;
+    box-shadow: 0 4px 16px rgb(52 211 153 / 0.15);
+}
+
+.btn-secondary:focus-visible,
+.page-view .btn.border.border-slate-200:focus-visible {
+    outline: 2px solid var(--color-primary-400, #34d399);
+    outline-offset: 2px;
+}
+
+/* ——— Outline emerald ——— */
+.btn-outline,
+.page-view .btn.bg-transparent.border-primary,
+.page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon) {
+    min-height: 2.75rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.625rem !important;
+    border: 1.5px solid var(--color-primary, #00a63e) !important;
+    background: #ffffff !important;
+    color: var(--color-primary-dark, #047857) !important;
+    box-shadow: 0 1px 3px rgb(5 150 105 / 0.08);
+}
+
+.dark .btn-outline,
+.dark .page-view .btn.bg-transparent.border-primary,
+.dark .page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon) {
+    background: rgb(30 41 59) !important;
+    border-color: var(--color-primary, #34d399) !important;
+    color: var(--color-primary-300, #6ee7b7) !important;
+}
+
+.btn-outline:hover,
+.page-view .btn.bg-transparent.border-primary:hover,
+.page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon):hover {
+    border-color: var(--color-primary-dark, #008f34) !important;
+    background: var(--color-primary, #00a63e) !important;
+    color: #ffffff !important;
+}
+
+.dark .btn-outline:hover,
+.dark .page-view .btn.bg-transparent.border-primary:hover,
+.dark .page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon):hover {
+    color: #ffffff !important;
+}
+
+/* ——— Icon buttons ——— */
+.btn.btn-icon {
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+.btn.btn-icon.border {
+    border-color: rgb(203 213 225) !important;
+    background: #ffffff !important;
+}
+
+.dark .btn.btn-icon.border {
+    border-color: rgb(71 85 105) !important;
+    background: rgb(30 41 59) !important;
+}
+
+.btn.btn-icon.border:hover {
+    border-color: var(--color-primary, #00a63e) !important;
+    background: var(--color-primary, #00a63e) !important;
+    color: #ffffff !important;
+}
+
+.dark .btn.btn-icon.border:hover {
+    color: #ffffff !important;
+}
+
+/* ——— Search tabs ——— */
+.property-search-tabs button[role='tab'] {
+    min-height: 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+}
+
+.property-search-tabs button[role='tab']:not([aria-selected='true']) {
+    color: rgb(71 85 105);
+}
+
+.dark .property-search-tabs button[role='tab']:not([aria-selected='true']) {
+    color: rgb(203 213 225);
+}
+
+.property-search-tabs button[role='tab'][aria-selected='true'] {
+    border-color: var(--color-primary-dark, #008f34) !important;
+    background: var(--color-primary, #00a63e) !important;
+    color: #ffffff !important;
+}
+
+.dark .property-search-tabs button[role='tab'][aria-selected='true'] {
+    color: #ffffff !important;
+}
+
+/* Rows of primary + secondary actions */
+.kardosh-btn-row,
+.kardosh-cta-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.kardosh-btn-row > .btn,
+.kardosh-btn-row > a.btn,
+.kardosh-btn-row > button.btn,
+.kardosh-btn-row > .kardosh-slide-btn,
+.kardosh-btn-row > a.kardosh-slide-btn,
+.kardosh-cta-row > .btn,
+.kardosh-cta-row > a.btn,
+.kardosh-cta-row > button.btn,
+.kardosh-cta-row > .kardosh-slide-btn,
+.kardosh-cta-row > a.kardosh-slide-btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding-inline: 1.25rem;
+}
+
+/* Full-width row CTAs: centered label, arrow anchored on the end */
+.kardosh-btn-row > .kardosh-slide-btn,
+.kardosh-btn-row > a.kardosh-slide-btn,
+.kardosh-cta-row > .kardosh-slide-btn,
+.kardosh-cta-row > a.kardosh-slide-btn {
+    position: relative;
+    justify-content: center;
+    padding-inline: 2.75rem;
+}
+
+.kardosh-btn-row > .kardosh-slide-btn .kardosh-slide-btn__label,
+.kardosh-btn-row > a.kardosh-slide-btn .kardosh-slide-btn__label,
+.kardosh-cta-row > .kardosh-slide-btn .kardosh-slide-btn__label,
+.kardosh-cta-row > a.kardosh-slide-btn .kardosh-slide-btn__label {
+    flex: 1;
+    text-align: center;
+}
+
+.kardosh-btn-row > .kardosh-slide-btn .kardosh-slide-btn__arrow,
+.kardosh-btn-row > a.kardosh-slide-btn .kardosh-slide-btn__arrow,
+.kardosh-cta-row > .kardosh-slide-btn .kardosh-slide-btn__arrow,
+.kardosh-cta-row > a.kardosh-slide-btn .kardosh-slide-btn__arrow {
+    position: absolute;
+    inset-inline-end: 1.25rem;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+}
+
+.kardosh-btn-row > .kardosh-slide-btn:hover .kardosh-slide-btn__arrow,
+.kardosh-btn-row > a.kardosh-slide-btn:hover .kardosh-slide-btn__arrow,
+.kardosh-cta-row > .kardosh-slide-btn:hover .kardosh-slide-btn__arrow,
+.kardosh-cta-row > a.kardosh-slide-btn:hover .kardosh-slide-btn__arrow,
+.kardosh-btn-row > .kardosh-slide-btn:focus-visible .kardosh-slide-btn__arrow,
+.kardosh-btn-row > a.kardosh-slide-btn:focus-visible .kardosh-slide-btn__arrow,
+.kardosh-cta-row > .kardosh-slide-btn:focus-visible .kardosh-slide-btn__arrow,
+.kardosh-cta-row > a.kardosh-slide-btn:focus-visible .kardosh-slide-btn__arrow {
+    transform: translateY(-50%) translateX(0.5rem);
+}
+
+.kardosh-btn-row--stack {
+    flex-direction: column;
+}
+
+.kardosh-btn-row--stack > .btn,
+.kardosh-btn-row--stack > a.btn,
+.kardosh-btn-row--stack > button.btn,
+.kardosh-btn-row--stack > .kardosh-slide-btn,
+.kardosh-btn-row--stack > a.kardosh-slide-btn {
+    width: 100%;
+    max-width: 100%;
+}
+
+.kardosh-btn-row--center {
+    align-items: stretch;
+}
+
+@media (min-width: 640px) {
+    .kardosh-btn-row:not(.kardosh-btn-row--stack),
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > .btn,
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > a.btn,
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > button.btn,
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > .kardosh-slide-btn,
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > a.kardosh-slide-btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > .btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > a.btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > button.btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > .kardosh-slide-btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > a.kardosh-slide-btn {
+        width: auto;
+        max-width: 100%;
+        flex: 0 1 auto;
+    }
+
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > .kardosh-slide-btn,
+    .kardosh-btn-row:not(.kardosh-btn-row--stack) > a.kardosh-slide-btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > .kardosh-slide-btn,
+    .kardosh-cta-row:not(.kardosh-btn-row--stack) > a.kardosh-slide-btn {
+        width: 11.25rem;
+    }
+
+    .kardosh-btn-row--center:not(.kardosh-btn-row--stack),
+    .kardosh-cta-row.kardosh-btn-row--center:not(.kardosh-btn-row--stack) {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@media (min-width: 640px) {
+    .kardosh-btn-row--center:not(.kardosh-btn-row--stack) > .btn,
+    .kardosh-btn-row--center:not(.kardosh-btn-row--stack) > a.btn {
+        min-width: 10.5rem;
+    }
+}
