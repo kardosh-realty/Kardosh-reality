@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import {
   fetchProjects,
   fetchProjectById,
+  fetchProjectBySlug,
   fetchProjectMarkers,
   fetchProjectUnits,
   fetchDeveloperById,
@@ -13,7 +14,8 @@ import { enrichLiveUnitsWithPlans } from '@/services/reelly/media'
 import { properties as localProperties } from '@/component/data/data'
 import { formatAed, formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
-import { loadVisibility, isProjectHiddenCascade } from '@/services/visibility'
+import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
+import { parseSlugParam, projectSlug } from '@/utils/seoRoutes'
 
 const projects = ref([])
 const markers = ref([])
@@ -197,9 +199,22 @@ export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = [
   }
 }
 
-export async function fetchDeveloperDetail(id) {
-  const raw = await fetchDeveloperById(id)
-  return mapDeveloper(raw)
+export async function fetchDeveloperDetail(param) {
+  const raw = String(param || '')
+  if (!raw) throw new Error('Developer not found')
+
+  if (/^\d+$/.test(raw)) {
+    return mapDeveloper(await fetchDeveloperById(raw))
+  }
+
+  await loadDeveloperLogos()
+  const want = slugify(raw)
+  const match = developerLogos.value.find((d) => slugify(d.name) === want)
+  if (match?.id) {
+    return mapDeveloper(await fetchDeveloperById(match.id))
+  }
+
+  throw new Error('Developer not found')
 }
 
 export function findDeveloperIdByName(name) {
@@ -334,21 +349,57 @@ export function useReelly() {
 // Back-compat for existing imports
 export { loadProjects as loadReellyProjects }
 
-export async function getListingById(id) {
-  const numericId = Number(id)
-  const local = localProperties.find((p) => p.id === numericId)
-  if (local) return mapLocal(local)
+export async function getListingById(param) {
+  const raw = String(param || '').trim()
+  if (!raw) return null
+
+  if (/^\d+$/.test(raw)) {
+    const numericId = Number(raw)
+    const local = localProperties.find((p) => p.id === numericId)
+    if (local) return mapLocal(local)
+    try {
+      return await fetchFullProject(numericId)
+    } catch {
+      if (!projects.value.length) {
+        const cachedList = readCache(PROJECTS_CACHE_KEY)
+        if (cachedList?.length) projects.value = cachedList
+      }
+      if (!projects.value.length) await loadProjects()
+      return projects.value.find((p) => p.id === numericId) || null
+    }
+  }
+
+  const detailParams = {
+    language: 'en-us',
+    preferred_currency: 'AED',
+    preferred_area_unit: 'm2',
+  }
 
   try {
-    return await fetchFullProject(numericId)
+    const data = await fetchProjectBySlug(raw, detailParams)
+    return mapReellyProject(data, { full: true })
   } catch {
-    if (!projects.value.length) {
-      const cachedList = readCache(PROJECTS_CACHE_KEY)
-      if (cachedList?.length) {
-        projects.value = cachedList
-      }
-    }
-    if (!projects.value.length) await loadProjects()
-    return projects.value.find((p) => p.id === numericId) || null
+    /* try slug-id suffix or catalogue */
   }
+
+  const { slug, id } = parseSlugParam(raw)
+  if (id) {
+    try {
+      return await fetchFullProject(id)
+    } catch {
+      /* fall through */
+    }
+  }
+
+  if (!projects.value.length) {
+    const cachedList = readCache(PROJECTS_CACHE_KEY)
+    if (cachedList?.length) projects.value = cachedList
+  }
+  if (!projects.value.length) await loadProjects()
+
+  const want = slugify(slug || raw)
+  return (
+    projects.value.find((p) => projectSlug(p) === raw || slugify(p.slug || '') === want) ||
+    null
+  )
 }

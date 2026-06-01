@@ -55,7 +55,7 @@
                 v-for="m in filteredMarkers"
                 :key="m.id"
                 :ref="(el) => setCardRef(m.id, el)"
-                :to="isMobile ? undefined : `/property-detail/${m.id}`"
+                :to="isMobile ? undefined : projectDetailPath(m)"
                 :type="isMobile ? 'button' : undefined"
                 role="listitem"
                 class="map-page__card"
@@ -125,7 +125,7 @@
             </p>
           </div>
           <RouterLink
-            :to="`/property-detail/${selectedMarker.id}`"
+            :to="projectDetailPath(selectedMarker)"
             class="map-page__dock-cta"
           >
             View
@@ -155,6 +155,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { formatAed } from '@/config/uae'
 import { useReelly } from '@/composables/useReelly'
 import { useMediaQuery } from '@/composables/useMediaQuery'
+import { projectDetailPath } from '@/utils/seoRoutes'
 import ProtectedPropertyImage from '@/component/kardosh/ProtectedPropertyImage.vue'
 
 const isMobile = useMediaQuery('(max-width: 767px)')

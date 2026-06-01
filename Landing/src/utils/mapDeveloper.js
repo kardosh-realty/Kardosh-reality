@@ -1,4 +1,5 @@
 import { mapReellyProject } from '@/services/reelly/mapProject'
+import { developerDetailPath } from '@/utils/seoRoutes'
 
 const ROLE_LABELS = {
   sales_executive: 'Sales executive',
@@ -95,7 +96,7 @@ export function mapDeveloper(raw) {
 /** Profile link when Reelly id is known; otherwise off-plan filtered by name */
 export function developerProfileRoute(dev) {
   if (!dev?.name) return '/developers'
-  if (dev.id) return `/developer/${dev.id}`
+  if (dev.id || dev.name) return developerDetailPath(dev)
   return { path: '/off-plan', query: { developer: dev.name } }
 }
 

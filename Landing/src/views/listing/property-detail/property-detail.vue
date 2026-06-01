@@ -213,9 +213,10 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, provide } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { formatAed, formatArea } from '@/config/uae'
-import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos, findDeveloperIdByName } from '@/composables/useReelly'
+import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos } from '@/composables/useReelly'
+import { developerDetailPath, projectDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
 import PropertyGallery from '@/component/kardosh/PropertyGallery.vue'
 import PropertyGallerySkeleton from '@/component/kardosh/skeleton/PropertyGallerySkeleton.vue'
 import PropertyDetailContentSkeleton from '@/component/kardosh/skeleton/PropertyDetailContentSkeleton.vue'
@@ -242,6 +243,7 @@ import { Maximize, MapPin, Building2 } from 'lucide-vue-next'
 import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
 
 const route = useRoute()
+const router = useRouter()
 const property = ref(null)
 const loading = ref(true)
 
@@ -378,8 +380,9 @@ watch(visibleTabs, (tabs) => {
 })
 
 const developerLink = computed(() => {
-  const id = findDeveloperIdByName(property.value?.developer)
-  return id ? `/developer/${id}` : null
+  const name = property.value?.developer
+  if (!name) return null
+  return developerDetailPath({ name })
 })
 
 function openPlanLightbox(plans, index) {
@@ -388,18 +391,28 @@ function openPlanLightbox(plans, index) {
   planLightboxOpen.value = true
 }
 
-onMounted(async () => {
-  void loadDeveloperLogos()
+async function loadProperty(slugParam) {
+  loading.value = true
+  liveUnits.value = []
+  unitsRestricted.value = false
+  unitsMessage.value = ''
 
   try {
-    property.value = await getListingById(route.params.id)
+    property.value = await getListingById(slugParam)
   } finally {
     loading.value = false
   }
 
-  if (property.value?.source === 'reelly') {
+  if (property.value && isNumericRouteParam(slugParam)) {
+    const canonical = projectDetailPath(property.value)
+    if (route.path !== canonical) {
+      router.replace(canonical)
+    }
+  }
+
+  if (property.value?.source === 'reelly' && property.value.id) {
     const typical = property.value.typicalUnitsWithPlans || []
-    fetchProjectUnitsSafe(route.params.id, typical)
+    fetchProjectUnitsSafe(property.value.id, typical)
       .then((unitsResult) => {
         liveUnits.value = unitsResult.units
         unitsRestricted.value = unitsResult.restricted
@@ -407,5 +420,17 @@ onMounted(async () => {
       })
       .catch(() => {})
   }
+}
+
+onMounted(() => {
+  void loadDeveloperLogos()
+  void loadProperty(route.params.slug)
 })
+
+watch(
+  () => route.params.slug,
+  (slug) => {
+    if (slug) void loadProperty(slug)
+  }
+)
 </script>

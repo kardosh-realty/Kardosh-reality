@@ -113,6 +113,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowRight, MapPin, X } from 'lucide-vue-next'
 import { fetchFullProject } from '@/composables/useReelly'
 import { enrichMapMarker } from '@/services/reelly/mapMarker'
+import { projectDetailPath } from '@/utils/seoRoutes'
 
 const props = defineProps({
   marker: { type: Object, default: null },
@@ -142,7 +143,9 @@ const activeImage = computed(
   () => displayMarker.value?.images?.[imageIndex.value] || displayMarker.value?.image
 )
 
-const detailTo = computed(() => `/property-detail/${displayMarker.value?.id}`)
+const detailTo = computed(() =>
+  displayMarker.value ? projectDetailPath(displayMarker.value) : '/off-plan'
+)
 
 const detailRows = computed(() => {
   const m = displayMarker.value

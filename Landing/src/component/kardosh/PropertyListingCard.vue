@@ -5,7 +5,7 @@
   >
     <div class="kardosh-property-card__media">
       <RouterLink
-        :to="`/property-detail/${item.id}`"
+        :to="detailTo"
         class="kardosh-property-card__media-link block h-full w-full"
       >
         <ProtectedPropertyImage
@@ -33,7 +33,7 @@
       </p>
 
       <RouterLink
-        :to="`/property-detail/${item.id}`"
+        :to="detailTo"
         class="kardosh-property-card__title line-clamp-2"
       >
         {{ item.name }}
@@ -77,7 +77,7 @@
           <p class="kardosh-property-card__price-value">{{ luxuryPrice }}</p>
         </div>
         <RouterLink
-          :to="`/property-detail/${item.id}`"
+          :to="detailTo"
           class="kardosh-property-card__cta"
           :aria-label="`Visit ${item.name}`"
         >
@@ -95,7 +95,7 @@
     class="group rounded-xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl dark:hover:shadow-xl shadow-gray-200 dark:shadow-gray-700 overflow-hidden ease-in-out duration-500 h-full flex flex-col"
   >
     <div class="relative">
-      <RouterLink :to="`/property-detail/${item.id}`">
+      <RouterLink :to="detailTo">
         <ProtectedPropertyImage
           :src="item.image"
           :alt="item.name"
@@ -122,7 +122,7 @@
     <div class="p-5 flex flex-col flex-1">
       <div class="pb-4">
         <RouterLink
-          :to="`/property-detail/${item.id}`"
+          :to="detailTo"
           class="text-base lg:text-lg hover:text-primary font-medium ease-in-out duration-500 line-clamp-2"
         >{{ item.name }}</RouterLink>
         <p v-if="item.developer" class="text-sm text-slate-400 mt-1 truncate">{{ item.developer }}</p>
@@ -174,6 +174,7 @@ import { formatArea, formatStartingPrice } from '@/config/uae'
 import ListingPrice from '@/component/listing-price.vue'
 import ProtectedPropertyImage from '@/component/kardosh/ProtectedPropertyImage.vue'
 import { ArrowRight, Maximize } from 'lucide-vue-next'
+import { projectDetailPath } from '@/utils/seoRoutes'
 
 const props = defineProps({
   item: { type: Object, required: true },
@@ -183,6 +184,8 @@ const props = defineProps({
   /** default | luxury (home page grids) */
   variant: { type: String, default: 'default' },
 })
+
+const detailTo = computed(() => projectDetailPath(props.item))
 
 const amenityList = computed(() => props.item.amenities || [])
 

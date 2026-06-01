@@ -43,8 +43,8 @@ const callHref = computed(() => `tel:${String(site.phone).replace(/\s/g, '')}`)
 const waLink = computed(() => {
   const base = whatsappHref.value
   if (props.message) return `${base}?text=${encodeURIComponent(props.message)}`
-  if (route.name === 'property-detail' && route.params.id) {
-    return `${base}?text=${WHATSAPP.propertyMessage('Property #' + route.params.id)}`
+  if (route.name === 'property-detail' && route.params.slug) {
+    return `${base}?text=${WHATSAPP.propertyMessage(route.params.slug)}`
   }
   return `${base}?text=${WHATSAPP.defaultMessage}`
 })

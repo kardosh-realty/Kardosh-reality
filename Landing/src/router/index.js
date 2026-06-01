@@ -90,12 +90,12 @@ const routes = [
     component: () => import('@/views/reelly/developers.vue'),
   },
   {
-    path: '/developer/:id',
+    path: '/developer/:slug',
     name: 'developer-detail',
     component: () => import('@/views/reelly/developer-detail.vue'),
   },
   {
-    path: '/property-detail/:id?',
+    path: '/property-detail/:slug?',
     name: 'property-detail',
     component: () => import('@/views/listing/property-detail/property-detail.vue'),
   },

@@ -184,7 +184,7 @@
 
 <script setup>
 import { ref, computed, onMounted, provide } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { Globe, ExternalLink } from 'lucide-vue-next'
 import Navbar from '@/component/navbar.vue'
 import Footer from '@/component/footer.vue'
@@ -196,8 +196,10 @@ import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
+import { developerDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
 
 const route = useRoute()
+const router = useRouter()
 const developer = ref(null)
 const loading = ref(true)
 const projectsLoading = ref(false)
@@ -266,16 +268,36 @@ function socialLabel(link) {
   return link?.platform || link?.type || link?.name || 'Social'
 }
 
-onMounted(async () => {
+async function loadDeveloper(slugParam) {
+  loading.value = true
+  error.value = null
   try {
     projectsLoading.value = true
     await loadProjects()
-    developer.value = await fetchDeveloperDetail(route.params.id)
+    developer.value = await fetchDeveloperDetail(slugParam)
+    if (developer.value && isNumericRouteParam(slugParam)) {
+      const canonical = developerDetailPath(developer.value)
+      if (route.path !== canonical) {
+        router.replace(canonical)
+      }
+    }
   } catch (e) {
     error.value = e.message || 'Developer not found'
+    developer.value = null
   } finally {
     loading.value = false
     projectsLoading.value = false
   }
+}
+
+onMounted(() => {
+  void loadDeveloper(route.params.slug)
 })
+
+watch(
+  () => route.params.slug,
+  (slug) => {
+    if (slug) void loadDeveloper(slug)
+  }
+)
 </script>
