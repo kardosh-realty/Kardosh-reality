@@ -9,7 +9,7 @@
 
   <section class="relative md:py-24 py-16">
     <div class="container-fluid max-w-3xl">
-      <p v-if="loading" class="text-center text-slate-400">Loading…</p>
+      <BlogDetailSkeleton v-if="loading" />
       <p v-else-if="notFound" class="text-center text-slate-400">
         Post not found.
         <RouterLink to="/blogs" class="text-primary hover:underline block mt-2">Back to blog</RouterLink>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
 import Navbar from '@/component/navbar.vue'
@@ -62,6 +62,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchBlogBySlug } from '@/services/blogs'
 import { formatBlogBodyForDisplay } from '@/utils/renderBlogBody'
 import { useSeo } from '@/composables/useSeo'
+import BlogDetailSkeleton from '@/component/kardosh/skeleton/BlogDetailSkeleton.vue'
 
 const route = useRoute()
 const post = ref(null)
@@ -98,5 +99,4 @@ async function loadPost() {
 }
 
 watch(() => route.params.slug, loadPost, { immediate: true })
-onMounted(loadPost)
 </script>

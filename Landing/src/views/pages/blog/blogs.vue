@@ -9,7 +9,7 @@
 
   <section class="relative md:py-24 py-16">
     <div class="container-fluid">
-      <p v-if="loading" class="text-center text-slate-400">Loading posts…</p>
+      <BlogGridSkeleton v-if="loading" />
       <p v-else-if="loadError" class="text-center text-red-600 max-w-lg mx-auto">{{ loadError }}</p>
       <p v-else-if="!supabaseReady" class="text-center text-amber-700 dark:text-amber-400 max-w-lg mx-auto">
         Blog is not connected to the database. Add <code class="text-xs">VITE_SUPABASE_URL</code> and
@@ -89,6 +89,7 @@ import Switcher from '@/component/switcher.vue'
 import PageHero from '@/component/kardosh/PageHero.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchPublishedBlogs } from '@/services/blogs'
+import BlogGridSkeleton from '@/component/kardosh/skeleton/BlogGridSkeleton.vue'
 
 const posts = ref([])
 const loading = ref(true)
