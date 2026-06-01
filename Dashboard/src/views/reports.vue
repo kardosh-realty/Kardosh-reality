@@ -316,7 +316,7 @@ async function onExport(format = 'both') {
       exportReportCsv(payload)
       toast.success('CSV report downloaded.')
     } else if (format === 'pdf') {
-      exportReportPdf(payload)
+      await exportReportPdf(payload)
       toast.success('PDF report downloaded.')
     } else {
       await exportReportBundle(payload)
