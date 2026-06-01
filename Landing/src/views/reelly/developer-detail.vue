@@ -77,7 +77,7 @@
               </div>
 
               <ul
-                v-if="developer.regions.length"
+                v-if="developer.regions?.length"
                 class="mt-6 flex flex-wrap justify-center gap-1.5 list-none p-0"
               >
                 <li
@@ -90,7 +90,7 @@
               </ul>
 
               <ul
-                v-if="developer.socialLinks.length"
+                v-if="developer.socialLinks?.length"
                 class="mt-6 flex flex-wrap justify-center gap-2 list-none p-0"
               >
                 <li
@@ -175,6 +175,16 @@
           </div>
         </div>
       </template>
+
+      <div
+        v-else
+        class="text-center py-16 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
+      >
+        <p class="text-slate-600 dark:text-slate-300">Developer profile could not be loaded.</p>
+        <RouterLink to="/developers" class="inline-block mt-4 text-sm font-semibold text-primary hover:underline">
+          ← Back to developers
+        </RouterLink>
+      </div>
     </div>
   </section>
 
@@ -271,9 +281,8 @@ function socialLabel(link) {
 async function loadDeveloper(slugParam) {
   loading.value = true
   error.value = null
+  developer.value = null
   try {
-    projectsLoading.value = true
-    await loadProjects()
     developer.value = await fetchDeveloperDetail(slugParam)
     if (developer.value && isNumericRouteParam(slugParam)) {
       const canonical = developerDetailPath(developer.value)
@@ -282,10 +291,16 @@ async function loadDeveloper(slugParam) {
       }
     }
   } catch (e) {
-    error.value = e.message || 'Developer not found'
+    error.value = e?.message || 'Developer not found'
     developer.value = null
   } finally {
     loading.value = false
+  }
+
+  projectsLoading.value = true
+  try {
+    await loadProjects()
+  } finally {
     projectsLoading.value = false
   }
 }

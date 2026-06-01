@@ -119,7 +119,10 @@ export function mapReellyProject(project, { full = false } = {}) {
     source: 'reelly',
     listingType: 'off-plan',
     developer: developerName,
-    developerId: typeof project.developer === 'object' ? project.developer?.id : null,
+    developerId:
+      typeof project.developer === 'object'
+        ? project.developer?.id
+        : project.developer_id ?? project.developerId ?? null,
     saleStatus: project.sale_status,
     constructionStatus: project.construction_status || project.status,
     completionDate: project.completion_date,

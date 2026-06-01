@@ -199,28 +199,51 @@ export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = [
   }
 }
 
-export async function fetchDeveloperDetail(param) {
-  const raw = String(param || '')
-  if (!raw) throw new Error('Developer not found')
+/** Resolve Reelly developer id from numeric id or name slug (logos, markers, projects). */
+export async function resolveDeveloperIdBySlug(param) {
+  const raw = String(param || '').trim()
+  if (!raw) return null
+  if (/^\d+$/.test(raw)) return Number(raw)
 
-  if (/^\d+$/.test(raw)) {
-    return mapDeveloper(await fetchDeveloperById(raw))
-  }
+  const want = slugify(raw)
 
   await loadDeveloperLogos()
-  const want = slugify(raw)
-  const match = developerLogos.value.find((d) => slugify(d.name) === want)
-  if (match?.id) {
-    return mapDeveloper(await fetchDeveloperById(match.id))
+  const logoHit = developerLogos.value.find((d) => d.id && slugify(d.name) === want)
+  if (logoHit?.id) return logoHit.id
+
+  await loadMarkers()
+  for (const m of markers.value) {
+    if (m.developerId && slugify(m.developer) === want) return m.developerId
   }
 
-  throw new Error('Developer not found')
+  await loadProjects()
+  const projectHit = projects.value.find((p) => p.developerId && slugify(p.developer) === want)
+  if (projectHit?.developerId) return projectHit.developerId
+
+  const statName = Object.keys(buildDeveloperStats(projects.value)).find((n) => slugify(n) === want)
+  if (statName) {
+    for (const m of markers.value) {
+      if (m.developerId && m.developer === statName) return m.developerId
+    }
+  }
+
+  return null
+}
+
+export async function fetchDeveloperDetail(param) {
+  const id = await resolveDeveloperIdBySlug(param)
+  if (!id) throw new Error('Developer not found')
+  return mapDeveloper(await fetchDeveloperById(id))
 }
 
 export function findDeveloperIdByName(name) {
   if (!name) return null
   const match = developerLogos.value.find((d) => d.name === name)
-  return match?.id ?? null
+  if (match?.id) return match.id
+  for (const m of markers.value) {
+    if (m.developer === name && m.developerId) return m.developerId
+  }
+  return null
 }
 
 function normalizeDeveloper(name) {
@@ -314,9 +337,23 @@ export function useReelly() {
    * Developers with active UAE projects.
    * Built from project stats first so the grid works even if /developers/logos is slow or fails.
    */
+  const developerIdByName = computed(() => {
+    const map = new Map()
+    for (const m of markers.value) {
+      if (m.developer && m.developerId && !map.has(m.developer)) {
+        map.set(m.developer, m.developerId)
+      }
+    }
+    for (const d of developerLogos.value) {
+      if (d.name && d.id && !map.has(d.name)) map.set(d.name, d.id)
+    }
+    return map
+  })
+
   const uaeDevelopers = computed(() => {
     const stats = developerStatsByName.value
     const logoByName = new Map(developerLogos.value.map((d) => [d.name, d]))
+    const idByName = developerIdByName.value
 
     const names = Object.keys(stats).filter((name) => stats[name]?.projectCount > 0)
     if (!names.length) return []
@@ -324,7 +361,8 @@ export function useReelly() {
     return names
       .map((name) => {
         const logo = logoByName.get(name)
-        const row = logo || { id: null, name }
+        const row = logo || { id: idByName.get(name) ?? null, name }
+        if (!row.id && idByName.has(name)) row.id = idByName.get(name)
         return enrichDeveloperLogo(row, stats)
       })
       .sort((a, b) => b.projectCount - a.projectCount)
