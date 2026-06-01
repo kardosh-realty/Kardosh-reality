@@ -215,7 +215,12 @@
 import { ref, computed, watch, onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatAed, formatArea } from '@/config/uae'
-import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos } from '@/composables/useReelly'
+import {
+  getListingById,
+  fetchProjectUnitsSafe,
+  loadDeveloperLogos,
+  findDeveloperIdByName,
+} from '@/composables/useReelly'
 import { developerDetailPath, projectDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
 import PropertyGallery from '@/component/kardosh/PropertyGallery.vue'
 import PropertyGallerySkeleton from '@/component/kardosh/skeleton/PropertyGallerySkeleton.vue'
@@ -382,7 +387,9 @@ watch(visibleTabs, (tabs) => {
 const developerLink = computed(() => {
   const name = property.value?.developer
   if (!name) return null
-  return developerDetailPath({ name })
+  const id = property.value?.developerId || findDeveloperIdByName(name)
+  if (!id) return null
+  return developerDetailPath({ id, name })
 })
 
 function openPlanLightbox(plans, index) {

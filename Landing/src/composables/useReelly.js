@@ -15,7 +15,7 @@ import { properties as localProperties } from '@/component/data/data'
 import { formatAed, formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
 import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
-import { parseSlugParam, projectSlug } from '@/utils/seoRoutes'
+import { parseDeveloperRouteParam, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
 
 const projects = ref([])
 const markers = ref([])
@@ -231,7 +231,10 @@ export async function resolveDeveloperIdBySlug(param) {
 }
 
 export async function fetchDeveloperDetail(param) {
-  const id = await resolveDeveloperIdBySlug(param)
+  let { id } = parseDeveloperRouteParam(param)
+  if (!id) {
+    id = await resolveDeveloperIdBySlug(param)
+  }
   if (!id) throw new Error('Developer not found')
   return mapDeveloper(await fetchDeveloperById(id))
 }

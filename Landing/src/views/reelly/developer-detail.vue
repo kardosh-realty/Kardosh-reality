@@ -206,7 +206,7 @@ import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
-import { developerDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
+import { developerDetailPath } from '@/utils/seoRoutes'
 
 const route = useRoute()
 const router = useRouter()
@@ -284,7 +284,7 @@ async function loadDeveloper(slugParam) {
   developer.value = null
   try {
     developer.value = await fetchDeveloperDetail(slugParam)
-    if (developer.value && isNumericRouteParam(slugParam)) {
+    if (developer.value?.id) {
       const canonical = developerDetailPath(developer.value)
       if (route.path !== canonical) {
         router.replace(canonical)
@@ -306,13 +306,13 @@ async function loadDeveloper(slugParam) {
 }
 
 onMounted(() => {
-  void loadDeveloper(route.params.slug)
+  void loadDeveloper(route.params.idSlug)
 })
 
 watch(
-  () => route.params.slug,
-  (slug) => {
-    if (slug) void loadDeveloper(slug)
+  () => route.params.idSlug,
+  (idSlug) => {
+    if (idSlug) void loadDeveloper(idSlug)
   }
 )
 </script>

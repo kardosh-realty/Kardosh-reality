@@ -1,18 +1,35 @@
 import { slugify } from '@/services/visibility'
 
-/** URL slug for a developer (name-based; matches dashboard visibility keys). */
+/** URL slug for a developer name (SEO segment only). */
 export function developerSlug(dev) {
   return slugify(dev?.slug || dev?.name || '')
 }
 
-/** Public developer profile path, e.g. /developer/damac */
+/**
+ * Developer profile URL — Reelly API uses numeric id only (no /developers/slug/…).
+ * Format: /developer/12-damac (id + name for SEO). Falls back to /developer/12.
+ */
 export function developerDetailPath(dev) {
+  const id = dev?.id
+  if (id == null || id === '') return '/developers'
   const slug = developerSlug(dev)
-  if (!slug) return '/developers'
-  return `/developer/${slug}`
+  return slug ? `/developer/${id}-${slug}` : `/developer/${id}`
 }
 
-/** Slug segment for a project detail URL. */
+/** Parse /developer/:param — supports 12, 12-damac, or legacy name-only slugs. */
+export function parseDeveloperRouteParam(param) {
+  const raw = String(param || '').trim()
+  const idSlug = raw.match(/^(\d+)-(.+)$/)
+  if (idSlug) {
+    return { id: Number(idSlug[1]), slugPart: idSlug[2] }
+  }
+  if (/^\d+$/.test(raw)) {
+    return { id: Number(raw), slugPart: null }
+  }
+  return { id: null, slugPart: raw }
+}
+
+/** Slug segment for a project detail URL (Reelly: GET /projects/slug/{slug}). */
 export function projectSlug(item) {
   const api = item?.slug || item?.slug_name || item?._raw?.slug_name
   if (api) return slugify(api)

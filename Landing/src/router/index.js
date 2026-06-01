@@ -90,7 +90,7 @@ const routes = [
     component: () => import('@/views/reelly/developers.vue'),
   },
   {
-    path: '/developer/:slug',
+    path: '/developer/:idSlug',
     name: 'developer-detail',
     component: () => import('@/views/reelly/developer-detail.vue'),
   },
