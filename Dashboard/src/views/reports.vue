@@ -15,15 +15,63 @@
             <option value="90">Last 90 days</option>
             <option value="all">All time</option>
           </select>
-          <button
-            type="button"
-            class="btn bg-primary hover:bg-primary-dark text-white rounded-md inline-flex items-center justify-center gap-2 disabled:opacity-60 w-full sm:w-auto"
-            :disabled="loading || exporting || !filteredLeads.length"
-            @click="onExport"
-          >
-            <i class="ri-download-2-line" />
-            {{ exporting ? 'Exporting…' : 'Export report' }}
-          </button>
+          <div class="relative w-full sm:w-auto" ref="exportMenuRef">
+            <div class="flex rounded-md overflow-hidden border border-primary/20 w-full sm:w-auto">
+              <button
+                type="button"
+                class="btn bg-primary hover:bg-primary-dark text-white rounded-none border-0 inline-flex items-center justify-center gap-2 disabled:opacity-60 flex-1 sm:flex-initial px-4"
+                :disabled="loading || exporting || !filteredLeads.length"
+                @click="onExport('both')"
+              >
+                <i class="ri-download-2-line" />
+                {{ exporting ? 'Exporting…' : 'Export report' }}
+              </button>
+              <button
+                type="button"
+                class="btn bg-primary hover:bg-primary-dark text-white rounded-none border-0 border-s border-white/25 px-3 disabled:opacity-60"
+                :disabled="loading || exporting || !filteredLeads.length"
+                aria-label="Export format options"
+                aria-haspopup="menu"
+                :aria-expanded="exportMenuOpen"
+                @click.stop="exportMenuOpen = !exportMenuOpen"
+              >
+                <i class="ri-arrow-down-s-line" />
+              </button>
+            </div>
+            <div
+              v-show="exportMenuOpen"
+              class="absolute right-0 top-full z-20 mt-1 min-w-[11rem] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow-lg py-1 text-sm"
+              role="menu"
+            >
+              <button
+                type="button"
+                role="menuitem"
+                class="w-full text-start px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-800 flex items-center gap-2"
+                @click="onExport('csv')"
+              >
+                <i class="ri-file-excel-2-line text-primary" />
+                Spreadsheet (CSV)
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                class="w-full text-start px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-800 flex items-center gap-2"
+                @click="onExport('pdf')"
+              >
+                <i class="ri-file-pdf-2-line text-primary" />
+                Document (PDF)
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                class="w-full text-start px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-800 flex items-center gap-2 border-t border-gray-100 dark:border-gray-800"
+                @click="onExport('both')"
+              >
+                <i class="ri-folder-download-line text-primary" />
+                Both files
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -112,7 +160,7 @@
             <div class="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
               <div>
                 <h6 class="text-lg font-semibold">Inquiries in period</h6>
-                <p class="text-sm text-slate-400 mt-1">{{ filteredLeads.length }} rows · use Export for full CSV</p>
+                <p class="text-sm text-slate-400 mt-1">{{ filteredLeads.length }} rows · export as CSV or PDF</p>
               </div>
               <RouterLink
                 to="/inquiries"
@@ -175,7 +223,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import VueApexCharts from 'vue3-apexcharts'
 import PageHeader from '@/components/PageHeader.vue'
@@ -191,13 +239,16 @@ import { useToast } from '@/composables/useToast'
 
 const { chartHeight } = useChartHeight(320, 260, 220)
 const { primary: chartPrimary, colors: chartColors } = useChartPrimaryColor()
-import { fetchReportData, exportReportCsv, sourceLabel } from '@/services/reports'
+import { fetchReportData, sourceLabel } from '@/services/reports'
+import { exportReportCsv, exportReportPdf, exportReportBundle } from '@/services/reportExport'
 
 const toast = useToast()
 
 const rangeDays = ref('30')
 const loading = ref(true)
 const exporting = ref(false)
+const exportMenuOpen = ref(false)
+const exportMenuRef = ref(null)
 const loadError = ref('')
 const configured = ref(true)
 const periodLabel = ref('Last 30 days')
@@ -245,20 +296,32 @@ async function load() {
   }
 }
 
-function onExport() {
+const exportPayload = () => ({
+  leads: filteredLeads.value,
+  periodLabel: periodLabel.value,
+  stats: stats.value,
+  sourceRows: sourceRows.value,
+})
+
+async function onExport(format = 'both') {
+  exportMenuOpen.value = false
   if (!filteredLeads.value.length) {
     toast.warning('No inquiries to export for this period.')
     return
   }
   exporting.value = true
   try {
-    exportReportCsv({
-      leads: filteredLeads.value,
-      periodLabel: periodLabel.value,
-      stats: stats.value,
-      sourceRows: sourceRows.value,
-    })
-    toast.success('Report downloaded.')
+    const payload = exportPayload()
+    if (format === 'csv') {
+      exportReportCsv(payload)
+      toast.success('CSV report downloaded.')
+    } else if (format === 'pdf') {
+      exportReportPdf(payload)
+      toast.success('PDF report downloaded.')
+    } else {
+      await exportReportBundle(payload)
+      toast.success('CSV and PDF reports downloaded.')
+    }
   } catch (e) {
     toast.error(e.message || 'Export failed')
   } finally {
@@ -266,5 +329,18 @@ function onExport() {
   }
 }
 
-onMounted(load)
+function closeExportMenu(e) {
+  if (exportMenuRef.value && !exportMenuRef.value.contains(e.target)) {
+    exportMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  load()
+  document.addEventListener('click', closeExportMenu)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeExportMenu)
+})
 </script>
