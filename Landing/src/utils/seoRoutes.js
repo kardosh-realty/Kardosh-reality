@@ -1,32 +1,23 @@
 import { slugify } from '@/services/visibility'
 
-/** URL slug for a developer name (SEO segment only). */
+/** URL slug for a developer name (Reelly has no /developers/slug API — id resolved server-side in proxy). */
 export function developerSlug(dev) {
   return slugify(dev?.slug || dev?.name || '')
 }
 
-/**
- * Developer profile URL — Reelly API uses numeric id only (no /developers/slug/…).
- * Format: /developer/12-damac (id + name for SEO). Falls back to /developer/12.
- */
+/** SEO path only, e.g. /developer/damac */
 export function developerDetailPath(dev) {
-  const id = dev?.id
-  if (id == null || id === '') return '/developers'
   const slug = developerSlug(dev)
-  return slug ? `/developer/${id}-${slug}` : `/developer/${id}`
+  if (!slug) return '/developers'
+  return `/developer/${slug}`
 }
 
-/** Parse /developer/:param — supports 12, 12-damac, or legacy name-only slugs. */
-export function parseDeveloperRouteParam(param) {
-  const raw = String(param || '').trim()
-  const idSlug = raw.match(/^(\d+)-(.+)$/)
-  if (idSlug) {
-    return { id: Number(idSlug[1]), slugPart: idSlug[2] }
-  }
-  if (/^\d+$/.test(raw)) {
-    return { id: Number(raw), slugPart: null }
-  }
-  return { id: null, slugPart: raw }
+/** Normalize route param (spaces → hyphens). */
+export function normalizeRouteSlug(param) {
+  return String(param || '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/\/+/g, '-')
 }
 
 /** Slug segment for a project detail URL (Reelly: GET /projects/slug/{slug}). */
@@ -47,7 +38,7 @@ export function projectDetailPath(item) {
 }
 
 export function isNumericRouteParam(param) {
-  return /^\d+$/.test(String(param || ''))
+  return /^\d+$/.test(normalizeRouteSlug(param))
 }
 
 /** Parse slug param that may end with -{id} for fallback lookup. */

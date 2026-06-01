@@ -20,7 +20,8 @@ const hideChrome = computed(
   <AnalyticsScripts />
   <RouterView v-slot="{ Component, route }">
     <Transition name="page-cross" mode="out-in">
-      <div v-if="Component" :key="route.path" class="page-view">
+      <!-- Use route name so /developer/damac → /developer/12-damac redirects do not remount and blank the transition -->
+      <div v-if="Component" :key="route.name || route.path" class="page-view">
         <component :is="Component" />
       </div>
     </Transition>

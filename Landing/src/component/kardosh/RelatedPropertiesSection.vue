@@ -50,7 +50,7 @@ import { ref, computed, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
-import { getRelatedListings, findDeveloperIdByName, loadDeveloperLogos } from '@/composables/useReelly'
+import { getRelatedListings, loadDeveloperLogos } from '@/composables/useReelly'
 import { developerDetailPath } from '@/utils/seoRoutes'
 
 const props = defineProps({
@@ -67,9 +67,7 @@ const showSection = computed(() => loading.value || items.value.length > 0)
 
 const developerLink = computed(() => {
   if (matchType.value !== 'developer' || !props.developer) return null
-  const id = findDeveloperIdByName(props.developer)
-  if (!id) return null
-  return developerDetailPath({ id, name: props.developer })
+  return developerDetailPath({ name: props.developer })
 })
 
 const heading = computed(() => {

@@ -15,7 +15,7 @@ import { properties as localProperties } from '@/component/data/data'
 import { formatAed, formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
 import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
-import { parseDeveloperRouteParam, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
+import { normalizeRouteSlug, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
 
 const projects = ref([])
 const markers = ref([])
@@ -201,19 +201,26 @@ export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = [
 
 /** Resolve Reelly developer id from numeric id or name slug (logos, markers, projects). */
 export async function resolveDeveloperIdBySlug(param) {
-  const raw = String(param || '').trim()
+  const raw = normalizeRouteSlug(param)
   if (!raw) return null
   if (/^\d+$/.test(raw)) return Number(raw)
 
   const want = slugify(raw)
+  // Legacy URLs like /developer/12-damac — use name segment after id-
+  const legacy = raw.match(/^\d+-(.+)$/)
+  const wantLegacy = legacy ? slugify(legacy[1]) : null
 
   await loadDeveloperLogos()
-  const logoHit = developerLogos.value.find((d) => d.id && slugify(d.name) === want)
+  const logoHit = developerLogos.value.find(
+    (d) => d.id && (slugify(d.name) === want || (wantLegacy && slugify(d.name) === wantLegacy))
+  )
   if (logoHit?.id) return logoHit.id
 
   await loadMarkers()
   for (const m of markers.value) {
-    if (m.developerId && slugify(m.developer) === want) return m.developerId
+    if (!m.developerId) continue
+    const mSlug = slugify(m.developer)
+    if (mSlug === want || (wantLegacy && mSlug === wantLegacy)) return m.developerId
   }
 
   await loadProjects()
@@ -231,10 +238,14 @@ export async function resolveDeveloperIdBySlug(param) {
 }
 
 export async function fetchDeveloperDetail(param) {
-  let { id } = parseDeveloperRouteParam(param)
-  if (!id) {
-    id = await resolveDeveloperIdBySlug(param)
+  const raw = normalizeRouteSlug(param)
+  if (!raw) throw new Error('Developer not found')
+
+  if (/^\d+$/.test(raw)) {
+    return mapDeveloper(await fetchDeveloperById(Number(raw)))
   }
+
+  const id = await resolveDeveloperIdBySlug(raw)
   if (!id) throw new Error('Developer not found')
   return mapDeveloper(await fetchDeveloperById(id))
 }

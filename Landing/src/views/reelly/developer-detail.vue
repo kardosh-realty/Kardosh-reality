@@ -206,7 +206,7 @@ import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
-import { developerDetailPath } from '@/utils/seoRoutes'
+import { developerDetailPath, isNumericRouteParam, normalizeRouteSlug } from '@/utils/seoRoutes'
 
 const route = useRoute()
 const router = useRouter()
@@ -279,14 +279,16 @@ function socialLabel(link) {
 }
 
 async function loadDeveloper(slugParam) {
+  const param = normalizeRouteSlug(slugParam)
   loading.value = true
   error.value = null
   developer.value = null
   try {
-    developer.value = await fetchDeveloperDetail(slugParam)
-    if (developer.value?.id) {
+    developer.value = await fetchDeveloperDetail(param)
+    if (developer.value) {
       const canonical = developerDetailPath(developer.value)
-      if (route.path !== canonical) {
+      const legacyNumeric = isNumericRouteParam(param) || /^\d+-/.test(param)
+      if (legacyNumeric && route.path !== canonical) {
         router.replace(canonical)
       }
     }
@@ -306,13 +308,13 @@ async function loadDeveloper(slugParam) {
 }
 
 onMounted(() => {
-  void loadDeveloper(route.params.idSlug)
+  void loadDeveloper(route.params.slug)
 })
 
 watch(
-  () => route.params.idSlug,
-  (idSlug) => {
-    if (idSlug) void loadDeveloper(idSlug)
+  () => route.params.slug,
+  (slug) => {
+    if (slug) void loadDeveloper(slug)
   }
 )
 </script>
