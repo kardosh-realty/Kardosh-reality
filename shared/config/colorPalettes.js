@@ -1,6 +1,6 @@
 /**
  * Brand color palettes (shared: Landing + Dashboard).
- * Edit hex values here — dev switcher or ?palette=slug on either app.
+ * Edit hex values here — dev switcher, ?palette=slug, or VITE_ENABLE_PALETTE_REVIEW on Vercel.
  */
 
 /**

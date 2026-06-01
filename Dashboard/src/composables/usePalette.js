@@ -5,6 +5,7 @@ import {
   PALETTE_IDS,
   getPalette,
 } from '@kardosh/shared/config/colorPalettes'
+import { canPersistPaletteChoice, isPaletteReviewEnabled } from '@kardosh/shared/config/paletteReview'
 
 const STORAGE_KEY = 'kardosh-palette-dev'
 
@@ -105,16 +106,24 @@ export function initPalette() {
   currentPaletteId.value = id
   applyCurrentPalette()
 
-  if (import.meta.env.DEV && fromUrl && COLOR_PALETTES[fromUrl]) {
+  if (canPersistPaletteChoice() && fromUrl && COLOR_PALETTES[fromUrl]) {
     localStorage.setItem(STORAGE_KEY, fromUrl)
   }
+}
+
+function syncPaletteQuery(id) {
+  if (!isPaletteReviewEnabled() || typeof window === 'undefined') return
+  const url = new URL(window.location.href)
+  url.searchParams.set('palette', id)
+  window.history.replaceState({}, '', url)
 }
 
 export function setPalette(id) {
   if (!COLOR_PALETTES[id]) return
   currentPaletteId.value = id
-  if (import.meta.env.DEV) {
+  if (canPersistPaletteChoice()) {
     localStorage.setItem(STORAGE_KEY, id)
+    syncPaletteQuery(id)
   }
   applyCurrentPalette()
 }

@@ -1,38 +1,43 @@
 <template>
-    <section class="relative bg-primary/5">
-        <div class="container-fluid relative">
-            <div class="grid grid-cols-1">
-                <div class="flex flex-col min-h-screen justify-center md:px-10 py-10 px-4">
-                    <div class="text-center">
-                        <RouterLink to="/" class="flex justify-center">
-                            <BrandLogo variant="icon" size="lg" />
-                        </RouterLink>
-                    </div>
-                    <div class="title-heading text-center my-auto">
-                        <img :src="error" class="mx-auto" alt=""/>
-                        <h1 class="mt-3 mb-6 md:text-4xl text-3xl font-bold">Page Not Found?</h1>
-                        <p class="text-slate-400">Whoops, this is embarassing. <br/> Looks like the page you were looking for wasn't found.</p>
-                        
-                        <div class="mt-4">
-                            <RouterLink to="/" class="btn bg-primary hover:bg-primary-dark border-primary hover:border-primary-dark text-white rounded-md">Back to Home</RouterLink>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <p class="mb-0 text-slate-400">© {{ year }} {{ BRAND.name }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <BackToHome />
+  <section class="relative min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4 py-12">
+    <div class="max-w-md w-full text-center rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-6 py-10">
+      <RouterLink to="/" class="inline-flex justify-center mb-6">
+        <BrandLogo variant="icon" size="lg" />
+      </RouterLink>
+      <p class="text-sm font-semibold uppercase tracking-[0.25em] text-primary">404</p>
+      <h1 class="mt-4 text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white">
+        Page not found
+      </h1>
+      <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+        This page does not exist in the Kardosh admin dashboard. Check the URL or return to the overview.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <RouterLink
+          to="/"
+          class="btn bg-primary hover:bg-primary-dark border-primary text-white rounded-md px-6"
+        >
+          Dashboard home
+        </RouterLink>
+        <RouterLink
+          to="/inquiries"
+          class="btn border border-slate-200 dark:border-slate-600 rounded-md px-6 text-slate-700 dark:text-slate-200"
+        >
+          Inquiries
+        </RouterLink>
+      </div>
+      <p v-if="publicSiteUrl" class="mt-8 text-xs text-slate-400">
+        Public website:
+        <a :href="publicSiteUrl" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+          {{ publicSiteUrl }}
+        </a>
+      </p>
+    </div>
+  </section>
 </template>
 
 <script setup>
-import BackToHome from '@/components/back-to-home.vue';
-
 import BrandLogo from '@/components/BrandLogo.vue'
 import { BRAND } from '@/config/brand'
-import error from '@/assets/images/error.png'
 
-const year = new Date().getFullYear()
+const publicSiteUrl = import.meta.env.VITE_MAIN_SITE_URL || ''
 </script>

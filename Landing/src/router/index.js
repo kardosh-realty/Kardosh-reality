@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import { scrollBehaviorOption } from '@/utils/smoothScroll'
+import { isDashboardOnlyPath, redirectToDashboard } from '@/config/dashboard'
 
 const removedToOffPlan = [
   '/buy',
@@ -181,6 +182,13 @@ const router = createRouter({
 
     return { top: 0, left: 0, behavior }
   },
+})
+
+/** Admin-only paths (e.g. /inquiries) live on the Dashboard deployment — send users there when configured. */
+router.beforeEach((to) => {
+  if (isDashboardOnlyPath(to.path) && redirectToDashboard(to.fullPath)) {
+    return false
+  }
 })
 
 /** Belt-and-suspenders after hydration on direct loads */
