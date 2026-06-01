@@ -26,7 +26,8 @@
               </span>
             </h1>
             <p class="home-hero__lead">
-              Curated off-plan and ready homes across the UAE.
+              Browse Dubai off plan projects and buy off plan property with confidence —
+              new launch and upcoming projects across the UAE, plus ready homes for rent and sale.
             </p>
           </div>
         </div>

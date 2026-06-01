@@ -24,6 +24,10 @@ npm install framer-motion
 
 Default shadcn paths: `components/ui`, `lib/utils.ts`, `@/` alias in `tsconfig.json`.
 
+## Marquee
+
+`components/ui/Marquee.vue` — horizontal/vertical infinite scroll (Magic UI pattern). Requires `_marquee.css` imported in `tailwind.css`.
+
 ### Why keep `components/ui` here?
 
 - Same import path pattern: `@/components/ui/AnimatedTextCycle`

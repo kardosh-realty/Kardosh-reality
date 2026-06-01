@@ -73,6 +73,7 @@
               <ChartSkeleton v-if="loading" :height="chartHeight" />
               <VueApexCharts
                 v-else
+                :key="chartPrimary"
                 type="bar"
                 :height="chartHeight"
                 :options="chartOptions"
@@ -185,9 +186,11 @@ import TableSkeleton from '@/components/skeleton/TableSkeleton.vue'
 import LeadCardsSkeleton from '@/components/skeleton/LeadCardsSkeleton.vue'
 import LeadCardList from '@/components/LeadCardList.vue'
 import { useChartHeight } from '@/composables/useChartHeight'
+import { useChartPrimaryColor } from '@/composables/useChartPrimaryColor'
 import { useToast } from '@/composables/useToast'
 
 const { chartHeight } = useChartHeight(320, 260, 220)
+const { primary: chartPrimary, colors: chartColors } = useChartPrimaryColor()
 import { fetchReportData, exportReportCsv, sourceLabel } from '@/services/reports'
 
 const toast = useToast()
@@ -208,7 +211,7 @@ const previewLeads = computed(() => filteredLeads.value.slice(0, 25))
 
 const chartOptions = computed(() => ({
   chart: { type: 'bar', toolbar: { show: false } },
-  colors: ['#00a63e'],
+  colors: chartColors.value,
   plotOptions: { bar: { borderRadius: 4, columnWidth: '50%' } },
   dataLabels: { enabled: false },
   grid: { borderColor: 'rgba(148,163,184,0.15)' },

@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import { scrollBehaviorOption } from '@/utils/smoothScroll'
 
-/** Align with page-cross out-in transition in App.vue */
-const PAGE_TRANSITION_MS = 420
-
 const removedToOffPlan = [
   '/buy',
   '/grid',
@@ -66,6 +63,7 @@ const routes = [
   {
     path: '/communities/:slug',
     name: 'community-detail',
+    meta: { dynamicSeo: true },
     component: () => import('@/views/kardosh/community-detail.vue'),
   },
   {
@@ -92,11 +90,13 @@ const routes = [
   {
     path: '/developer/:slug',
     name: 'developer-detail',
+    meta: { dynamicSeo: true },
     component: () => import('@/views/reelly/developer-detail.vue'),
   },
   {
     path: '/property-detail/:slug?',
     name: 'property-detail',
+    meta: { dynamicSeo: true },
     component: () => import('@/views/listing/property-detail/property-detail.vue'),
   },
   {
@@ -137,6 +137,7 @@ const routes = [
   {
     path: '/blog/:slug',
     name: 'blog-detail',
+    meta: { dynamicSeo: true },
     component: () => import('@/views/pages/blog/blog-detail.vue'),
   },
   ...removedToOffPlan.map((path) => ({ path, redirect: '/off-plan' })),
@@ -158,10 +159,6 @@ const router = createRouter({
     const behavior = scrollBehaviorOption()
     const isInitialLoad = from === START_LOCATION
 
-    const runAfterTransition = (resolve) => {
-      setTimeout(resolve, PAGE_TRANSITION_MS)
-    }
-
     /** Full refresh / first entry — jump to top immediately (hero on home) */
     if (isInitialLoad) {
       if (to.hash) {
@@ -171,26 +168,18 @@ const router = createRouter({
     }
 
     if (savedPosition) {
-      return new Promise((resolve) => {
-        runAfterTransition(() => resolve({ ...savedPosition, behavior }))
-      })
+      return { ...savedPosition, behavior }
     }
 
     if (to.hash) {
-      return new Promise((resolve) => {
-        runAfterTransition(() =>
-          resolve({
-            el: to.hash,
-            behavior,
-            top: 88,
-          })
-        )
-      })
+      return {
+        el: to.hash,
+        behavior,
+        top: 88,
+      }
     }
 
-    return new Promise((resolve) => {
-      runAfterTransition(() => resolve({ top: 0, left: 0, behavior }))
-    })
+    return { top: 0, left: 0, behavior }
   },
 })
 

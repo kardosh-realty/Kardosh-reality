@@ -1,7 +1,7 @@
 export const BRAND = {
   name: import.meta.env.VITE_APP_NAME || 'Kardosh Realty',
   tagline:
-    'Buy, sell, and rent premium properties across the UAE — plus curated off-plan projects from leading developers.',
+    'Buy off plan property in Dubai and across the UAE — new launch and upcoming projects from leading developers, with licensed advisory from Kardosh Realty.',
   email: import.meta.env.VITE_CONTACT_EMAIL || 'info@kardoshrealty.ae',
   phone: import.meta.env.VITE_CONTACT_PHONE || '+971 4 123 4567',
   phoneTel: `tel:${(import.meta.env.VITE_CONTACT_PHONE || '+97141234567').replace(/\s/g, '')}`,

@@ -206,6 +206,8 @@ import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
+import { useSeo } from '@/composables/useSeo'
+import { truncateDescription } from '@/config/seo'
 
 const route = useRoute()
 const developer = ref(null)
@@ -233,6 +235,22 @@ const heroSubtitle = computed(() => {
     parts.push(`Active in ${developer.value.regions.slice(0, 3).join(', ')}`)
   }
   return parts.length ? parts.join(' · ') : 'Developer profile and UAE off-plan projects'
+})
+
+useSeo(() => {
+  const d = developer.value
+  const name = d?.name || 'Developer'
+  const count = d?.projectCount || 0
+  return {
+    title: `${name} Projects in Dubai | Kardosh Realty`,
+    description: truncateDescription(
+      d?.description ||
+        `${name} projects in Dubai — browse ${count || 'active'} off plan developments, payment plans, and new launch stock. Compare ${name} off plan property on Kardosh Realty.`
+    ),
+    path: route.path,
+    image: d?.logo?.url,
+    ogType: 'profile',
+  }
 })
 
 const profileStats = computed(() => {

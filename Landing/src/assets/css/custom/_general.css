@@ -14,7 +14,7 @@ html {
 
 body {
     @apply font-league text-base text-slate-900 dark:text-white w-full!;
-    background-color: var(--kardosh-page, #f8fafb);
+    background-color: var(--kardosh-page, #ffffff);
 }
 
 .dark body {

@@ -5,6 +5,7 @@ import { RouterView, useRoute } from 'vue-router'
 import Sidebar from './components/sidebar.vue'
 import TopHeader from './components/top-header.vue'
 import ToastContainer from './components/ToastContainer.vue'
+import PaletteDevSwitcher from './components/PaletteDevSwitcher.vue'
 import { initAuth } from '@/composables/useAuth'
 
 initAuth()
@@ -63,6 +64,7 @@ const isAuthPage = computed(() => {
   </template>
 
   <ToastContainer />
+  <PaletteDevSwitcher />
 </template>
 
 <style>

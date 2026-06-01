@@ -128,10 +128,10 @@ export const BEDROOM_OPTIONS = [
 ]
 
 export const INVESTMENT_ADVANTAGES = [
-  { title: '0% income tax', desc: 'Attractive for international investors seeking efficient structures.' },
-  { title: 'High rental yields', desc: 'Dubai remains a global leader for residential ROI in prime districts.' },
-  { title: 'Golden Visa pathway', desc: 'Qualifying property investments can support long-term residency.' },
-  { title: 'Payment plans', desc: 'Off-plan projects often offer staged payments during construction.' },
-  { title: 'Safe & stable', desc: 'Regulated market with RERA oversight and escrow protections.' },
-  { title: 'Global hub', desc: 'Connectivity, tourism, and business growth drive long-term demand.' },
+  { title: '0% income tax', desc: 'Attractive for international dubai property investment and efficient ownership structures.' },
+  { title: 'High rental yields', desc: 'High ROI property in Dubai — gross yields often strongest in JVC, Marina, and Business Bay.' },
+  { title: 'Golden Visa pathway', desc: 'Dubai golden visa property investment may qualify at AED 2M+ (rules subject to change).' },
+  { title: 'Payment plans', desc: 'Off plan projects in Dubai typically offer staged payments through construction milestones.' },
+  { title: 'Safe & stable', desc: 'Regulated market with RERA oversight and escrow protections on registered launches.' },
+  { title: 'Global hub', desc: 'New launch and upcoming projects dubai pipeline supports long-term investor demand.' },
 ]

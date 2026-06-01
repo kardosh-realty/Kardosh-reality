@@ -8,8 +8,8 @@ export const WHY_DUBAI_STATS = [
 ]
 
 export const WHY_DUBAI_INTRO = {
-  title: 'Why international buyers choose Dubai',
-  body: 'Dubai combines tax-efficient ownership, regulated off-plan sales, and global connectivity. Kardosh Realty helps you compare developers, payment plans, and communities before you reserve — with transparent AED pricing from our live Reelly catalogue.',
+  title: 'Your Dubai property investment guide',
+  body: 'Whether you are comparing the best off plan projects in Dubai, exploring best areas to invest in Dubai, or planning dubai golden visa property investment — Kardosh Realty helps you compare payment plans, communities, and developers with transparent AED pricing from our live catalogue.',
 }
 
 export { INVESTMENT_ADVANTAGES } from './marketing'
@@ -23,7 +23,7 @@ export const BUYER_JOURNEY_STEPS = [
   {
     step: '02',
     title: 'Compare off-plan stock',
-    text: 'Browse live projects, payment plans, handover dates, and developer track records on Kardosh Realty.',
+    text: 'Browse Dubai off plan projects — new launch and upcoming developments, payment plans, handover dates, and developer track records on Kardosh Realty.',
   },
   {
     step: '03',
@@ -40,7 +40,7 @@ export const BUYER_JOURNEY_STEPS = [
 export const GOLDEN_VISA_HIGHLIGHTS = [
   {
     title: '10-year Golden Visa',
-    text: 'Qualifying property investments (commonly AED 2 million or above, subject to current UAE rules) can support long-term residency for investors and eligible family members.',
+    text: 'Dubai golden visa property investment (commonly AED 2 million or above, subject to current UAE rules) can support long-term residency for investors and eligible family members.',
   },
   {
     title: '2-year renewable visa',
@@ -96,7 +96,7 @@ export const TOP_INVESTMENT_DISTRICTS = [
   {
     name: 'Downtown Dubai',
     slug: 'downtown-dubai',
-    tagline: 'Iconic skyline, Burj Khalifa district, strong short-stay demand.',
+    tagline: 'Downtown Dubai projects — Burj Khalifa district and strong short-stay demand.',
   },
   {
     name: 'Dubai Marina',
@@ -106,7 +106,12 @@ export const TOP_INVESTMENT_DISTRICTS = [
   {
     name: 'Business Bay',
     slug: 'business-bay',
-    tagline: 'Central business corridor with canal views and steady off-plan pipeline.',
+    tagline: 'Business Bay off plan projects — canal views and steady new launches.',
+  },
+  {
+    name: 'Dubai Creek Harbour',
+    slug: 'dubai-creek-harbour',
+    tagline: 'Dubai Creek Harbour projects — waterfront master community by Emaar.',
   },
   {
     name: 'Palm Jumeirah',
@@ -116,7 +121,7 @@ export const TOP_INVESTMENT_DISTRICTS = [
   {
     name: 'Dubai Hills Estate',
     slug: 'dubai-hills',
-    tagline: 'Family master community, golf course, mixed villa and apartment stock.',
+    tagline: 'Dubai Hills projects — Emaar master community with golf and family stock.',
   },
   {
     name: 'Jumeirah Village Circle',
@@ -142,7 +147,13 @@ export const WHY_DUBAI_FAQ = [
     id: 'yields',
     question: 'What rental yields can I expect?',
     answer:
-      'Gross yields often range from roughly 5–8% depending on community, furnishing, and unit type — prime districts can differ. We provide project-specific context, not generic promises.',
+      'High ROI property in Dubai often sits in the 5–8% gross range depending on community, furnishing, and unit type — JVC, Business Bay, and Marina differ widely. We provide project-specific context, not generic promises.',
+  },
+  {
+    id: 'best-off-plan',
+    question: 'What are the best off plan projects in Dubai?',
+    answer:
+      'The best off plan projects in Dubai depend on your budget, handover timeline, and developer track record. We shortlist live stock from Emaar, DAMAC, Sobha, and other tier-one pipelines on Kardosh Realty — compare payment plans before you reserve.',
   },
   {
     id: 'golden-visa',

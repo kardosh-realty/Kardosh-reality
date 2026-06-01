@@ -2,6 +2,14 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.kardoshrealty.ae" }],
+      "destination": "https://kardoshrealty.ae/:path*",
+      "permanent": true
+    }
+  ],
   "build": {
     "env": {
       "VITE_HERO_USE_LOCAL_VIDEO": "true",

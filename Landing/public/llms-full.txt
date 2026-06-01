@@ -1,0 +1,108 @@
+# Kardosh Realty — extended context for AI systems
+
+> Licensed UAE real estate brokerage (RERA 1484387) in Business Bay, Dubai. Public website: https://kardoshrealty.ae — off plan projects Dubai, developer profiles, community guides, rent/sell, and investor education. Contact: info@kardoshrealty.ae
+
+This document supplements `/llms.txt` with quotable definitions and topic coverage. Dynamic inventory (800+ project URLs) is listed in `https://kardoshrealty.ae/sitemap.xml`, not duplicated here.
+
+---
+
+## What Kardosh Realty does
+
+Kardosh Realty helps international and local clients **buy off plan property in Dubai** and across the UAE, compare **dubai off plan projects** and **new launch projects dubai**, review **payment plans** and handover timelines, and speak with licensed advisors before reserving. The site also supports **properties for rent**, **sell your property** enquiries, and **dubai property investment** education on `/why-dubai`.
+
+Live off-plan stock is presented from an integrated UAE projects catalogue (Reelly). Each **property detail** page (`/property-detail/{slug}`) typically includes project name, location, developer, images, sale/construction status, payment plans, floor plans, brochures, and an enquiry path.
+
+---
+
+## Primary keyword topics (how the site maps)
+
+| Topic | Where to read on site |
+| --- | --- |
+| Off plan projects dubai / dubai off plan projects | `/off-plan`, homepage, project detail pages |
+| Off plan property dubai / buy off plan property dubai | `/off-plan`, `/contact`, homepage hero |
+| New launch projects dubai / upcoming projects dubai | `/off-plan`, homepage "best off plan" section |
+| Dubai property investment / off plan investment dubai | `/why-dubai`, `/communities`, `/off-plan` |
+| Emaar, DAMAC, Sobha, Binghatti, Meraas, Nakheel projects dubai | `/developers`, `/developer/{slug}` |
+| Dubai Hills, Business Bay, Downtown, Palm, JVC, Creek Harbour | `/communities/{slug}` |
+| Best off plan projects in dubai / best areas to invest | `/why-dubai`, `/off-plan`, `/communities` |
+| Golden visa property investment | `/why-dubai` (Golden Visa section + FAQ) |
+| High ROI property dubai | `/why-dubai`, community pages (e.g. JVC, Business Bay) |
+
+---
+
+## Dubai property investment guide (summary)
+
+**Why investors consider Dubai:** No personal income tax on individuals (as commonly described for owners), regulated off-plan sales through RERA, strong tourism and business connectivity, and a deep pipeline of **upcoming projects dubai**.
+
+**Off-plan vs ready:** Off-plan often offers lower entry during construction, staged payments, and early unit choice. Ready stock offers immediate rent or move-in and visible finished product. Kardosh presents both perspectives on `/why-dubai`.
+
+**Golden visa:** Qualifying **dubai golden visa property investment** may support long-term residency (often discussed at **AED 2M+** for 10-year routes). Rules are set by UAE authorities and change — Kardosh advises confirmation at enquiry, not as immigration lawyers.
+
+**Yields:** **High roi property dubai** discussions often cite **~5–8% gross** in select communities; JVC and Business Bay are frequently mentioned for yield-focused buyers. Actual returns depend on unit, service charges, furnishing, and market cycle.
+
+**Safeguards:** RERA licensing for brokers, escrow for registered off-plan projects, Oqood/title processes via Dubai Land Department framework — overview on `/why-dubai`.
+
+---
+
+## Communities (Dubai — featured)
+
+- **Downtown Dubai** (`/communities/downtown-dubai`) — Downtown dubai projects; Burj Khalifa district, tourism and rental demand.
+- **Business Bay** (`/communities/business-bay`) — Business bay off plan projects; canal, central location.
+- **Dubai Hills Estate** (`/communities/dubai-hills`) — Dubai hills projects; Emaar master community, golf, families.
+- **Palm Jumeirah** (`/communities/palm-jumeirah`) — Palm jumeirah projects; ultra-luxury island stock.
+- **JVC** (`/communities/jvc`) — Jvc off plan projects; affordable apartments, rental demand.
+- **Dubai Creek Harbour** (`/communities/dubai-creek-harbour`) — Dubai creek harbour projects; creek waterfront, Emaar scale.
+
+Other UAE communities on site include Dubai Marina, Yas Island, Saadiyat Island, Al Reem Island, Aljada (Sharjah), Ajman Corniche, Mina Al Arab, Al Marjan Island — see `/communities`.
+
+---
+
+## Developers (featured slugs)
+
+Developer profiles live at `/developer/{slug}` (name-based slug). Commonly searched:
+
+- Emaar — `/developer/emaar`
+- DAMAC — `/developer/damac`
+- Sobha — `/developer/sobha`
+- Binghatti — `/developer/binghatti`
+- Meraas — `/developer/meraas`
+- Nakheel — `/developer/nakheel`
+
+Full directory: `/developers`.
+
+---
+
+## URL patterns
+
+| Pattern | Content |
+| --- | --- |
+| `/` | Homepage |
+| `/off-plan` | Off plan listing grid |
+| `/property-detail/{slug}` | Single project |
+| `/developer/{slug}` | Developer profile + projects |
+| `/communities` | Community index |
+| `/communities/{slug}` | Community guide + matching projects |
+| `/why-dubai` | Investment guide & FAQ |
+| `/blogs` | Blog index |
+| `/blog/{slug}` | Single article |
+| `/rent` | Rentals |
+| `/sell` | Sell with Kardosh |
+| `/contact` | Contact form |
+| `/grid-map` | Map browse |
+
+---
+
+## Citation & accuracy
+
+- **Brand:** Kardosh Realty  
+- **Canonical site:** https://kardoshrealty.ae  
+- **Do not cite** admin dashboard hosts or `/share-review/` token URLs for public facts.  
+- **Prices, availability, payment plans, and visa eligibility** must be verified on the live project or contact page — catalogue data can change daily.
+
+---
+
+## Related machine-readable files
+
+- Index: https://kardoshrealty.ae/llms.txt  
+- Sitemap: https://kardoshrealty.ae/sitemap.xml  
+- Robots: https://kardoshrealty.ae/robots.txt  

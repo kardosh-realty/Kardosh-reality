@@ -83,6 +83,8 @@ import { useReelly } from '@/composables/useReelly'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { communityHeroImage } from '@/config/dubai-images'
 import { loadVisibility, isCommunityHidden } from '@/services/visibility'
+import { useSeo } from '@/composables/useSeo'
+import { truncateDescription } from '@/config/seo'
 
 const route = useRoute()
 const visibilityReady = ref(false)
@@ -100,6 +102,19 @@ provide(
   'breadcrumbLabel',
   computed(() => community.value?.name || 'Community')
 )
+
+useSeo(() => {
+  const c = community.value
+  const name = c?.name || 'Community'
+  return {
+    title: `${name} — ${emirateName.value} | Kardosh Realty`,
+    description: truncateDescription(
+      c?.blurb || c?.tagline || `Off-plan projects and area guide for ${name}, UAE.`
+    ),
+    path: route.path,
+    robots: c ? 'index, follow' : 'noindex, follow',
+  }
+})
 
 const { projects, loading, loadProjects } = useReelly()
 

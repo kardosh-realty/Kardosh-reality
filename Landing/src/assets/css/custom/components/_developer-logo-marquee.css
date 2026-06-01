@@ -1,0 +1,65 @@
+/* Developer logo band (Marquee.vue + DeveloperLogoMarquee.vue) */
+
+.developer-logo-marquee__marquee {
+   width: 100%;
+}
+
+.developer-logo-marquee__logo-link {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 5rem;
+   height: 3rem;
+   padding: 0;
+   border: none;
+   background: transparent;
+   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.developer-logo-marquee__logo-link:hover,
+.developer-logo-marquee__logo-link:focus-visible {
+   opacity: 1;
+   transform: scale(1.04);
+   outline: none;
+}
+
+.developer-logo-marquee__logo-img {
+   display: block;
+   max-height: 2.75rem;
+   width: auto;
+   max-width: 9rem;
+   height: auto;
+   object-fit: contain;
+   background: transparent;
+   filter: grayscale(0.2);
+   opacity: 0.88;
+   transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
+}
+
+.developer-logo-marquee__logo-link:hover .developer-logo-marquee__logo-img,
+.developer-logo-marquee__logo-link:focus-visible .developer-logo-marquee__logo-img {
+   filter: none;
+   opacity: 1;
+}
+
+.developer-logo-marquee__initial {
+   font-size: 1.25rem;
+   font-weight: 700;
+   color: var(--color-primary);
+   line-height: 1;
+   background: transparent;
+}
+
+@media (max-width: 639px) {
+   .developer-logo-marquee__logo-link {
+      min-width: 4rem;
+      height: 2.5rem;
+   }
+
+   .developer-logo-marquee__logo-img {
+      max-height: 2.25rem;
+      max-width: 7rem;
+   }
+}

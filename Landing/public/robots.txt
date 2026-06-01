@@ -1,0 +1,12 @@
+# Kardosh Realty — public marketing site
+User-agent: *
+Allow: /
+
+# Tokenized review links — not for indexing
+Disallow: /share-review/
+
+Sitemap: https://kardoshrealty.ae/sitemap.xml
+
+# GEO: curated context for AI systems
+# https://kardoshrealty.ae/llms.txt
+# https://kardoshrealty.ae/llms-full.txt

@@ -31,7 +31,7 @@
             </span>
           </h2>
           <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed mx-auto">
-            Speak with our Dubai team about off-plan, ready homes, rentals, or selling your property.
+            Speak with our Dubai team about off plan projects, buy off plan property, rentals, or selling your home.
             We typically respond within one business day.
           </p>
         </div>
@@ -146,7 +146,7 @@
                       type="text"
                       required
                       autocomplete="name"
-                      class="form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full rounded-lg placeholder:text-slate-400 dark:placeholder:text-slate-400"
+                      class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full placeholder:text-slate-400 dark:placeholder:text-slate-400"
                       placeholder="Your name"
                     />
                   </div>
@@ -157,7 +157,7 @@
                       v-model="form.email"
                       type="email"
                       autocomplete="email"
-                      class="form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full rounded-lg placeholder:text-slate-400 dark:placeholder:text-slate-400"
+                      class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full placeholder:text-slate-400 dark:placeholder:text-slate-400"
                       placeholder="you@email.com"
                     />
                   </div>
@@ -166,21 +166,22 @@
                 <div class="grid sm:grid-cols-2 gap-4 mt-4">
                   <div>
                     <label :for="`${fieldPrefix}-phone`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</label>
-                    <input
+                    <PhoneInput
                       :id="`${fieldPrefix}-phone`"
                       v-model="form.phone"
-                      type="tel"
-                      autocomplete="tel"
-                      class="form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full rounded-lg placeholder:text-slate-400 dark:placeholder:text-slate-400"
-                      placeholder="+971 50 …"
+                      placeholder="Enter phone number"
+                      default-country="AE"
+                      :invalid="!!phoneError"
+                      class="w-full"
                     />
+                    <p v-if="phoneError" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ phoneError }}</p>
                   </div>
                   <div>
                     <label :for="`${fieldPrefix}-type`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Interested in</label>
                     <select
                       :id="`${fieldPrefix}-type`"
                       v-model="form.listingType"
-                      class="form-select form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full rounded-lg"
+                      class="kardosh-form-control form-select form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full"
                     >
                       <option value="sale">Buy / Off-plan</option>
                       <option value="rent">Rent</option>
@@ -195,7 +196,7 @@
                     :id="`${fieldPrefix}-message`"
                     v-model="form.message"
                     rows="4"
-                    class="form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full rounded-lg textarea placeholder:text-slate-400 dark:placeholder:text-slate-400"
+                    class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full textarea placeholder:text-slate-400 dark:placeholder:text-slate-400"
                     placeholder="Tell us about your budget, community, or timeline…"
                   />
                 </div>
@@ -250,6 +251,8 @@ import { BRAND, RERA_LICENSE_LABEL, SOCIAL } from '@/config/brand'
 import { CONTACT, GOOGLE_MAP_EMBED, GOOGLE_MAPS_DIRECTIONS } from '@/config/uae'
 import { whatsAppLink, WHATSAPP } from '@/config/marketing'
 import { submitLead } from '@/services/leads'
+import PhoneInput from '@/components/ui/PhoneInput.vue'
+import { validatePhone } from '@/utils/validatePhone'
 
 const props = defineProps({
   mt: { type: Boolean, default: true },
@@ -274,6 +277,7 @@ const form = ref({
 const submitting = ref(false)
 const formError = ref('')
 const formSuccess = ref('')
+const phoneError = ref('')
 
 // Property context passed via ?property=<title>&id=<id> (e.g. from a project page).
 const regardingProperty = ref('')
@@ -293,6 +297,13 @@ watch(
   () => [route.query.property, route.query.id],
   applyPropertyFromRoute,
   { immediate: true }
+)
+
+watch(
+  () => form.value.phone,
+  () => {
+    if (phoneError.value) phoneError.value = ''
+  }
 )
 
 function clearRegarding() {
@@ -352,12 +363,20 @@ const contactChannels = computed(() => [
 async function onSubmit() {
   formError.value = ''
   formSuccess.value = ''
+  phoneError.value = ''
+
+  const phoneCheck = validatePhone(form.value.phone)
+  if (!phoneCheck.valid) {
+    phoneError.value = phoneCheck.message
+    return
+  }
+
   submitting.value = true
   try {
     const result = await submitLead({
       name: form.value.name,
       email: form.value.email,
-      phone: form.value.phone,
+      phone: phoneCheck.value || form.value.phone,
       message: form.value.message,
       listingType: form.value.listingType,
       projectId: regardingId.value || undefined,
@@ -369,6 +388,7 @@ async function onSubmit() {
         ? `Thank you — Kardosh Realty will contact you about ${regardingProperty.value} shortly.`
         : 'Thank you — Kardosh Realty will contact you shortly.'
       form.value = { name: '', email: '', phone: '', message: '', listingType: 'sale' }
+      phoneError.value = ''
       clearRegarding()
     } else if (result.dev) {
       formSuccess.value = 'Message received (dev mode). Connect Supabase to store leads.'

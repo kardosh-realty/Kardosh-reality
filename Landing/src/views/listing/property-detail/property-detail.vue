@@ -214,7 +214,9 @@
 <script setup>
 import { ref, computed, watch, onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { formatAed, formatArea } from '@/config/uae'
+import { useSeo } from '@/composables/useSeo'
+import { truncateDescription } from '@/config/seo'
+import { formatAedInMillions, formatArea } from '@/config/uae'
 import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos } from '@/composables/useReelly'
 import { developerDetailPath, projectDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
 import PropertyGallery from '@/component/kardosh/PropertyGallery.vue'
@@ -330,13 +332,38 @@ const locationLabel = computed(() => {
   return [loc.district, loc.region, loc.city, loc.country].filter(Boolean).join(', ') || null
 })
 
+useSeo(() => {
+  const p = property.value
+  const title = p?.title || p?.name || 'Property'
+  const loc = locationLabel.value
+  const desc =
+    (typeof p?.overview === 'string' ? p.overview.slice(0, 300) : null) ||
+    p?.description ||
+    (loc
+      ? `${title} — ${loc}. Off-plan and UAE property details from Kardosh Realty.`
+      : `${title} — UAE property details from Kardosh Realty.`)
+  const image =
+    p?.image ||
+    p?.gallery?.[0]?.url ||
+    p?.images?.[0]?.url ||
+    p?.detail?.[0]
+  return {
+    title: `${title} | Kardosh Realty`,
+    description: truncateDescription(desc),
+    path: route.path,
+    image,
+    ogType: 'article',
+    robots: isEmbed.value ? 'noindex, nofollow' : 'index, follow',
+  }
+})
+
 const displayUnits = computed(() => {
   if (liveUnits.value.length) {
     return liveUnits.value.map((u, i) => ({
       key: u.id || `live-${i}`,
       title: u.unit_number ? `Unit ${u.unit_number}` : `Unit ${i + 1}`,
       subtitle: [u.bedrooms != null ? `${u.bedrooms} BR` : null, u.unit_type].filter(Boolean).join(' · '),
-      priceText: u.price ? formatAed(Math.round(u.price)) : null,
+      priceText: u.price ? formatAedInMillions(Math.round(u.price)) : null,
       fromPriceAed: u.price != null ? Math.round(Number(u.price)) : null,
       toPriceAed: u.price != null ? Math.round(Number(u.price)) : null,
       meta: [
@@ -360,7 +387,7 @@ const displayUnits = computed(() => {
         : null,
     priceText:
       u.fromPriceAed || u.toPriceAed
-        ? `${formatAed(u.fromPriceAed || 0)}${u.toPriceAed && u.toPriceAed !== u.fromPriceAed ? ` – ${formatAed(u.toPriceAed)}` : ''}`
+        ? `${formatAedInMillions(u.fromPriceAed || 0)}${u.toPriceAed && u.toPriceAed !== u.fromPriceAed ? ` – ${formatAedInMillions(u.toPriceAed)}` : ''}`
         : null,
     fromPriceAed: u.fromPriceAed != null ? Math.round(Number(u.fromPriceAed)) : null,
     toPriceAed: u.toPriceAed != null ? Math.round(Number(u.toPriceAed)) : null,

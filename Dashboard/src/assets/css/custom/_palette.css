@@ -1,0 +1,31 @@
+/* Palette-driven accents (login + dashboard use --color-primary from usePalette) */
+
+.login-submit {
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+}
+
+.login-submit:hover:not(:disabled) {
+  box-shadow: 0 10px 25px -3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.login-brand-gradient {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in srgb, var(--color-primary) 85%, transparent),
+    color-mix(in srgb, var(--color-primary-dark) 80%, transparent),
+    color-mix(in srgb, #0f172a 85%, transparent)
+  );
+}
+
+input:focus-visible.border-primary,
+input:focus.border-primary {
+  border-color: var(--color-primary);
+}
+
+.accent-primary {
+  accent-color: var(--color-primary);
+}

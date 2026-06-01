@@ -38,6 +38,14 @@ export function formatAed(amount) {
   }).format(amount)
 }
 
+/** Off-plan / project display — round up to whole millions (e.g. AED 2M). */
+export function formatAedInMillions(amount) {
+  const n = Math.max(0, Number(amount) || 0)
+  if (!n) return null
+  const millions = Math.ceil(n / 1_000_000)
+  return `AED ${millions}M`
+}
+
 export function formatArea(sqm) {
   return `${sqm} ${AREA_UNIT}`
 }
@@ -52,7 +60,8 @@ export function formatStartingPrice(item) {
   const min = Math.round(Number(item.minPrice ?? item.price) || 0)
   const max = Math.round(Number(item.maxPrice) || 0)
   const start = min || max
-  return start ? `From ${formatAed(start)}` : 'Price on request'
+  const compact = formatAedInMillions(start)
+  return compact ? `From ${compact}` : 'Price on request'
 }
 
 export const MIN_PRICE_OPTIONS = [

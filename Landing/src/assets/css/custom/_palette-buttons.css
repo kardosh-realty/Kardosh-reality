@@ -1,0 +1,109 @@
+/*********************************/
+/*  Palette test — button colors */
+/*********************************/
+
+[data-palette] .btn.bg-primary,
+[data-palette] a.btn.bg-primary,
+[data-palette] button.btn.bg-primary,
+[data-palette] .kardosh-slide-btn,
+[data-palette] a.kardosh-slide-btn,
+[data-palette] button.kardosh-slide-btn,
+[data-palette] #topnav .kardosh-header__btn--primary,
+[data-palette] .kardosh-header__btn--primary,
+[data-palette] .kardosh-property-card__cta,
+[data-palette] .property-search-tabs button[role='tab'][aria-selected='true'],
+[data-palette] .map-page__list-btn.btn.bg-primary {
+    background-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    border-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    color: var(--btn-primary-text, #ffffff) !important;
+    box-shadow: 0 4px 14px var(--btn-primary-shadow, rgb(0 0 0 / 0.12));
+}
+
+[data-palette] .btn.bg-primary:hover,
+[data-palette] a.btn.bg-primary:hover,
+[data-palette] button.btn.bg-primary:hover,
+[data-palette] .kardosh-slide-btn:hover,
+[data-palette] a.kardosh-slide-btn:hover,
+[data-palette] button.kardosh-slide-btn:hover,
+[data-palette] #topnav .kardosh-header__btn--primary:hover,
+[data-palette] .kardosh-header__btn--primary:hover,
+[data-palette] .kardosh-property-card__cta:hover,
+[data-palette] .map-page__list-btn.btn.bg-primary:hover {
+    background-color: var(--btn-primary-hover, var(--color-primary-dark)) !important;
+    border-color: var(--btn-primary-hover, var(--color-primary-dark)) !important;
+    color: var(--btn-primary-text, #ffffff) !important;
+}
+
+[data-palette] .btn.bg-primary:focus-visible,
+[data-palette] .kardosh-slide-btn:focus-visible {
+    outline-color: var(--btn-primary-bg, var(--color-primary));
+}
+
+/* Outline primary */
+[data-palette] .btn-outline,
+[data-palette] .page-view .btn.bg-transparent.border-primary,
+[data-palette] .page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon) {
+    border-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    color: var(--btn-outline-text, var(--color-primary-dark)) !important;
+}
+
+[data-palette] .btn-outline:hover,
+[data-palette] .page-view .btn.bg-transparent.border-primary:hover,
+[data-palette] .page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon):hover {
+    background-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    border-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    color: var(--btn-primary-text, #ffffff) !important;
+}
+
+/* Secondary (slate outline) hover */
+[data-palette] .btn-secondary:hover,
+[data-palette] .page-view .btn.border.border-slate-200:hover,
+[data-palette] .page-view a.btn.border.border-slate-200:hover,
+[data-palette] .page-view button.btn.border.border-slate-200:hover {
+    border-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    background: var(--btn-secondary-hover-bg, var(--kardosh-primary-tint)) !important;
+    color: var(--btn-secondary-hover-text, var(--color-primary-dark)) !important;
+    box-shadow: 0 4px 14px var(--btn-primary-shadow, rgb(0 0 0 / 0.08));
+}
+
+/* Hero search CTA */
+[data-palette] .hero-search-submit {
+    background: var(--btn-hero-bg, var(--color-primary)) !important;
+    color: var(--btn-hero-text, #faf3dd) !important;
+    border: 1px solid var(--btn-hero-border, var(--color-primary-dark)) !important;
+    box-shadow:
+        0 12px 32px var(--btn-primary-shadow, rgb(0 0 0 / 0.2)),
+        inset 0 1px 0 rgb(255 255 255 / 0.15) !important;
+}
+
+[data-palette] .hero-search-submit:hover {
+    background: var(--btn-hero-hover, var(--color-primary-dark)) !important;
+    color: var(--btn-hero-text, #faf3dd) !important;
+}
+
+[data-palette] .hero-search-submit--listing,
+[data-palette] .hero-search-submit--listing:hover {
+    background: var(--btn-primary-bg, var(--color-primary)) !important;
+    border-color: var(--btn-primary-bg, var(--color-primary)) !important;
+    color: var(--btn-primary-text, #ffffff) !important;
+}
+
+/* Header contact — match hero search CTA (solid --btn-hero-bg) */
+[data-palette] .kardosh-contact-swap-btn {
+    background: var(--btn-hero-bg, var(--color-primary)) !important;
+    border-color: var(--btn-hero-border, var(--color-primary-dark)) !important;
+    color: var(--btn-hero-text, var(--btn-primary-text, #ffffff)) !important;
+    box-shadow: 0 4px 14px var(--btn-primary-shadow, rgb(0 0 0 / 0.18)) !important;
+}
+
+[data-palette] .kardosh-contact-swap-btn:hover {
+    background: var(--btn-hero-hover, var(--color-primary-dark)) !important;
+    border-color: var(--btn-hero-hover, var(--color-primary-dark)) !important;
+    color: var(--btn-hero-text, var(--btn-primary-text, #ffffff)) !important;
+}
+
+[data-palette] .dark .btn.bg-primary,
+[data-palette] .dark .kardosh-slide-btn,
+[data-palette] .dark .kardosh-header__btn--primary {
+    color: var(--btn-primary-text, #ffffff) !important;
+}

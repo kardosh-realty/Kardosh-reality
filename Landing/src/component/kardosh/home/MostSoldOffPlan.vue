@@ -10,10 +10,10 @@
           id="most-sold-off-plan-heading"
           class="text-3xl md:text-4xl lg:text-[2.5rem] font-semibold text-slate-900 dark:text-white leading-tight"
         >
-          Most sold off-plan properties
+          Best off plan projects in Dubai
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Top-performing developments from our live catalogue — ranked by sale status, availability, and investor demand.
+          Top-performing Dubai off plan projects from our live catalogue — new launch and upcoming developments ranked by demand and availability.
         </p>
       </div>
 

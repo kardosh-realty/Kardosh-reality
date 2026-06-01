@@ -12,7 +12,7 @@ import { mapReellyProject, mapReellyMarker } from '@/services/reelly/mapProject'
 import { enrichProjectsWithAmenities } from '@/services/reelly/enrichAmenities'
 import { enrichLiveUnitsWithPlans } from '@/services/reelly/media'
 import { properties as localProperties } from '@/component/data/data'
-import { formatAed, formatArea } from '@/config/uae'
+import { formatAed, formatAedInMillions, formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
 import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
 import { normalizeRouteSlug, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
@@ -331,9 +331,10 @@ function mapLocal(p) {
     priceLabel:
       p.listingType === 'rent'
         ? `${formatAed(p.price)}/year`
-        : p.price
-          ? `From ${formatAed(p.price)}`
-          : 'Price on request',
+        : (() => {
+            const compact = formatAedInMillions(p.price)
+            return compact ? `From ${compact}` : 'Price on request'
+          })(),
     areaLabel: formatArea(p.square),
     title: p.name,
   }

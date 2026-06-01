@@ -1,0 +1,3 @@
+# Kardosh admin dashboard — not for public search
+User-agent: *
+Disallow: /

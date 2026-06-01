@@ -6,11 +6,11 @@
           id="why-dubai-heading"
           class="kardosh-section-heading text-3xl md:text-4xl lg:text-[2.5rem] font-semibold text-slate-900 dark:text-white leading-tight"
         >
-          A global hub built for property investors
+          Dubai property investment, made clear
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Tax-efficient ownership, strong yields, and regulated off-plan pathways — Kardosh Realty helps
-          international buyers navigate the UAE market with clarity.
+          Off plan investment in Dubai combines tax-efficient ownership, strong yields, and regulated launches —
+          Kardosh Realty helps you compare the best areas to invest and upcoming projects before you reserve.
         </p>
       </div>
 

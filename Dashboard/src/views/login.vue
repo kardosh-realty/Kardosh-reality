@@ -10,7 +10,7 @@
         class="hidden md:block w-1/2 relative overflow-hidden border-r border-gray-100 dark:border-slate-800 bg-cover bg-center"
         :style="{ backgroundImage: `url(${bg})` }"
       >
-        <div class="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary-dark/80 to-slate-900/85"></div>
+        <div class="login-brand-gradient absolute inset-0" aria-hidden="true"></div>
 
         <div class="login-panel-content relative z-10 h-full min-h-[560px] flex flex-col items-center justify-center p-10 text-center">
           <RouterLink to="/" class="mb-6 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-4 shadow-lg shadow-black/20">
@@ -88,7 +88,7 @@
             <button
               type="submit"
               :disabled="loading"
-              class="login-submit group relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-primary to-primary-dark py-3 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 disabled:opacity-60 disabled:cursor-not-allowed"
+              class="login-submit group relative w-full overflow-hidden rounded-lg py-3 text-white font-medium transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <span class="flex items-center justify-center">
                 {{ loading ? 'Signing in…' : 'Sign in' }}

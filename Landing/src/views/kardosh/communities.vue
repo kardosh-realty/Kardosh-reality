@@ -1,8 +1,8 @@
 <template>
   <Navbar nav-class="navbar-white" />
   <PageHero
-    title="Explore the UAE by community"
-    subtitle="Off-plan and investment opportunities across Dubai, Abu Dhabi, Sharjah, Ajman, Ras Al Khaimah, and the wider Emirates — curated on Kardosh Realty."
+    title="Best areas to invest in Dubai & the UAE"
+    subtitle="Downtown Dubai, Business Bay, Dubai Hills, Palm Jumeirah, JVC, Dubai Creek Harbour, and more — off plan projects by community on Kardosh Realty."
     :image="PAGE_HERO_IMAGES.communities"
   />
 
@@ -31,7 +31,8 @@
           Find your next UAE address
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Filter by emirate and open a community page to see matching off-plan projects from our live Reelly catalogue.
+          Filter by emirate and open a community guide to see matching off plan projects — from Business Bay and
+          Downtown to Dubai Hills, Palm Jumeirah, JVC, and Dubai Creek Harbour.
         </p>
       </div>
 

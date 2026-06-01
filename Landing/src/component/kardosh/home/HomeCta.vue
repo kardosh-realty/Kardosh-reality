@@ -7,9 +7,9 @@
       >
         <div class="absolute inset-0 bg-slate-900/70" />
         <div class="relative z-[1] max-w-2xl mx-auto">
-          <h2 class="text-2xl md:text-3xl font-semibold">Ready to explore Dubai off-plan?</h2>
+          <h2 class="text-2xl md:text-3xl font-semibold">Ready to buy off plan property in Dubai?</h2>
           <p class="text-white/70 mt-3">
-            Speak with Kardosh Realty for curated projects, payment plans, and investor guidance.
+            Speak with Kardosh Realty about the best off plan projects in Dubai — payment plans, new launches, and investor guidance.
           </p>
           <div class="flex flex-wrap justify-center items-center gap-3 mt-8">
             <KardoshSlideButton

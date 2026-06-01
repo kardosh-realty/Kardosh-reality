@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="UAE property developers"
-    subtitle="Explore established and emerging developers with active off-plan stock across the Emirates — powered by Reelly and curated on Kardosh Realty."
+    title="Dubai property developers"
+    subtitle="Explore Emaar, DAMAC, Sobha, Binghatti, Meraas, Nakheel, and more — active off plan projects in Dubai and the UAE, curated on Kardosh Realty."
     :image="PAGE_HERO_IMAGES.developers"
   />
 
@@ -32,8 +32,8 @@
           Compare UAE developer pipelines
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Each profile shows live project counts, key regions, and sales contacts where Reelly provides them.
-          Open a developer to browse their full off-plan catalogue.
+          From Emaar projects in Dubai to DAMAC, Sobha, Binghatti, Meraas, and Nakheel pipelines — each profile
+          shows live project counts and regions. Open a developer to browse their full off plan catalogue.
         </p>
       </div>
 

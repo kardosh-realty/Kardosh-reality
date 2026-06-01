@@ -1,5 +1,5 @@
 import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
-import { formatAed, formatArea } from '@/config/uae'
+import { formatAedInMillions, formatArea } from '@/config/uae'
 import { parseOverviewToFaq } from '@/utils/parseOverviewFaq'
 import { collectProjectMedia } from './media'
 import { normalizePaymentPlans } from '@/utils/parsePaymentPlans'
@@ -16,7 +16,8 @@ function priceLabel(minPrice, maxPrice) {
   const min = Math.round(Number(minPrice) || 0)
   const max = Math.round(Number(maxPrice) || 0)
   if (!min && !max) return 'Price on request'
-  return `From ${formatAed(min || max)}`
+  const compact = formatAedInMillions(min || max)
+  return compact ? `From ${compact}` : 'Price on request'
 }
 
 /** Bedroom counts from typical units and unit-type labels (list API often omits units). */

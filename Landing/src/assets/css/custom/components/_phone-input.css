@@ -1,0 +1,88 @@
+/* International phone input (vue-tel-input) + enquiry form controls */
+
+.kardosh-phone-input.vue-tel-input {
+   width: 100%;
+   margin-top: 0.375rem;
+   border-radius: 0.75rem;
+   border: 1px solid rgb(226 232 240);
+   background: transparent;
+   box-shadow: none;
+   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dark .kardosh-phone-input.vue-tel-input {
+   border-color: rgb(71 85 105);
+   background: rgb(15 23 42);
+}
+
+.kardosh-phone-input.vue-tel-input:focus-within {
+   border-color: var(--color-primary);
+   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.kardosh-phone-input--invalid.vue-tel-input {
+   border-color: rgb(220 38 38);
+}
+
+.kardosh-phone-input--invalid.vue-tel-input:focus-within {
+   border-color: rgb(220 38 38);
+   box-shadow: 0 0 0 2px rgb(220 38 38 / 0.2);
+}
+
+.kardosh-phone-input .vti__dropdown {
+   border: none;
+   border-radius: 0.75rem 0 0 0.75rem;
+   background: rgb(248 250 252);
+}
+
+.dark .kardosh-phone-input .vti__dropdown {
+   background: rgb(30 41 59);
+}
+
+.kardosh-phone-input .vti__dropdown-list {
+   border-radius: 0.75rem;
+   border: 1px solid rgb(226 232 240);
+   box-shadow: 0 10px 25px rgb(0 0 0 / 0.1);
+}
+
+.dark .kardosh-phone-input .vti__dropdown-list {
+   border-color: rgb(71 85 105);
+   background: rgb(15 23 42);
+}
+
+.kardosh-phone-input .vti__input,
+.kardosh-phone-input__field {
+   width: 100%;
+   min-height: 2.5rem;
+   padding: 0.5rem 0.75rem;
+   border: none !important;
+   border-radius: 0 0.75rem 0.75rem 0;
+   background: transparent !important;
+   color: inherit;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   outline: none;
+   box-shadow: none !important;
+}
+
+.dark .kardosh-phone-input .vti__input {
+   color: rgb(226 232 240);
+}
+
+.kardosh-phone-input .vti__input::placeholder {
+   color: rgb(148 163 184);
+}
+
+/* Rounded enquiry fields (contact + home) */
+.kardosh-form-control.form-input,
+.kardosh-form-control.form-select.form-input,
+.kardosh-form-control.textarea.form-input {
+   border-radius: 0.75rem !important;
+}
+
+.kardosh-form-control.form-input:focus,
+.kardosh-form-control.form-select.form-input:focus,
+.kardosh-form-control.textarea.form-input:focus {
+   border-color: var(--color-primary) !important;
+   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}

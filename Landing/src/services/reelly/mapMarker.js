@@ -1,19 +1,10 @@
 import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
-import { formatAed } from '@/config/uae'
+import { formatAedInMillions } from '@/config/uae'
 import { normalizePaymentPlans } from '@/utils/parsePaymentPlans'
 import { extractProjectBedrooms } from './mapProject'
 
-export function formatCompactAed(amount) {
-  const n = Math.round(Number(amount) || 0)
-  if (!n) return null
-  if (n >= 1_000_000) {
-    const m = n / 1_000_000
-    const s = m >= 10 ? String(Math.round(m)) : m.toFixed(1).replace(/\.0$/, '')
-    return `${s}M AED`
-  }
-  if (n >= 1000) return `${Math.round(n / 1000)}K AED`
-  return formatAed(n)
-}
+/** @deprecated Use formatAedInMillions from @/config/uae */
+export const formatCompactAed = formatAedInMillions
 
 export function formatMapLocationLine(location = {}, projectName = '') {
   const parts = []
@@ -87,8 +78,11 @@ export function enrichMapMarker(raw) {
     image: raw.cover_image?.url || raw.image || DUBAI_PROPERTY_FALLBACK,
     images: collectImages(raw),
     minPrice,
-    launchPrice: formatCompactAed(minPrice),
-    priceLabel: minPrice ? `From ${formatAed(minPrice)}` : 'Price on request',
+    launchPrice: formatAedInMillions(minPrice),
+    priceLabel: (() => {
+      const compact = formatAedInMillions(minPrice)
+      return compact ? `From ${compact}` : 'Price on request'
+    })(),
     developer,
     developerId: typeof raw.developer === 'object' ? raw.developer?.id : raw.developer_id,
     completionDate: raw.completion_date || raw.completionDate || null,

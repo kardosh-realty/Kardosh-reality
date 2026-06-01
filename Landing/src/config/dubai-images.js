@@ -51,6 +51,7 @@ export const COMMUNITY_IMAGES = {
   'palm-jumeirah': property2,
   'dubai-hills': property4,
   'business-bay': heroDistrict,
+  'dubai-creek-harbour': heroSkyline,
   jvc: property5,
   'yas-island': heroMarina,
   'saadiyat-island': property3,

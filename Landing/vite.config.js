@@ -40,6 +40,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@kardosh/shared': path.resolve(__dirname, '../shared'),
       },
     },
     server: {

@@ -66,12 +66,12 @@ const listingsHeroImage = computed(() =>
 )
 
 const heroTitle = computed(() =>
-  props.mode === 'rent' ? 'Properties for rent' : 'Off-plan & ready to buy'
+  props.mode === 'rent' ? 'Properties for rent' : 'Off plan projects in Dubai'
 )
 const heroSubtitle = computed(() =>
   props.mode === 'rent'
     ? 'Annual rent listings across the UAE on Kardosh Realty.'
-    : 'New developments from leading UAE developers via Reelly.'
+    : 'Compare Dubai off plan projects — new launch and upcoming developments, payment plans, and off plan investment opportunities from leading UAE developers.'
 )
 
 const sourceList = computed(() =>

@@ -12,6 +12,7 @@
     <InternationalBrokerStrip />
     <Client />
     <HomeCta />
+    <DeveloperLogoMarquee />
     <GetInTuch />
   </section>
   <Footer />
@@ -28,6 +29,9 @@ import Switcher from '@/component/switcher.vue'
 /** Below-fold sections — smaller initial JS parse for faster FCP / TBT */
 const Property = defineAsyncComponent(() => import('@/component/Properties/property.vue'))
 const WhyInvestDubai = defineAsyncComponent(() => import('@/component/kardosh/home/WhyInvestDubai.vue'))
+const DeveloperLogoMarquee = defineAsyncComponent(
+  () => import('@/component/kardosh/home/DeveloperLogoMarquee.vue')
+)
 const FeaturedDevelopers = defineAsyncComponent(() => import('@/component/kardosh/home/FeaturedDevelopers.vue'))
 const MostSoldOffPlan = defineAsyncComponent(() => import('@/component/kardosh/home/MostSoldOffPlan.vue'))
 const About = defineAsyncComponent(() => import('@/component/about.vue'))

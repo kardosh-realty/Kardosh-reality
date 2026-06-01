@@ -1,5 +1,12 @@
 /* Route transitions — App.vue <Transition name="page-cross"> */
-/* Crossfade + subtle zoom — editorial / luxury feel */
+/* Parallel crossfade (not out-in) so both pages overlap — avoids blank gap */
+
+.page-transition-root {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
+}
 
 .page-view {
     width: 100%;
@@ -7,29 +14,36 @@
 }
 
 .page-cross-enter-active {
+    position: relative;
+    z-index: 1;
     transition:
-        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
-        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
-        filter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+        opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.04s,
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.04s,
+        filter 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
 }
 
 .page-cross-leave-active {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    pointer-events: none;
     transition:
-        opacity 0.32s cubic-bezier(0.4, 0, 1, 1),
-        transform 0.38s cubic-bezier(0.4, 0, 1, 1),
-        filter 0.32s cubic-bezier(0.4, 0, 1, 1);
+        opacity 0.35s cubic-bezier(0.4, 0, 1, 1),
+        transform 0.4s cubic-bezier(0.4, 0, 1, 1),
+        filter 0.35s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .page-cross-enter-from {
     opacity: 0;
-    transform: scale(0.965);
-    filter: blur(6px);
+    transform: scale(0.97);
+    filter: blur(4px);
 }
 
 .page-cross-leave-to {
     opacity: 0;
-    transform: scale(1.02);
-    filter: blur(4px);
+    transform: scale(1.015);
+    filter: blur(3px);
 }
 
 @media (prefers-reduced-motion: reduce) {

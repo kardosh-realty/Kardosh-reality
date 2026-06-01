@@ -1,0 +1,108 @@
+/* Header contact — solid fill like .hero-search-submit (palette --btn-hero-*) */
+
+.kardosh-contact-swap-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 2.5rem;
+    padding: 0 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid var(--btn-hero-border, var(--color-primary-dark, #008f34));
+    background: var(--btn-hero-bg, var(--btn-primary-bg, var(--color-primary, #00a63e)));
+    color: var(--btn-hero-text, var(--btn-primary-text, #ffffff));
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: 0 4px 14px var(--btn-primary-shadow, rgb(0 0 0 / 0.18));
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+@media (min-width: 1280px) {
+    .kardosh-contact-swap-btn {
+        min-height: 2.625rem;
+        padding: 0 1.5rem;
+        font-size: 1.0625rem;
+    }
+}
+
+.kardosh-contact-swap-btn:hover {
+    background: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #008f34)));
+    border-color: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #008f34)));
+    color: var(--btn-hero-text, var(--btn-primary-text, #ffffff));
+    box-shadow: 0 8px 22px var(--btn-primary-shadow, rgb(0 0 0 / 0.22));
+    transform: translateY(-1px);
+}
+
+.kardosh-contact-swap-btn:active {
+    transform: translateY(0);
+}
+
+.kardosh-contact-swap-btn--block {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.875rem 1.5rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.kardosh-contact-swap-btn__text {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    line-height: 1.25;
+}
+
+.kardosh-contact-swap-btn__layer {
+    display: block;
+    white-space: nowrap;
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        skew 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kardosh-contact-swap-btn__layer--default {
+    transform: translateY(0) skewY(0deg);
+}
+
+.kardosh-contact-swap-btn__layer--hover {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    transform: translateY(114%) skewY(12deg);
+}
+
+.kardosh-contact-swap-btn:hover .kardosh-contact-swap-btn__layer--default {
+    transform: translateY(-110%) skewY(-12deg);
+}
+
+.kardosh-contact-swap-btn:hover .kardosh-contact-swap-btn__layer--hover {
+    transform: translateY(0) skewY(0deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kardosh-contact-swap-btn__layer,
+    .kardosh-contact-swap-btn:hover .kardosh-contact-swap-btn__layer--default,
+    .kardosh-contact-swap-btn:hover .kardosh-contact-swap-btn__layer--hover {
+        transition: none;
+        transform: none;
+    }
+
+    .kardosh-contact-swap-btn__layer--hover {
+        display: none;
+    }
+
+    .kardosh-contact-swap-btn:hover {
+        transform: none;
+    }
+}

@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Why invest in Dubai?"
-    subtitle="Tax efficiency, regulated off-plan, residency pathways, and one of the world's most active property markets — guided by Kardosh Realty."
+    title="Dubai property investment guide"
+    subtitle="Best areas to invest in Dubai, off plan investment, golden visa property rules, and high ROI communities — explained by Kardosh Realty."
     :image="PAGE_HERO_IMAGES.whyDubai"
   />
 

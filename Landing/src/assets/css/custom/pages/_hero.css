@@ -802,23 +802,62 @@ ul.vs__dropdown-menu.hero-glass-dropdown .vs__dropdown-option--highlight {
     color: #ffffff !important;
 }
 
-@media (max-width: 639px) {
-    .hero-search-glass {
+/* Hero search only — compact dock (labels + mode hint live in placeholders) */
+@media (max-width: 767px) {
+    .hero-search-bar .hero-search-glass {
+        --hero-field-height: 2.625rem;
+        --hero-label-height: 0;
+        --hero-field-gap: 0;
         border-radius: 1.25rem;
     }
 
-    .hero-search-panel {
-        padding: 1.25rem 1.125rem 1.375rem;
+    .hero-search-bar .hero-search-panel {
+        padding: 0.875rem 1rem 1rem;
     }
 
-    .hero-search-head {
-        flex-direction: column;
-        align-items: flex-start;
+    .hero-search-bar .hero-search-head {
+        display: none;
+    }
+
+    .hero-search-bar .hero-search-grid {
         gap: 0.5rem;
     }
 
-    .hero-search-submit {
+    .hero-search-bar .hero-search-field-cell {
+        grid-template-rows: var(--hero-field-height);
+        gap: 0;
+    }
+
+    .hero-search-bar .hero-search-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+        min-height: 0;
+    }
+
+    .hero-search-bar .hero-search-field,
+    .hero-search-bar .hero-search-field--input,
+    .hero-search-bar .hero-search-control .hero-search-vselect .vs__selected,
+    .hero-search-bar .hero-search-control .hero-search-vselect .vs__search input {
+        font-size: 0.875rem;
+    }
+
+    .hero-search-bar .hero-search-actions {
+        padding-top: 0.375rem;
+    }
+
+    .hero-search-bar .hero-search-submit {
         width: 100%;
+        min-height: 2.625rem;
+        padding: 0 1.25rem;
+        font-size: 0.8125rem;
     }
 }
 

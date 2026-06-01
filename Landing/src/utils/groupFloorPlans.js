@@ -1,4 +1,4 @@
-import { formatAed } from '@/config/uae'
+import { formatAedInMillions } from '@/config/uae'
 
 export function bedroomGroupLabel(bedrooms) {
   if (bedrooms == null) return 'Other configurations'
@@ -11,9 +11,14 @@ export function buildGroupPriceLabel(minPrice, maxPrice) {
   if (minPrice == null && maxPrice == null) return null
   const min = minPrice ?? maxPrice
   const max = maxPrice ?? minPrice
-  if (min === max) return formatAed(min)
-  if (max > min) return `From ${formatAed(min)} · Up to ${formatAed(max)}`
-  return `From ${formatAed(min)}`
+  if (min === max) return formatAedInMillions(min)
+  if (max > min) {
+    const from = formatAedInMillions(min)
+    const to = formatAedInMillions(max)
+    return from && to ? `From ${from} · Up to ${to}` : from || to
+  }
+  const from = formatAedInMillions(min)
+  return from ? `From ${from}` : null
 }
 
 function ingestUnitPrices(group, unit) {

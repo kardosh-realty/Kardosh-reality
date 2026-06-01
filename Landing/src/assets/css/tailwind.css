@@ -55,6 +55,8 @@
 
 /* Custom */
 @import "./custom/_kardosh-tokens.css";
+@import "./custom/_palette-overrides.css";
+@import "./custom/_palette-buttons.css";
 @import "./custom/_brand.css";
 @import "./custom/_page-transitions.css";
 @import "./custom/_general.css";
@@ -67,6 +69,7 @@
 @import "./custom/_footer-preferences.css";
 @import "./components/_buttons.css";
 @import "./custom/components/_kardosh-buttons.css";
+@import "./custom/components/_contact-swap-button.css";
 @import "./custom/pages/_hero.css";
 @import "./custom/pages/_map-page.css";
 @import "./custom/pages/_communities-page.css";
@@ -95,6 +98,9 @@
 @import "./custom/components/_why-invest-advantages.css";
 @import "./custom/components/_property-image-watermark.css";
 @import "./custom/components/_developer.css";
+@import "./custom/components/_marquee.css";
+@import "./custom/components/_developer-logo-marquee.css";
+@import "./custom/components/_phone-input.css";
 @import "./custom/_rtl.css";
 @import "./custom/pages/_choices.css";
 @import "./custom/_kardosh-dark-mode.css";
@@ -120,8 +126,8 @@
    border-color: var(--color-primary);
 }
 
-/* Dark mode — brighter green for links & CTAs on dark surfaces */
-.dark {
+/* Dark mode — brighter green for links & CTAs (skipped when testing a palette) */
+.dark:not([data-palette]) {
    --color-primary: #00cc4b;
    --color-primary-50: #052e16;
    --color-primary-100: #064e26;

@@ -152,7 +152,7 @@ import ReellyMap from '@/component/reelly/ReellyMap.vue'
 import PropertyListItemSkeleton from '@/component/kardosh/skeleton/PropertyListItemSkeleton.vue'
 import MapSkeleton from '@/component/kardosh/skeleton/MapSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
-import { formatAed } from '@/config/uae'
+import { formatAedInMillions } from '@/config/uae'
 import { useReelly } from '@/composables/useReelly'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { projectDetailPath } from '@/utils/seoRoutes'
@@ -226,7 +226,10 @@ function markerLocation(m) {
 
 function markerPrice(m) {
   if (m.launchPrice) return m.launchPrice
-  if (m.minPrice) return `From ${formatAed(Math.round(m.minPrice))}`
+  if (m.minPrice) {
+    const compact = formatAedInMillions(Math.round(m.minPrice))
+    if (compact) return `From ${compact}`
+  }
   return null
 }
 

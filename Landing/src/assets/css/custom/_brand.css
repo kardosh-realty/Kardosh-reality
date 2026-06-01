@@ -2,10 +2,17 @@
 /*   Kardosh brand overrides     */
 /*===============================*/
 
-/* Primary buttons — solid brand green */
-.btn.bg-primary,
+/* Primary buttons — solid brand (palette-aware via CSS vars) */
+.btn.bg-primary {
+   background-color: var(--color-primary, #00a63e) !important;
+   border-color: var(--color-primary, #00a63e) !important;
+   color: var(--btn-primary-text, #ffffff) !important;
+}
+
 .btn.bg-primary:hover {
-   @apply border-primary text-white;
+   background-color: var(--color-primary-dark, #008f34) !important;
+   border-color: var(--color-primary-dark, #008f34) !important;
+   color: var(--btn-primary-text, #ffffff) !important;
 }
 
 .dark .btn.bg-primary,

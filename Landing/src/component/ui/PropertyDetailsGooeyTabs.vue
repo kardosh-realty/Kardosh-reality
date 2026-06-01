@@ -87,9 +87,21 @@ function setTabRef(id, el) {
 
 function selectTab(id) {
   emit('update:modelValue', id)
+  nextTick(() => scrollActiveTabIntoView(id))
+}
+
+function scrollActiveTabIntoView(id) {
+  if (!screenSize.lessThan('md')) return
+  const tab = tabRefs.value[id]
+  tab?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
 }
 
 function updatePill() {
+  if (screenSize.lessThan('md')) {
+    pillStyle.value = { opacity: 0 }
+    return
+  }
+
   const track = trackRef.value
   const active = tabRefs.value[props.modelValue]
   if (!track || !active) {
@@ -112,6 +124,7 @@ let resizeObserver = null
 onMounted(async () => {
   await nextTick()
   updatePill()
+  scrollActiveTabIntoView(props.modelValue)
 
   if (typeof ResizeObserver !== 'undefined' && trackRef.value) {
     resizeObserver = new ResizeObserver(() => updatePill())
@@ -130,7 +143,9 @@ watch(
   async () => {
     await nextTick()
     updatePill()
+    scrollActiveTabIntoView(props.modelValue)
   },
   { deep: true }
 )
+
 </script>

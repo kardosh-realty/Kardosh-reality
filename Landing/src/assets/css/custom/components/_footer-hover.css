@@ -90,8 +90,10 @@
    width: 100%;
 }
 
-.kardosh-hover-footer__brand .kardosh-brand-img--footer {
+.kardosh-hover-footer__brand .kardosh-brand-img--footer,
+.kardosh-hover-footer__brand .kardosh-brand-img--invert-dark {
    max-height: 4.75rem;
+   filter: brightness(0) invert(1);
 }
 
 .kardosh-hover-footer__tagline {

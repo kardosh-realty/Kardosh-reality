@@ -49,13 +49,11 @@
       <div class="kardosh-header__actions flex shrink-0 items-center gap-2">
         <HeaderThemeButton class="kardosh-header__theme-desktop" />
 
-        <RouterLink
+        <ContactTextSwapButton
           to="/contact"
-          class="kardosh-header__enquire kardosh-header__btn kardosh-header__btn--primary"
+          class="kardosh-header__enquire"
           @click="closeMenu"
-        >
-          Contact
-        </RouterLink>
+        />
 
         <button
           type="button"
@@ -124,13 +122,12 @@
                 <ChevronRight class="kardosh-header__mobile-theme-chevron size-5 shrink-0" aria-hidden="true" />
               </button>
 
-              <RouterLink
+              <ContactTextSwapButton
                 to="/contact"
+                block
                 class="kardosh-header__mobile-contact"
                 @click="closeMenu"
-              >
-                Contact
-              </RouterLink>
+              />
             </div>
           </aside>
         </div>
@@ -148,6 +145,7 @@ import { useTheme } from '@/composables/useTheme'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
 import HeaderThemeButton from '@/component/kardosh/HeaderThemeButton.vue'
 import MenuToggleIcon from '@/component/ui/MenuToggleIcon.vue'
+import ContactTextSwapButton from '@/component/ui/ContactTextSwapButton.vue'
 import { ChevronRight, Moon, Sun } from 'lucide-vue-next'
 
 const props = defineProps({

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { formatAed, formatStartingPrice } from '@/config/uae'
+import { formatAed, formatAedInMillions, formatStartingPrice } from '@/config/uae'
 
 const props = defineProps({
   item: { type: Object, required: true },
@@ -14,7 +14,8 @@ const display = computed(() => {
   if (props.item.listingType === 'rent') {
     return props.item.price ? `${formatAed(props.item.price)}/year` : 'Price on request'
   }
-  return props.item.price ? formatAed(props.item.price) : 'Price on request'
+  const compact = formatAedInMillions(props.item.price)
+  return compact || 'Price on request'
 })
 </script>
 

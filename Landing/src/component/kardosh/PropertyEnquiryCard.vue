@@ -121,29 +121,34 @@ const propertyWhatsApp = computed(() => {
 
 <style scoped>
 .property-contact-card {
-  --pcc-bg: #ffffff;
-  --pcc-border: #e2e8f0;
-  --pcc-header-bg: linear-gradient(160deg, #0f172a 0%, #020617 100%);
-  --pcc-header-fg: #ffffff;
+  --pcc-bg: var(--kardosh-surface, #ffffff);
+  --pcc-border: var(--kardosh-border, #e2e8f0);
+  --pcc-header-bg: linear-gradient(
+    160deg,
+    var(--color-primary-dark, #0f172a) 0%,
+    var(--color-primary, #1e293b) 55%,
+    var(--color-primary-500, #334155) 100%
+  );
+  --pcc-header-fg: var(--btn-primary-text, #ffffff);
   --pcc-badge-bg: rgb(255 255 255 / 0.12);
-  --pcc-badge-fg: #ffffff;
-  --pcc-body-fg: #0f172a;
-  --pcc-muted: #64748b;
-  --pcc-value: #0f172a;
-  --pcc-divider: #e2e8f0;
-  --pcc-mark-bg: #f1f5f9;
+  --pcc-badge-fg: var(--btn-primary-text, #ffffff);
+  --pcc-body-fg: var(--kardosh-ink, #0f172a);
+  --pcc-muted: var(--kardosh-muted, #64748b);
+  --pcc-value: var(--kardosh-ink, #0f172a);
+  --pcc-divider: var(--kardosh-border, #e2e8f0);
+  --pcc-mark-bg: var(--kardosh-logo-surface, var(--kardosh-surface-muted, #f1f5f9));
   --pcc-shadow: 0 16px 48px -20px rgb(15 23 42 / 0.12);
-  --pcc-btn-primary-bg: #00a63e;
-  --pcc-btn-primary-fg: #ffffff;
-  --pcc-btn-primary-border: #008f34;
-  --pcc-btn-secondary-bg: #ffffff;
-  --pcc-btn-secondary-border: #cbd5e1;
-  --pcc-btn-secondary-fg: #0f172a;
-  --pcc-btn-outline-bg: #ffffff;
-  --pcc-btn-outline-border: #e2e8f0;
-  --pcc-btn-outline-fg: #334155;
-  --pcc-whatsapp-border: #cbd5e1;
-  --pcc-whatsapp-hover-bg: #f8fafc;
+  --pcc-btn-primary-bg: var(--btn-primary-bg, var(--color-primary, #00a63e));
+  --pcc-btn-primary-fg: var(--btn-primary-text, #ffffff);
+  --pcc-btn-primary-border: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
+  --pcc-btn-secondary-bg: var(--kardosh-surface, #ffffff);
+  --pcc-btn-secondary-border: var(--kardosh-border, #cbd5e1);
+  --pcc-btn-secondary-fg: var(--kardosh-ink, #0f172a);
+  --pcc-btn-outline-bg: var(--kardosh-surface, #ffffff);
+  --pcc-btn-outline-border: var(--kardosh-border, #e2e8f0);
+  --pcc-btn-outline-fg: var(--kardosh-ink, #334155);
+  --pcc-whatsapp-border: rgb(37 211 102 / 0.45);
+  --pcc-whatsapp-hover-bg: var(--btn-secondary-hover-bg, #f8fafc);
 
   border-radius: 1rem;
   border: 1px solid var(--pcc-border);
@@ -154,29 +159,29 @@ const propertyWhatsApp = computed(() => {
 }
 
 .dark .property-contact-card {
-  --pcc-bg: rgb(15 23 42);
-  --pcc-border: rgb(51 65 85);
-  --pcc-header-bg: linear-gradient(160deg, rgb(30 41 59) 0%, rgb(15 23 42) 55%, rgb(15 23 42) 100%);
-  --pcc-header-fg: #ffffff;
-  --pcc-badge-bg: rgb(255 255 255 / 0.1);
-  --pcc-badge-fg: rgb(248 250 252);
-  --pcc-body-fg: rgb(226 232 240);
-  --pcc-muted: rgb(148 163 184);
-  --pcc-value: #ffffff;
-  --pcc-divider: rgb(51 65 85);
-  --pcc-mark-bg: rgb(30 41 59);
+  --pcc-bg: var(--kardosh-surface, rgb(15 23 42));
+  --pcc-border: var(--kardosh-border, rgb(51 65 85));
+  --pcc-header-bg: linear-gradient(
+    160deg,
+    var(--color-primary-dark, rgb(30 41 59)) 0%,
+    var(--color-primary, rgb(15 23 42)) 55%,
+    var(--kardosh-page, rgb(15 23 42)) 100%
+  );
+  --pcc-header-fg: var(--btn-primary-text, #ffffff);
+  --pcc-body-fg: var(--kardosh-ink, rgb(226 232 240));
+  --pcc-muted: var(--kardosh-muted, rgb(148 163 184));
+  --pcc-value: var(--kardosh-ink, #ffffff);
+  --pcc-divider: var(--kardosh-border, rgb(51 65 85));
+  --pcc-mark-bg: var(--kardosh-logo-surface, rgb(30 41 59));
   --pcc-shadow: 0 20px 50px -16px rgb(0 0 0 / 0.45);
-  --pcc-btn-primary-bg: #34d399;
-  --pcc-btn-primary-fg: rgb(15 23 42);
-  --pcc-btn-primary-border: #10b981;
-  --pcc-btn-secondary-bg: rgb(30 41 59);
-  --pcc-btn-secondary-border: rgb(37 211 102 / 0.45);
-  --pcc-btn-secondary-fg: #ffffff;
-  --pcc-btn-outline-bg: rgb(30 41 59);
-  --pcc-btn-outline-border: rgb(71 85 105);
-  --pcc-btn-outline-fg: rgb(226 232 240);
-  --pcc-whatsapp-border: rgb(37 211 102 / 0.4);
-  --pcc-whatsapp-hover-bg: rgb(37 211 102 / 0.12);
+  --pcc-btn-primary-bg: var(--btn-primary-bg, #34d399);
+  --pcc-btn-primary-fg: var(--btn-primary-text, rgb(15 23 42));
+  --pcc-btn-primary-border: var(--btn-primary-hover, #10b981);
+  --pcc-btn-secondary-bg: var(--kardosh-surface, rgb(30 41 59));
+  --pcc-btn-secondary-fg: var(--kardosh-ink, #ffffff);
+  --pcc-btn-outline-bg: var(--kardosh-surface, rgb(30 41 59));
+  --pcc-btn-outline-border: var(--kardosh-border, rgb(71 85 105));
+  --pcc-btn-outline-fg: var(--kardosh-ink, rgb(226 232 240));
 }
 
 .property-contact-card__header {
@@ -341,8 +346,9 @@ const propertyWhatsApp = computed(() => {
 }
 
 .property-contact-card__btn--primary:hover {
-  background: var(--color-primary-dark, #008f34);
-  border-color: var(--color-primary-dark, #008f34);
+  background: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
+  border-color: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
+  color: var(--btn-primary-text, #ffffff);
   transform: translateY(-1px);
 }
 
@@ -378,14 +384,14 @@ const propertyWhatsApp = computed(() => {
 }
 
 .property-contact-card__btn--outline:hover {
-  border-color: var(--color-primary, #00a63e);
-  background: rgb(240 253 244);
-  color: var(--color-primary-dark, #008f34);
+  border-color: var(--btn-primary-bg, var(--color-primary, #00a63e));
+  background: var(--btn-secondary-hover-bg, rgb(240 253 244));
+  color: var(--btn-secondary-hover-text, var(--color-primary-dark, #008f34));
 }
 
 .dark .property-contact-card__btn--outline:hover {
-  border-color: var(--color-primary, #00cc4b);
-  background: rgb(5 46 22 / 0.45);
-  color: var(--color-primary-300, #00f55a);
+  border-color: var(--btn-primary-bg, var(--color-primary, #00cc4b));
+  background: var(--btn-secondary-hover-bg, rgb(5 46 22 / 0.45));
+  color: var(--btn-secondary-hover-text, var(--color-primary-300, #00f55a));
 }
 </style>

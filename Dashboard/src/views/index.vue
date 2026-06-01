@@ -60,6 +60,7 @@
                         <ChartSkeleton v-if="loading" :height="chartHeight" />
                         <VueApexCharts
                             v-else
+                            :key="chartPrimary"
                             type="area"
                             :height="chartHeight"
                             width="100%"
@@ -279,8 +280,10 @@ import TableSkeleton from '@/components/skeleton/TableSkeleton.vue'
 import LeadCardsSkeleton from '@/components/skeleton/LeadCardsSkeleton.vue'
 import LeadCardList from '@/components/LeadCardList.vue'
 import { useChartHeight } from '@/composables/useChartHeight'
+import { useChartPrimaryColor } from '@/composables/useChartPrimaryColor'
 
 const { chartHeight } = useChartHeight(360, 280, 220)
+const { primary: chartPrimary, colors: chartColors } = useChartPrimaryColor()
 
 const loading = ref(true)
 const loadError = ref('')
@@ -304,7 +307,7 @@ const chartOptions = computed(() => {
             width: '100%',
             toolbar: { show: false },
         },
-        colors: ['#16a34a'],
+        colors: chartColors.value,
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth', width: 2 },
         grid: {

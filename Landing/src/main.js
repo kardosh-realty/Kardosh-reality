@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import { HERO_VIDEO } from '@/config/marketing'
@@ -6,6 +7,7 @@ import { resolveHeroPosterInstant } from '@/config/hero-poster'
 
 import './assets/css/tailwind.css'
 import { initTheme } from '@/composables/useTheme'
+import { initPalette } from '@/composables/usePalette'
 import { initLanguage } from '@/composables/useLanguage'
 import { loadSiteSettings } from '@/composables/useSiteSettings'
 import { loadTestimonials } from '@/composables/useTestimonials'
@@ -18,6 +20,7 @@ if (typeof window !== 'undefined') {
   }
   window.scrollTo(0, 0)
   initTheme()
+  initPalette()
   initLanguage()
 }
 
@@ -44,7 +47,9 @@ if (HERO_VIDEO.poster) {
 }
 
 const app = createApp(App)
+const head = createHead()
 
+app.use(head)
 app.use(router)
 
 app.mount('#app')

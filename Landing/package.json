@@ -5,16 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "node scripts/generate-sitemap.mjs && vite build",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview --host",
     "audit:reelly": "node scripts/audit-reelly-apis.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
     "@tailwindcss/vite": "^4.3.0",
+    "@unhead/vue": "^3.1.1",
     "dompurify": "^3.4.7",
     "jarallax": "^3.0.0",
     "leaflet": "^1.9.4",
+    "libphonenumber-js": "^1.13.4",
     "lucide-vue-next": "^1.0.0",
     "swiper": "^12.1.4",
     "tailwindcss": "^4.3.0",
@@ -22,7 +25,8 @@
     "vue": "^3.5.32",
     "vue-easy-lightbox": "^1.19.0",
     "vue-router": "^5.0.4",
-    "vue-select": "^4.0.0-beta.6"
+    "vue-select": "^4.0.0-beta.6",
+    "vue-tel-input": "^9.8.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
