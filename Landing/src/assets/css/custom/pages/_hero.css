@@ -359,18 +359,22 @@
     --hero-glass-bg: rgb(255 255 255 / 0.1);
     --hero-glass-border: rgb(255 255 255 / 0.2);
     --hero-glass-field: rgb(255 255 255 / 0.08);
+    --hero-glass-veil: rgb(15 23 42 / 0.58);
 
     position: relative;
     border-radius: 1.5rem;
     overflow: visible;
-    background: linear-gradient(
-        145deg,
-        rgb(255 255 255 / 0.16) 0%,
-        rgb(255 255 255 / 0.06) 48%,
-        rgb(255 255 255 / 0.1) 100%
-    );
-    backdrop-filter: blur(36px) saturate(185%);
+    /* Dark veil keeps labels readable when backdrop-filter cannot blur video/iframes */
+    background:
+        linear-gradient(
+            145deg,
+            rgb(255 255 255 / 0.16) 0%,
+            rgb(255 255 255 / 0.06) 48%,
+            rgb(255 255 255 / 0.1) 100%
+        ),
+        var(--hero-glass-veil);
     -webkit-backdrop-filter: blur(36px) saturate(185%);
+    backdrop-filter: blur(36px) saturate(185%);
     border: 1px solid var(--hero-glass-border);
     box-shadow:
         0 28px 80px rgb(0 0 0 / 0.45),
@@ -378,10 +382,18 @@
         inset 0 -1px 0 rgb(255 255 255 / 0.06);
 }
 
+/* YouTube iframes are not blurred by backdrop-filter — use a stronger veil */
+.home-hero:has(.hero-youtube-wrap) .hero-search-glass {
+    --hero-glass-veil: rgb(15 23 42 / 0.82);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
 .hero-search-glass::before {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 0;
     border-radius: inherit;
     background: linear-gradient(
         180deg,
@@ -391,9 +403,13 @@
     pointer-events: none;
 }
 
-@supports not (backdrop-filter: blur(1px)) {
+@supports not (
+    (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+) {
     .hero-search-glass {
-        background: rgb(15 23 42 / 0.88);
+        --hero-glass-veil: rgb(15 23 42 / 0.88);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
     }
 }
 
@@ -477,14 +493,16 @@
         --hero-field-gap: 0.375rem;
 
         border-radius: 1.25rem;
-        background: linear-gradient(
-            145deg,
-            rgb(255 255 255 / 0.14) 0%,
-            rgb(255 255 255 / 0.07) 50%,
-            rgb(255 255 255 / 0.11) 100%
-        );
-        backdrop-filter: blur(32px) saturate(180%);
+        background:
+            linear-gradient(
+                145deg,
+                rgb(255 255 255 / 0.14) 0%,
+                rgb(255 255 255 / 0.07) 50%,
+                rgb(255 255 255 / 0.11) 100%
+            ),
+            var(--hero-glass-veil);
         -webkit-backdrop-filter: blur(32px) saturate(180%);
+        backdrop-filter: blur(32px) saturate(180%);
     }
 
     .hero-search-panel {
