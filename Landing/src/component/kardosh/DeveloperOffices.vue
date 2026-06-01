@@ -54,7 +54,7 @@
         </a>
 
         <ul
-          v-if="office.workingHours.length"
+          v-if="office.workingHours?.length"
           class="mt-4 space-y-1.5 list-none p-0 text-sm text-slate-500 dark:text-slate-400"
         >
           <li

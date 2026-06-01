@@ -224,7 +224,11 @@ export async function resolveDeveloperIdBySlug(param) {
   }
 
   await loadProjects()
-  const projectHit = projects.value.find((p) => p.developerId && slugify(p.developer) === want)
+  const projectHit = projects.value.find(
+    (p) =>
+      slugify(p.developer) === want ||
+      (wantLegacy && slugify(p.developer) === wantLegacy)
+  )
   if (projectHit?.developerId) return projectHit.developerId
 
   const statName = Object.keys(buildDeveloperStats(projects.value)).find((n) => slugify(n) === want)

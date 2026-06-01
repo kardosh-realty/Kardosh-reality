@@ -18,13 +18,10 @@ const hideChrome = computed(
 
 <template>
   <AnalyticsScripts />
-  <RouterView v-slot="{ Component, route }">
-    <Transition name="page-cross" mode="out-in">
-      <!-- Use route name so /developer/damac → /developer/12-damac redirects do not remount and blank the transition -->
-      <div v-if="Component" :key="route.name || route.path" class="page-view">
-        <component :is="Component" />
-      </div>
-    </Transition>
+  <RouterView v-slot="{ Component }">
+    <div v-if="Component" class="page-view">
+      <component :is="Component" />
+    </div>
   </RouterView>
   <WhatsAppFloat v-if="!hideChrome" />
   <ScrollToTop v-if="!hideChrome" />

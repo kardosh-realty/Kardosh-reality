@@ -193,8 +193,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, provide } from 'vue'
-import { useRoute, useRouter, RouterLink } from 'vue-router'
+import { ref, computed, onMounted, watch, provide } from 'vue'
+import { useRoute, RouterLink } from 'vue-router'
 import { Globe, ExternalLink } from 'lucide-vue-next'
 import Navbar from '@/component/navbar.vue'
 import Footer from '@/component/footer.vue'
@@ -206,10 +206,8 @@ import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
-import { developerDetailPath, isNumericRouteParam, normalizeRouteSlug } from '@/utils/seoRoutes'
 
 const route = useRoute()
-const router = useRouter()
 const developer = ref(null)
 const loading = ref(true)
 const projectsLoading = ref(false)
@@ -247,7 +245,6 @@ const profileStats = computed(() => {
   ]
 })
 
-/** Prefer API project list; merge with live catalogue for enriched cards */
 const displayProjects = computed(() => {
   const d = developer.value
   if (!d) return []
@@ -278,43 +275,31 @@ function socialLabel(link) {
   return link?.platform || link?.type || link?.name || 'Social'
 }
 
-async function loadDeveloper(slugParam) {
-  const param = normalizeRouteSlug(slugParam)
+async function loadPage() {
+  const param = route.params.slug
+  if (!param) return
+
   loading.value = true
   error.value = null
-  developer.value = null
+
   try {
+    projectsLoading.value = true
+    await loadProjects()
     developer.value = await fetchDeveloperDetail(param)
-    if (developer.value) {
-      const canonical = developerDetailPath(developer.value)
-      const legacyNumeric = isNumericRouteParam(param) || /^\d+-/.test(param)
-      if (legacyNumeric && route.path !== canonical) {
-        router.replace(canonical)
-      }
-    }
   } catch (e) {
     error.value = e?.message || 'Developer not found'
     developer.value = null
   } finally {
     loading.value = false
-  }
-
-  projectsLoading.value = true
-  try {
-    await loadProjects()
-  } finally {
     projectsLoading.value = false
   }
 }
 
 onMounted(() => {
-  void loadDeveloper(route.params.slug)
+  void loadPage()
 })
 
-watch(
-  () => route.params.slug,
-  (slug) => {
-    if (slug) void loadDeveloper(slug)
-  }
-)
+watch(() => route.params.slug, () => {
+  void loadPage()
+})
 </script>
