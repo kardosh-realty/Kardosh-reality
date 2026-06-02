@@ -202,14 +202,15 @@
                 </div>
 
                 <div class="kardosh-btn-row mt-6">
-                  <button
+                  <StatusButton
                     type="submit"
-                    :disabled="submitting"
-                    class="btn bg-primary hover:bg-primary-dark text-white rounded-lg inline-flex items-center justify-center gap-2 px-6"
-                  >
-                    {{ submitting ? 'Sending…' : 'Send message' }}
-                    <Send v-if="!submitting" class="size-4" aria-hidden="true" />
-                  </button>
+                    :status="submitStatus"
+                    :labels="{
+                      idle: 'Send message',
+                      loading: 'Sending',
+                      success: 'Sent',
+                    }"
+                  />
                   <a
                     :href="enquiryWhatsAppLink"
                     target="_blank"
@@ -246,7 +247,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { Building2, Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Send, Shield, X } from 'lucide-vue-next'
+import { Building2, Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Shield, X } from 'lucide-vue-next'
+import StatusButton from '@/components/ui/StatusButton.vue'
 import { BRAND, RERA_LICENSE_LABEL, SOCIAL } from '@/config/brand'
 import { CONTACT, GOOGLE_MAP_EMBED, GOOGLE_MAPS_DIRECTIONS } from '@/config/uae'
 import { whatsAppLink, WHATSAPP } from '@/config/marketing'
@@ -274,7 +276,7 @@ const form = ref({
   listingType: 'sale',
 })
 
-const submitting = ref(false)
+const submitStatus = ref('idle')
 const formError = ref('')
 const formSuccess = ref('')
 const phoneError = ref('')
@@ -371,7 +373,7 @@ async function onSubmit() {
     return
   }
 
-  submitting.value = true
+  submitStatus.value = 'loading'
   try {
     const result = await submitLead({
       name: form.value.name,
@@ -390,13 +392,22 @@ async function onSubmit() {
       form.value = { name: '', email: '', phone: '', message: '', listingType: 'sale' }
       phoneError.value = ''
       clearRegarding()
+      submitStatus.value = 'success'
+      window.setTimeout(() => {
+        submitStatus.value = 'idle'
+      }, 2000)
     } else if (result.dev) {
       formSuccess.value = 'Message received (dev mode). Connect Supabase to store leads.'
+      submitStatus.value = 'success'
+      window.setTimeout(() => {
+        submitStatus.value = 'idle'
+      }, 2000)
+    } else {
+      submitStatus.value = 'idle'
     }
   } catch (e) {
     formError.value = e.message || 'Could not send message. Please try again.'
-  } finally {
-    submitting.value = false
+    submitStatus.value = 'idle'
   }
 }
 </script>
