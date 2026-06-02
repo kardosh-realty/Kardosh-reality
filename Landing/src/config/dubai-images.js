@@ -6,6 +6,7 @@ import heroSkyline from '@/assets/images/bg/01.jpg'
 import heroMarina from '@/assets/images/bg/02.jpg'
 import heroDistrict from '@/assets/images/bg/03.jpg'
 import heroTwilight from '@/assets/images/bg/04.jpg'
+import { DEFAULT_HERO_POSTER } from '@/config/hero-poster'
 import aboutEditorial from '@/assets/images/about.jpg'
 import whyInvestDubai from '@/assets/images/Why invest in Dubai.jpg'
 import property1 from '@/assets/images/property/1.jpg'
@@ -41,7 +42,7 @@ export const SECTION_IMAGES = {
   about: aboutEditorial,
   whyInvest: whyInvestDubai,
   cta: heroTwilight,
-  homeHeroPoster: heroTwilight,
+  homeHeroPoster: DEFAULT_HERO_POSTER,
 }
 
 /** Per-community card & detail hero */

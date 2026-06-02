@@ -52,23 +52,21 @@ const HERO_YOUTUBE_ID_FROM_ENV = parseYouTubeId(
   import.meta.env.VITE_HERO_YOUTUBE_ID || import.meta.env.VITE_HERO_YOUTUBE_URL || ''
 )
 
-const HERO_FORCE_LOCAL = ['true', '1', 'yes'].includes(
+const HERO_VIDEO_URL = String(import.meta.env.VITE_HERO_VIDEO_URL || '').trim()
+
+const HERO_FORCE_DIRECT = ['true', '1', 'yes'].includes(
   String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
 )
 
-const HERO_FORCE_YOUTUBE = ['false', '0', 'no'].includes(
-  String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
-)
+/** Direct MP4 when VITE_HERO_VIDEO_URL is set (CDN https://… or /videos/… in public/) */
+export const HERO_USE_DIRECT_VIDEO = Boolean(HERO_VIDEO_URL)
 
-/**
- * Self-hosted MP4 at public/videos/dubai-hero.mp4 — default when YouTube is not configured.
- * Set VITE_HERO_USE_LOCAL_VIDEO=true on Vercel, or remove VITE_HERO_YOUTUBE_URL there.
- */
-export const HERO_USE_LOCAL_VIDEO =
-  HERO_FORCE_LOCAL || (!HERO_FORCE_YOUTUBE && !HERO_YOUTUBE_ID_FROM_ENV)
+/** @deprecated alias */
+export const HERO_USE_LOCAL_VIDEO = HERO_USE_DIRECT_VIDEO
 
-/** Active only when YouTube URL/id is in env and local video is not forced */
-export const HERO_YOUTUBE_ID = HERO_USE_LOCAL_VIDEO ? null : HERO_YOUTUBE_ID_FROM_ENV
+/** YouTube embed when configured and direct video is not in use */
+export const HERO_YOUTUBE_ID =
+  HERO_USE_DIRECT_VIDEO || HERO_FORCE_DIRECT ? null : HERO_YOUTUBE_ID_FROM_ENV || null
 
 /** YouTube still frame for hero poster while the embed loads */
 export function heroYouTubeThumbnailUrl(videoId, quality = 'hqdefault') {
@@ -97,11 +95,10 @@ export function heroYouTubeEmbedUrl(videoId, options = {}) {
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`
 }
 
-/** MP4 fallback when VITE_HERO_YOUTUBE_* is empty — `public/videos/dubai-hero.mp4` */
+/** Background video — set VITE_HERO_VIDEO_URL to a CDN MP4 link (recommended) or /videos/... in public/ */
 export const HERO_VIDEO = {
-  src: import.meta.env.VITE_HERO_VIDEO_URL || '/videos/dubai-hero.mp4',
+  src: HERO_VIDEO_URL,
   poster: resolveHeroPosterPath(import.meta.env.VITE_HERO_VIDEO_POSTER || ''),
-  /** Optional lightweight poster shown while `poster` loads (e.g. WebP ~80kb) */
   posterFast: resolveHeroPosterPath(import.meta.env.VITE_HERO_VIDEO_POSTER_FAST || ''),
 }
 

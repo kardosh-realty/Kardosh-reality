@@ -3,7 +3,6 @@ import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import { HERO_VIDEO } from '@/config/marketing'
-import { resolveHeroPosterInstant } from '@/config/hero-poster'
 
 import './assets/css/tailwind.css'
 import { initTheme } from '@/composables/useTheme'
@@ -39,11 +38,9 @@ function preloadHeroImage(href, priority = 'high') {
   img.src = href
 }
 
-/** Preload only the lightweight instant frame — full poster loads via useHeroPosterGate */
+/** Preload the hero poster (LCP) — single brand image, no stock underlay */
 if (HERO_VIDEO.poster) {
-  const instant = resolveHeroPosterInstant(HERO_VIDEO.poster)
-  const lcpPoster = instant && instant !== HERO_VIDEO.poster ? instant : HERO_VIDEO.poster
-  preloadHeroImage(lcpPoster, 'high')
+  preloadHeroImage(HERO_VIDEO.poster, 'high')
 }
 
 const app = createApp(App)

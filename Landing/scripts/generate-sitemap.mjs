@@ -218,11 +218,28 @@ ${body}
   const robotsPath = path.join(publicDir, 'robots.txt')
   let robots = fs.readFileSync(robotsPath, 'utf8')
   const sitemapLine = `Sitemap: ${SITE_URL}/sitemap.xml`
+  const llmsLine = `LLMs: ${SITE_URL}/llms.txt`
+  const llmsFullLine = `LLMs-Full: ${SITE_URL}/llms-full.txt`
+
   if (!robots.includes('Sitemap:')) {
     robots = `${robots.trim()}\n\n${sitemapLine}\n`
   } else {
     robots = robots.replace(/Sitemap:.*/g, sitemapLine)
   }
+
+  if (!robots.includes('LLMs:')) {
+    robots = `${robots.trim()}\n\n# AI / LLM context (llms.txt)\n${llmsLine}\n${llmsFullLine}\n`
+  } else {
+    robots = robots.replace(/LLMs:.*/g, llmsLine).replace(/LLMs-Full:.*/g, llmsFullLine)
+  }
+
+  if (!robots.includes('Allow: /llms.txt')) {
+    robots = robots.replace(
+      /^(User-agent: \*\r?\nAllow: \/\r?\n)/m,
+      '$1Allow: /llms.txt\nAllow: /llms-full.txt\n'
+    )
+  }
+
   fs.writeFileSync(robotsPath, robots, 'utf8')
 
   console.log(`[sitemap] Wrote ${locs.size} URLs → public/sitemap.xml (${SITE_URL})`)

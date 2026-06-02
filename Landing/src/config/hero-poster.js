@@ -2,6 +2,10 @@ import hero01 from '@/assets/images/bg/01.jpg'
 import hero02 from '@/assets/images/bg/02.jpg'
 import hero03 from '@/assets/images/bg/03.jpg'
 import hero04 from '@/assets/images/bg/04.jpg'
+import hero001 from '@/assets/images/bg/001.webp'
+
+/** Default hero still shown until background video plays */
+export const DEFAULT_HERO_POSTER = hero001
 
 /** All images under src/assets/images/bg (includes custom 001.webp etc.) */
 const BG_GLOB = import.meta.glob('@/assets/images/bg/*.{jpg,jpeg,webp,png,JPG,WEBP,PNG}', {
@@ -16,6 +20,7 @@ const BY_FILENAME = {
   '03.jpg': hero03,
   '04.jpg': hero04,
   '001.jpg': hero01,
+  '001.webp': hero001,
 }
 
 function bundledPosterUrl(filename) {
@@ -32,7 +37,7 @@ function bundledPosterUrl(filename) {
  * Raw `/assets/images/...` paths are not served by Vite unless imported.
  */
 export function resolveHeroPosterPath(envPath) {
-  if (!envPath) return ''
+  if (!envPath) return DEFAULT_HERO_POSTER
   const trimmed = String(envPath).trim()
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   const file = trimmed.split('/').pop() || trimmed
@@ -45,17 +50,11 @@ export const HAS_CUSTOM_HERO_POSTER = Boolean(
 )
 
 /**
- * Small image shown under the WebP/JPG poster until the main file paints (avoids empty hero).
- * Uses VITE_HERO_VIDEO_POSTER_FAST, else a light bundled frame (04.jpg).
+ * Optional tiny placeholder while the main poster loads.
+ * We do not stack a different stock image under the brand poster by default.
  */
 export function resolveHeroPosterInstant(resolvedFullUrl) {
   const fast = resolveHeroPosterPath(import.meta.env.VITE_HERO_VIDEO_POSTER_FAST || '')
   if (fast && fast !== resolvedFullUrl) return fast
-
-  if (HAS_CUSTOM_HERO_POSTER && resolvedFullUrl) {
-    const light = bundledPosterUrl('04.jpg') || hero04
-    if (light && light !== resolvedFullUrl) return light
-  }
-
   return ''
 }

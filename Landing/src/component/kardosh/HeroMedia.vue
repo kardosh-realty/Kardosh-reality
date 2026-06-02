@@ -53,7 +53,7 @@
         disablepictureinpicture
         disableremoteplayback
         controlslist="nodownload nofullscreen noremoteplayback"
-        preload="none"
+        preload="metadata"
         aria-hidden="true"
         @playing="onVideoPlaying"
         @error="useMp4 = false"
