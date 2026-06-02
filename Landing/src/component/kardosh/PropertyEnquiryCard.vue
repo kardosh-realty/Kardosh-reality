@@ -33,31 +33,36 @@
       </div>
 
       <div class="property-contact-card__actions">
-        <RouterLink :to="contactLink" class="property-contact-card__btn property-contact-card__btn--primary">
-          <MessageCircle class="property-contact-card__icon" aria-hidden="true" />
-          <span>Contact about this property</span>
+        <RouterLink :to="contactLink" class="property-contact-card__cta property-contact-card__cta--primary">
+          <span class="property-contact-card__cta-icon property-contact-card__cta-icon--light" aria-hidden="true">
+            <SendHorizontal class="size-[1.125rem]" />
+          </span>
+          <span class="property-contact-card__cta-label">Contact about this property</span>
+          <ChevronRight class="property-contact-card__cta-arrow" aria-hidden="true" />
         </RouterLink>
 
         <a
           :href="propertyWhatsApp"
           target="_blank"
-          rel="noopener"
-          class="property-contact-card__btn property-contact-card__btn--whatsapp"
+          rel="noopener noreferrer"
+          class="property-contact-card__cta property-contact-card__cta--whatsapp"
         >
-          <MessageCircle class="property-contact-card__icon" aria-hidden="true" />
-          <span>WhatsApp</span>
+          <span class="property-contact-card__cta-icon property-contact-card__cta-icon--whatsapp" aria-hidden="true">
+            <WhatsAppIcon />
+          </span>
+          <span class="property-contact-card__cta-label">WhatsApp</span>
         </a>
 
-        <div class="property-contact-card__btn-row">
-          <a :href="CONTACT.phoneTel" class="property-contact-card__btn property-contact-card__btn--outline">
-            <Phone class="property-contact-card__icon" aria-hidden="true" />
+        <div class="property-contact-card__cta-duo">
+          <a :href="CONTACT.phoneTel" class="property-contact-card__cta property-contact-card__cta--ghost">
+            <Phone class="size-[1.125rem]" aria-hidden="true" />
             <span>Call</span>
           </a>
           <a
             :href="`mailto:${CONTACT.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`"
-            class="property-contact-card__btn property-contact-card__btn--outline"
+            class="property-contact-card__cta property-contact-card__cta--ghost"
           >
-            <Mail class="property-contact-card__icon" aria-hidden="true" />
+            <Mail class="size-[1.125rem]" aria-hidden="true" />
             <span>Email</span>
           </a>
         </div>
@@ -72,8 +77,9 @@ import { RouterLink } from 'vue-router'
 import { BRAND } from '@/config/brand'
 import { CONTACT, formatArea, formatStartingPrice } from '@/config/uae'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
+import WhatsAppIcon from '@/components/ui/WhatsAppIcon.vue'
 import { WHATSAPP } from '@/config/marketing'
-import { MessageCircle, Phone, Mail } from 'lucide-vue-next'
+import { ChevronRight, Mail, Phone, SendHorizontal } from 'lucide-vue-next'
 
 const props = defineProps({
   property: { type: Object, required: true },
@@ -310,88 +316,239 @@ const propertyWhatsApp = computed(() => {
 .property-contact-card__actions {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
+  gap: 0.75rem;
 }
 
-.property-contact-card__btn {
-  display: flex;
+.property-contact-card__cta {
+  position: relative;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   width: 100%;
   min-height: 3rem;
-  padding: 0.75rem 1.125rem;
-  font-size: 1rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.25;
   text-align: center;
-  white-space: nowrap;
   text-decoration: none;
-  border-radius: 0.625rem;
+  border-radius: 9999px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  transition:
+    background-color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.property-contact-card__icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.property-contact-card__cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 42%,
+    rgb(255 255 255 / 0.16) 50%,
+    transparent 58%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.property-contact-card__cta-label,
+.property-contact-card__cta-icon,
+.property-contact-card__cta-arrow,
+.property-contact-card__cta--ghost svg {
+  position: relative;
+  z-index: 1;
+  transition:
+    transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.property-contact-card__cta-arrow {
+  width: 1rem;
+  height: 1rem;
+  margin-inline-start: auto;
+  opacity: 0;
+  transform: translateX(-6px);
   flex-shrink: 0;
 }
 
-.property-contact-card__btn--primary {
+.property-contact-card__cta:active {
+  transform: scale(0.97);
+}
+
+.property-contact-card__cta:focus-visible {
+  outline: 2px solid var(--color-primary, #1e3a5f);
+  outline-offset: 3px;
+}
+
+.property-contact-card__cta-label {
+  min-width: 0;
+  white-space: normal;
+}
+
+.property-contact-card__cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+}
+
+.property-contact-card__cta-icon--light {
+  background: rgb(255 255 255 / 0.14);
+  color: var(--pcc-header-fg, #ffffff);
+}
+
+.property-contact-card__cta-icon--whatsapp {
+  background: rgb(37 211 102 / 0.14);
+  color: #128c7e;
+}
+
+.dark .property-contact-card__cta-icon--whatsapp {
+  background: rgb(37 211 102 / 0.2);
+  color: #25d366;
+}
+
+/* Primary */
+.property-contact-card__cta--primary {
   background: var(--pcc-btn-primary-bg);
   border-color: var(--pcc-btn-primary-border);
   color: var(--pcc-btn-primary-fg);
+  box-shadow: 0 8px 22px rgb(30 58 95 / 0.22);
 }
 
-.property-contact-card__btn--primary:hover {
-  background: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
-  border-color: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
-  color: var(--btn-primary-text, #ffffff);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .property-contact-card__cta--primary:hover {
+    background: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
+    border-color: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
+    box-shadow: 0 10px 28px rgb(30 58 95 / 0.28);
+  }
+
+  .property-contact-card__cta--primary:hover::before {
+    transform: translateX(120%);
+  }
+
+  .property-contact-card__cta--primary:hover .property-contact-card__cta-icon--light {
+    transform: scale(1.1) rotate(-6deg);
+  }
+
+  .property-contact-card__cta--primary:hover .property-contact-card__cta-label {
+    transform: translateX(2px);
+  }
+
+  .property-contact-card__cta--primary:hover .property-contact-card__cta-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.dark .property-contact-card__btn--primary:hover {
-  filter: none;
+/* WhatsApp */
+.property-contact-card__cta--whatsapp {
+  background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-color: rgb(37 211 102 / 0.35);
+  color: #14532d;
+  box-shadow: 0 1px 3px rgb(20 83 45 / 0.08);
 }
 
-.property-contact-card__btn--whatsapp {
-  background: var(--pcc-btn-secondary-bg);
-  border-color: var(--pcc-whatsapp-border);
-  color: var(--pcc-btn-secondary-fg);
+@media (hover: hover) and (pointer: fine) {
+  .property-contact-card__cta--whatsapp:hover {
+    background: #dcfce7;
+    border-color: rgb(37 211 102 / 0.55);
+    box-shadow: 0 4px 14px rgb(37 211 102 / 0.16);
+  }
+
+  .property-contact-card__cta--whatsapp:hover::before {
+    transform: translateX(120%);
+  }
+
+  .property-contact-card__cta--whatsapp:hover .property-contact-card__cta-icon--whatsapp {
+    transform: scale(1.12);
+  }
+
+  .property-contact-card__cta--whatsapp:hover .property-contact-card__cta-label {
+    transform: translateX(2px);
+  }
 }
 
-.property-contact-card__btn--whatsapp:hover {
-  background: var(--pcc-whatsapp-hover-bg);
-  border-color: rgb(37 211 102 / 0.65);
+.dark .property-contact-card__cta--whatsapp {
+  background: rgb(6 78 59 / 0.35);
+  border-color: rgb(37 211 102 / 0.4);
+  color: #bbf7d0;
 }
 
-.dark .property-contact-card__btn--whatsapp:hover {
-  color: #ffffff;
+@media (hover: hover) and (pointer: fine) {
+  .dark .property-contact-card__cta--whatsapp:hover {
+    background: rgb(6 95 70 / 0.45);
+    border-color: rgb(37 211 102 / 0.6);
+  }
 }
 
-.property-contact-card__btn-row {
+/* Call + Email */
+.property-contact-card__cta-duo {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.625rem;
 }
 
-.property-contact-card__btn--outline {
+.property-contact-card__cta--ghost {
   background: var(--pcc-btn-outline-bg);
   border-color: var(--pcc-btn-outline-border);
   color: var(--pcc-btn-outline-fg);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
 }
 
-.property-contact-card__btn--outline:hover {
-  border-color: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
-  background: var(--btn-secondary-hover-bg, rgb(240 253 244));
-  color: var(--btn-secondary-hover-text, var(--color-primary-dark, #152a45));
+@media (hover: hover) and (pointer: fine) {
+  .property-contact-card__cta--ghost:hover {
+    border-color: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
+    background: var(--btn-secondary-hover-bg, #f8fafc);
+    color: var(--btn-secondary-hover-text, var(--color-primary-dark, #152a45));
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.06);
+  }
+
+  .property-contact-card__cta--ghost:hover::before {
+    transform: translateX(120%);
+  }
+
+  .property-contact-card__cta--ghost:hover svg {
+    transform: translateY(-1px) scale(1.1);
+  }
+
+  .dark .property-contact-card__cta--ghost:hover {
+    border-color: var(--btn-primary-bg, var(--color-primary, #7eb3e8));
+    background: rgb(51 65 85 / 0.45);
+    color: var(--btn-secondary-hover-text, #e2e8f0);
+  }
 }
 
-.dark .property-contact-card__btn--outline:hover {
-  border-color: var(--btn-primary-bg, var(--color-primary, #7eb3e8));
-  background: var(--btn-secondary-hover-bg, rgb(5 46 22 / 0.45));
-  color: var(--btn-secondary-hover-text, var(--color-primary-300, #00f55a));
+@media (prefers-reduced-motion: reduce) {
+  .property-contact-card__cta,
+  .property-contact-card__cta::before,
+  .property-contact-card__cta-label,
+  .property-contact-card__cta-icon,
+  .property-contact-card__cta-arrow,
+  .property-contact-card__cta--ghost svg {
+    transition: none;
+  }
+
+  .property-contact-card__cta:active {
+    transform: none;
+  }
+
+  .property-contact-card__cta-arrow {
+    opacity: 1;
+    transform: none;
+  }
 }
 </style>
