@@ -84,6 +84,7 @@ import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleto
 import { communityHeroImage } from '@/config/dubai-images'
 import { loadVisibility, isCommunityHidden } from '@/services/visibility'
 import { useSeo } from '@/composables/useSeo'
+import { buildCommunitySchema } from '@/config/schema'
 import { truncateDescription } from '@/config/seo'
 
 const route = useRoute()
@@ -113,6 +114,7 @@ useSeo(() => {
     ),
     path: route.path,
     robots: c ? 'index, follow' : 'noindex, follow',
+    schema: c ? buildCommunitySchema(c, route.path, emirateName.value) : null,
   }
 })
 

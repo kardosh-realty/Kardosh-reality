@@ -17,6 +17,8 @@ export const ROUTE_BREADCRUMB_TRAILS = {
   'why-dubai': [{ label: 'Why Dubai', to: '/why-dubai' }],
   aboutus: [{ label: 'About', to: '/aboutus' }],
   contact: [{ label: 'Contact', to: '/contact' }],
+  blogs: [{ label: 'Insights', to: '/blogs' }],
+  'blog-detail': [{ label: 'Insights', to: '/blogs' }],
   terms: [{ label: 'Terms', to: '/terms' }],
   privacy: [{ label: 'Privacy', to: '/privacy' }],
   NotFound: [{ label: 'Page not found' }],

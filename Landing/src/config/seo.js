@@ -84,6 +84,11 @@ export const ROUTE_SEO = {
     description: 'Submit your property experience review for Kardosh Realty.',
     robots: 'noindex, nofollow',
   },
+  'grid-map': {
+    title: `Off-Plan Map — UAE Projects | ${SITE_NAME}`,
+    description:
+      'Explore off-plan projects across the UAE on an interactive map. Filter by area and browse new launches from leading developers.',
+  },
 }
 
 export function absoluteUrl(path = '/') {

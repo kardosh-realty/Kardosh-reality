@@ -62,6 +62,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchBlogBySlug } from '@/services/blogs'
 import { formatBlogBodyForDisplay } from '@/utils/renderBlogBody'
 import { useSeo } from '@/composables/useSeo'
+import { buildBlogPostingSchema } from '@/config/schema'
 import BlogDetailSkeleton from '@/component/kardosh/skeleton/BlogDetailSkeleton.vue'
 
 const route = useRoute()
@@ -80,6 +81,7 @@ useSeo(() => {
     image: p?.image,
     ogType: 'article',
     robots: notFound.value ? 'noindex, follow' : 'index, follow',
+    schema: p && !notFound.value ? buildBlogPostingSchema(p, route.path) : null,
   }
 })
 

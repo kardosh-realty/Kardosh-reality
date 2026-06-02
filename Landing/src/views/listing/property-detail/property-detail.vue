@@ -216,6 +216,7 @@ import { ref, computed, watch, onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSeo } from '@/composables/useSeo'
 import { truncateDescription } from '@/config/seo'
+import { buildPropertySchema } from '@/config/schema'
 import { formatAedInMillions, formatArea } from '@/config/uae'
 import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos } from '@/composables/useReelly'
 import { developerDetailPath, projectDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
@@ -354,6 +355,7 @@ useSeo(() => {
     image,
     ogType: 'article',
     robots: isEmbed.value ? 'noindex, nofollow' : 'index, follow',
+    schema: isEmbed.value ? null : buildPropertySchema(p, route.path),
   }
 })
 

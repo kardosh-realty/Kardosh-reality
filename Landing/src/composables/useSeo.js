@@ -7,6 +7,18 @@ import {
   absoluteUrl,
   truncateDescription,
 } from '@/config/seo'
+import { buildStaticRouteSchema } from '@/config/schema'
+
+function schemaScripts(schema) {
+  if (!schema) return undefined
+  return [
+    {
+      type: 'application/ld+json',
+      key: 'json-ld',
+      innerHTML: JSON.stringify(schema),
+    },
+  ]
+}
 
 function buildHead(input = {}) {
   const title = input.title || `${SITE_NAME} — UAE Real Estate`
@@ -38,6 +50,7 @@ function buildHead(input = {}) {
     ],
     link: [{ rel: 'canonical', href: canonical }],
     htmlAttrs: { lang: 'en' },
+    script: schemaScripts(input.schema),
   }
 }
 
@@ -55,12 +68,19 @@ export function useRouteSeo() {
   useHead(() => {
     if (route.meta.dynamicSeo) return {}
     const preset = route.meta.seo || ROUTE_SEO[route.name]
+    const path = route.fullPath.split('?')[0]
+
     if (!preset) {
-      return buildHead({ path: route.path })
+      return buildHead({
+        path,
+        schema: buildStaticRouteSchema(route),
+      })
     }
+
     return buildHead({
       ...preset,
-      path: route.fullPath.split('?')[0],
+      path,
+      schema: buildStaticRouteSchema(route),
     })
   })
 }

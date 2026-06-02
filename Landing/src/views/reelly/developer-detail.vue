@@ -208,6 +208,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchDeveloperDetail, useReelly } from '@/composables/useReelly'
 import { useSeo } from '@/composables/useSeo'
 import { truncateDescription } from '@/config/seo'
+import { buildDeveloperSchema } from '@/config/schema'
 
 const route = useRoute()
 const developer = ref(null)
@@ -250,6 +251,7 @@ useSeo(() => {
     path: route.path,
     image: d?.logo?.url,
     ogType: 'profile',
+    schema: buildDeveloperSchema(d, route.path),
   }
 })
 

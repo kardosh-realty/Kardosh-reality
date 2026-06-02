@@ -13,6 +13,7 @@ function rowToBlog(row) {
     excerpt: row.excerpt || '',
     body: row.body || '',
     image: row.cover_image_url || '',
+    publishedAt: date || undefined,
     type: row.category || 'Insights',
     author: row.author_name || 'Kardosh Realty',
     readMinutes: row.read_minutes ?? 5,
