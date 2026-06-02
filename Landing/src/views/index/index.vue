@@ -8,6 +8,7 @@
     <WhyInvestDubai />
     <FeaturedDevelopers />
     <MostSoldOffPlan />
+    <HomeCommunities />
     <About />
     <InternationalBrokerStrip />
     <Client />
@@ -34,6 +35,7 @@ const DeveloperLogoMarquee = defineAsyncComponent(
 )
 const FeaturedDevelopers = defineAsyncComponent(() => import('@/component/kardosh/home/FeaturedDevelopers.vue'))
 const MostSoldOffPlan = defineAsyncComponent(() => import('@/component/kardosh/home/MostSoldOffPlan.vue'))
+const HomeCommunities = defineAsyncComponent(() => import('@/component/kardosh/home/HomeCommunities.vue'))
 const About = defineAsyncComponent(() => import('@/component/about.vue'))
 const InternationalBrokerStrip = defineAsyncComponent(
   () => import('@/component/kardosh/home/InternationalBrokerStrip.vue')

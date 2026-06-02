@@ -1,6 +1,6 @@
 /**
  * Dubai / UAE photography used site-wide for brand authenticity.
- * Swap files under src/assets/images when client provides final shots.
+ * Community cards use curated Dubai/UAE stock — replace with client shots when ready.
  */
 import heroSkyline from '@/assets/images/bg/01.jpg'
 import heroMarina from '@/assets/images/bg/02.jpg'
@@ -10,11 +10,14 @@ import { DEFAULT_HERO_POSTER } from '@/config/hero-poster'
 import aboutEditorial from '@/assets/images/about.jpg'
 import whyInvestDubai from '@/assets/images/why-invest-dubai.webp'
 import property1 from '@/assets/images/property/1.jpg'
-import property2 from '@/assets/images/property/2.jpg'
-import property3 from '@/assets/images/property/3.jpg'
-import property4 from '@/assets/images/property/4.jpg'
-import property5 from '@/assets/images/property/5.jpg'
-import property6 from '@/assets/images/property/6.jpg'
+
+import downtownDubai from '@/assets/images/communities/downtown-dubai.jpg'
+import businessBay from '@/assets/images/communities/business-bay.jpg'
+import dubaiHills from '@/assets/images/communities/dubai-hills.jpg'
+import palmJumeirah from '@/assets/images/communities/palm-jumeirah.jpg'
+import dubaiCreekHarbour from '@/assets/images/communities/dubai-creek-harbour.jpg'
+import jvc from '@/assets/images/communities/jvc.jpg'
+import dubaiMarina from '@/assets/images/communities/dubai-marina.jpg'
 
 /** Default when Reelly has no cover image */
 export const DUBAI_PROPERTY_FALLBACK = property1
@@ -25,7 +28,7 @@ export const PAGE_HERO_IMAGES = {
   about: heroSkyline,
   offPlan: heroTwilight,
   rent: heroMarina,
-  communities: heroDistrict,
+  communities: downtownDubai,
   developers: heroSkyline,
   whyDubai: heroMarina,
   map: heroDistrict,
@@ -33,7 +36,7 @@ export const PAGE_HERO_IMAGES = {
   sell: heroSkyline,
   privacy: heroSkyline,
   terms: heroSkyline,
-  communityDetail: heroDistrict,
+  communityDetail: downtownDubai,
   developerDetail: heroSkyline,
 }
 
@@ -45,22 +48,22 @@ export const SECTION_IMAGES = {
   homeHeroPoster: DEFAULT_HERO_POSTER,
 }
 
-/** Per-community card & detail hero */
+/** Per-community card & detail hero — Dubai corridors use location-specific photography */
 export const COMMUNITY_IMAGES = {
-  'downtown-dubai': heroSkyline,
-  'dubai-marina': heroMarina,
-  'palm-jumeirah': property2,
-  'dubai-hills': property4,
-  'business-bay': heroDistrict,
-  'dubai-creek-harbour': heroSkyline,
-  jvc: property5,
-  'yas-island': heroMarina,
-  'saadiyat-island': property3,
-  'al-reem-island': heroTwilight,
-  aljada: property6,
-  'ajman-corniche': heroDistrict,
-  'mina-al-arab': property1,
-  'al-marjan-island': property2,
+  'downtown-dubai': downtownDubai,
+  'dubai-marina': dubaiMarina,
+  'palm-jumeirah': palmJumeirah,
+  'dubai-hills': dubaiHills,
+  'business-bay': businessBay,
+  'dubai-creek-harbour': dubaiCreekHarbour,
+  jvc,
+  'yas-island': dubaiMarina,
+  'saadiyat-island': dubaiMarina,
+  'al-reem-island': downtownDubai,
+  aljada: downtownDubai,
+  'ajman-corniche': dubaiMarina,
+  'mina-al-arab': dubaiMarina,
+  'al-marjan-island': palmJumeirah,
 }
 
 export function communityHeroImage(slug) {
