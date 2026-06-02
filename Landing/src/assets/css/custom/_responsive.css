@@ -323,14 +323,14 @@ video {
     }
 }
 
-/* ——— Floating WhatsApp ——— */
-.whatsapp-float {
+/* ——— Floating contact dock ——— */
+.wa-float {
     bottom: max(1rem, env(safe-area-inset-bottom, 0px)) !important;
     inset-inline-end: max(1rem, env(safe-area-inset-right, 0px)) !important;
 }
 
 @media (max-width: 639px) {
-    .whatsapp-float {
+    .wa-float {
         bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
         inset-inline-end: max(0.75rem, env(safe-area-inset-right, 0px)) !important;
     }

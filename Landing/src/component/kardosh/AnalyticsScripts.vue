@@ -1,6 +1,9 @@
 <script setup>
-import { onMounted } from 'vue'
+import { watch } from 'vue'
 import { ANALYTICS } from '@/config/marketing'
+import { hasAnalyticsConsent } from '@/composables/useCookieConsent'
+
+let analyticsLoaded = false
 
 function appendInlineScript(content) {
   const script = document.createElement('script')
@@ -40,14 +43,18 @@ fbq('init','${ANALYTICS.metaPixelId}');fbq('track','PageView');`)
   }
 }
 
-onMounted(() => {
+function tryLoadAnalytics() {
+  if (analyticsLoaded || !hasAnalyticsConsent.value) return
+  analyticsLoaded = true
   const run = () => loadAnalytics()
   if ('requestIdleCallback' in window) {
     requestIdleCallback(run, { timeout: 5000 })
   } else {
-    setTimeout(run, 2500)
+    setTimeout(run, 500)
   }
-})
+}
+
+watch(hasAnalyticsConsent, tryLoadAnalytics, { immediate: true })
 </script>
 
 <template>

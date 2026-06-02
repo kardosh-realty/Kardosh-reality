@@ -155,12 +155,12 @@ const props = defineProps({
 
 const navItems = [
   { path: '/', label: 'Home', exact: true },
-  { path: '/off-plan', label: 'Off-Plan' },
+  { path: '/aboutus', label: 'About' },
   { path: '/grid-map', label: 'Map' },
+  { path: '/off-plan', label: 'Off-Plan' },
   { path: '/communities', label: 'Communities' },
   { path: '/developers', label: 'Developers' },
   { path: '/why-dubai', label: 'Why Dubai' },
-  { path: '/aboutus', label: 'About' },
 ]
 
 const open = ref(false)

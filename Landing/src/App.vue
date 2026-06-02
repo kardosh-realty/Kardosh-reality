@@ -5,6 +5,10 @@ import { useRouteSeo } from '@/composables/useSeo'
 import ScrollToTop from './component/scroll-to-top.vue'
 import WhatsAppFloat from './component/kardosh/WhatsAppFloat.vue'
 import AnalyticsScripts from './component/kardosh/AnalyticsScripts.vue'
+import CookieConsent from './component/kardosh/CookieConsent.vue'
+import { initCookieConsent } from '@/composables/useCookieConsent'
+
+initCookieConsent()
 const route = useRoute()
 useRouteSeo()
 
@@ -26,6 +30,7 @@ const pageTransitionName = computed(() =>
 
 <template>
   <AnalyticsScripts />
+  <CookieConsent v-if="!hideChrome" />
   <div class="page-transition-root">
     <RouterView v-slot="{ Component, route: activeRoute }">
       <!-- Single root wrapper required — route SFCs use fragments (Navbar + sections). -->
