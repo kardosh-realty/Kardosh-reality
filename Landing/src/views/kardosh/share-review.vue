@@ -256,7 +256,7 @@ import {
   submitCustomerReview,
   uploadCustomerTestimonialPhoto,
 } from '@/services/testimonialInvite'
-import panelBg from '@/assets/images/bg/001.webp'
+import panelBg from '@/assets/images/bg/001-hero.webp'
 import pageBg from '@/assets/images/bg/01.jpg'
 
 const route = useRoute()

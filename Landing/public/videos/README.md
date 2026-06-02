@@ -30,6 +30,18 @@ You can still use `public/videos/dubai-hero.mp4` with:
 VITE_HERO_VIDEO_URL=/videos/dubai-hero.mp4
 ```
 
+## Vimeo page link
+
+Paste a **Vimeo watch URL** (not an MP4 file) — the site embeds it in background mode:
+
+```env
+VITE_HERO_VIDEO_URL=https://vimeo.com/1197606897
+VITE_HERO_USE_LOCAL_VIDEO=true
+VITE_HERO_VIDEO_POSTER=/assets/images/bg/001.webp
+```
+
+The video must allow **embedding** on your domain (Vimeo privacy settings).
+
 ## YouTube (alternative)
 
 Unset `VITE_HERO_USE_LOCAL_VIDEO` or set it `false`, then set `VITE_HERO_YOUTUBE_URL`. The custom poster (`001.webp`) is still used until the embed loads.

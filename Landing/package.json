@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "node scripts/generate-sitemap.mjs && vite build",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview --host",
     "audit:reelly": "node scripts/audit-reelly-apis.mjs"
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
+    "sharp": "^0.34.5",
     "vite": "^8.0.8"
   },
   "engines": {

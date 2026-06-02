@@ -4,6 +4,7 @@
     :src="src"
     :alt="alt || BRAND.name"
     :class="['kardosh-brand-img', variantClass, imgClass, { 'kardosh-brand-img--loaded': loaded }]"
+    :width="width"
     :height="height"
     :loading="size === 'nav' ? 'eager' : 'lazy'"
     :fetchpriority="size === 'nav' ? 'high' : 'auto'"
@@ -44,6 +45,12 @@ const height = computed(() => {
   if (props.size === 'inline') return 36
   if (props.size === 'nav') return 48
   return 40
+})
+
+/** Wordmark aspect ratio from kardosh-logo.png (1831×632) */
+const width = computed(() => {
+  if (props.variant === 'icon') return height.value
+  return Math.round(height.value * (1831 / 632))
 })
 
 const variantClass = computed(() => {

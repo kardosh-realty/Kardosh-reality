@@ -257,25 +257,12 @@
     background: transparent;
 }
 
-.hero-youtube-chrome-mask {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    /* Crop visual bleed from YouTube title bar + center play/pause */
-    background:
-        linear-gradient(180deg, rgb(15 23 42 / 0.92) 0%, transparent 18%),
-        linear-gradient(0deg, rgb(15 23 42 / 0.94) 0%, transparent 22%),
-        radial-gradient(
-            ellipse 62% 48% at 50% 56%,
-            rgb(15 23 42 / 0.78) 0%,
-            transparent 72%
-        );
+.hero-poster-slot {
+    @apply absolute inset-0 z-0 overflow-hidden transition-opacity duration-700 ease-out;
 }
 
-.hero-poster-slot {
-    @apply absolute inset-0 z-0 overflow-hidden bg-cover bg-center bg-no-repeat transition-opacity duration-700 ease-out;
-    background-color: #0f172a;
+.hero-poster-img {
+    @apply h-full w-full object-cover object-center;
 }
 
 .hero-poster-slot--ready {

@@ -4,6 +4,29 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import { envDir } from '../env-dir.mjs'
 
+/** Preconnect to Supabase + Reelly image CDN for faster LCP / API. */
+function preconnectPlugin(env) {
+  return {
+    name: 'kardosh-preconnect',
+    transformIndexHtml(html) {
+      const hints = []
+      const supabase = env.VITE_SUPABASE_URL
+      if (supabase) {
+        try {
+          hints.push(`<link rel="preconnect" href="${new URL(supabase).origin}" crossorigin />`)
+        } catch {
+          /* ignore invalid url */
+        }
+      }
+      hints.push('<link rel="preconnect" href="https://player.vimeo.com" crossorigin />')
+      hints.push('<link rel="dns-prefetch" href="https://player.vimeo.com" />')
+      hints.push('<link rel="dns-prefetch" href="https://storage.googleapis.com" />')
+      if (!hints.length) return html
+      return html.replace('</head>', `    ${hints.join('\n    ')}\n  </head>`)
+    },
+  }
+}
+
 /** Inject all VITE_* vars from kardosh/.env (fixes dev when envDir alone does not reach the client). */
 function viteClientEnv(env) {
   return Object.fromEntries(
@@ -20,7 +43,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir,
     define: viteClientEnv(env),
-    plugins: [vue(), tailwindcss()],
+    plugins: [vue(), tailwindcss(), preconnectPlugin(env)],
     build: {
       target: 'es2020',
       cssCodeSplit: true,
@@ -31,6 +54,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules/swiper')) return 'swiper'
             if (id.includes('node_modules/vue-router')) return 'vue-vendor'
             if (id.includes('node_modules/vue/') || id.includes('node_modules/@vue')) return 'vue-vendor'
+            if (id.includes('node_modules/@supabase')) return 'supabase'
             if (id.includes('node_modules/vue-select')) return 'vue-select'
             if (id.includes('node_modules/lucide-vue-next')) return 'icons'
           },

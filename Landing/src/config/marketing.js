@@ -27,6 +27,36 @@ export const ANALYTICS = {
   metaPixelId: import.meta.env.VITE_META_PIXEL_ID || '',
 }
 
+/** Parse Vimeo page / player URLs → numeric video id */
+export function parseVimeoId(value) {
+  if (!value) return null
+  const trimmed = String(value).trim()
+  if (/^\d+$/.test(trimmed)) return trimmed
+  try {
+    const url = new URL(trimmed)
+    if (!url.hostname.includes('vimeo.com')) return null
+    const id = url.pathname.split('/').find((part) => /^\d+$/.test(part))
+    return id || null
+  } catch {
+    /* not a URL */
+  }
+  return null
+}
+
+/** True for direct MP4/WebM files — not YouTube/Vimeo page links */
+export function isDirectVideoUrl(value) {
+  if (!value) return false
+  const trimmed = String(value).trim()
+  if (parseVimeoId(trimmed) || parseYouTubeId(trimmed)) return false
+  const lower = trimmed.toLowerCase()
+  return (
+    /\.(mp4|webm|ogg)(\?|$)/i.test(lower) ||
+    lower.startsWith('/videos/') ||
+    lower.startsWith('/assets/') ||
+    (lower.startsWith('blob:') && lower.includes('mp4'))
+  )
+}
+
 /** Parse YouTube watch / youtu.be / embed URLs → 11-char video id */
 export function parseYouTubeId(value) {
   if (!value) return null
@@ -54,19 +84,30 @@ const HERO_YOUTUBE_ID_FROM_ENV = parseYouTubeId(
 
 const HERO_VIDEO_URL = String(import.meta.env.VITE_HERO_VIDEO_URL || '').trim()
 
+const HERO_VIMEO_ID_FROM_ENV =
+  parseVimeoId(HERO_VIDEO_URL) ||
+  parseVimeoId(import.meta.env.VITE_HERO_VIMEO_URL || import.meta.env.VITE_HERO_VIMEO_ID || '')
+
+const HERO_MP4_SRC = isDirectVideoUrl(HERO_VIDEO_URL) ? HERO_VIDEO_URL : ''
+
 const HERO_FORCE_DIRECT = ['true', '1', 'yes'].includes(
   String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
 )
 
-/** Direct MP4 when VITE_HERO_VIDEO_URL is set (CDN https://… or /videos/… in public/) */
-export const HERO_USE_DIRECT_VIDEO = Boolean(HERO_VIDEO_URL)
+/** Direct MP4 when VITE_HERO_VIDEO_URL is a file/CDN link (not Vimeo/YouTube) */
+export const HERO_USE_DIRECT_VIDEO = Boolean(HERO_MP4_SRC)
 
 /** @deprecated alias */
 export const HERO_USE_LOCAL_VIDEO = HERO_USE_DIRECT_VIDEO
 
-/** YouTube embed when configured and direct video is not in use */
+/** Vimeo background embed from VITE_HERO_VIDEO_URL or VITE_HERO_VIMEO_URL */
+export const HERO_VIMEO_ID = HERO_VIMEO_ID_FROM_ENV
+
+/** YouTube embed when configured and no MP4/Vimeo hero URL is in use */
 export const HERO_YOUTUBE_ID =
-  HERO_USE_DIRECT_VIDEO || HERO_FORCE_DIRECT ? null : HERO_YOUTUBE_ID_FROM_ENV || null
+  HERO_USE_DIRECT_VIDEO || HERO_VIMEO_ID || HERO_FORCE_DIRECT
+    ? null
+    : HERO_YOUTUBE_ID_FROM_ENV || null
 
 /** YouTube still frame for hero poster while the embed loads */
 export function heroYouTubeThumbnailUrl(videoId, quality = 'hqdefault') {
@@ -95,9 +136,27 @@ export function heroYouTubeEmbedUrl(videoId, options = {}) {
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`
 }
 
-/** Background video — set VITE_HERO_VIDEO_URL to a CDN MP4 link (recommended) or /videos/... in public/ */
+/** Vimeo background-mode embed (autoplay, loop, no chrome) */
+export function heroVimeoEmbedUrl(videoId) {
+  if (!videoId) return ''
+  const params = new URLSearchParams({
+    background: '1',
+    autoplay: '1',
+    muted: '1',
+    loop: '1',
+    autopause: '0',
+    playsinline: '1',
+    title: '0',
+    byline: '0',
+    portrait: '0',
+    dnt: '1',
+  })
+  return `https://player.vimeo.com/video/${videoId}?${params.toString()}`
+}
+
+/** Background video — MP4 file/CDN link, or Vimeo/YouTube page URL (embed), via env */
 export const HERO_VIDEO = {
-  src: HERO_VIDEO_URL,
+  src: HERO_MP4_SRC,
   poster: resolveHeroPosterPath(import.meta.env.VITE_HERO_VIDEO_POSTER || ''),
   posterFast: resolveHeroPosterPath(import.meta.env.VITE_HERO_VIDEO_POSTER_FAST || ''),
 }

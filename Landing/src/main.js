@@ -8,9 +8,6 @@ import './assets/css/tailwind.css'
 import { initTheme } from '@/composables/useTheme'
 import { initPalette } from '@/composables/usePalette'
 import { initLanguage } from '@/composables/useLanguage'
-import { loadSiteSettings } from '@/composables/useSiteSettings'
-import { loadTestimonials } from '@/composables/useTestimonials'
-import { loadTeam } from '@/composables/useTeam'
 
 /** Prevent refresh from restoring mid-page scroll (e.g. homepage section 2) */
 if (typeof window !== 'undefined') {
@@ -52,6 +49,6 @@ app.use(router)
 app.mount('#app')
 
 // Hydrate branding/contact and testimonials from Supabase without blocking first paint.
-loadSiteSettings()
-loadTestimonials()
-loadTeam()
+void import('@/composables/useSiteSettings').then((m) => m.loadSiteSettings())
+void import('@/composables/useTestimonials').then((m) => m.loadTestimonials())
+void import('@/composables/useTeam').then((m) => m.loadTeam())

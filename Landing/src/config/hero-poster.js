@@ -2,16 +2,10 @@ import hero01 from '@/assets/images/bg/01.jpg'
 import hero02 from '@/assets/images/bg/02.jpg'
 import hero03 from '@/assets/images/bg/03.jpg'
 import hero04 from '@/assets/images/bg/04.jpg'
-import hero001 from '@/assets/images/bg/001.webp'
+import hero001 from '@/assets/images/bg/001-hero.webp'
 
 /** Default hero still shown until background video plays */
 export const DEFAULT_HERO_POSTER = hero001
-
-/** All images under src/assets/images/bg (includes custom 001.webp etc.) */
-const BG_GLOB = import.meta.glob('@/assets/images/bg/*.{jpg,jpeg,webp,png,JPG,WEBP,PNG}', {
-  eager: true,
-  import: 'default',
-})
 
 /** Map env paths / filenames → Vite-resolved asset URLs */
 const BY_FILENAME = {
@@ -21,15 +15,7 @@ const BY_FILENAME = {
   '04.jpg': hero04,
   '001.jpg': hero01,
   '001.webp': hero001,
-}
-
-function bundledPosterUrl(filename) {
-  if (!filename) return null
-  const entry = Object.entries(BG_GLOB).find(([path]) => {
-    const base = path.split('/').pop()
-    return base === filename
-  })
-  return entry ? entry[1] : null
+  '001-hero.webp': hero001,
 }
 
 /**
@@ -41,7 +27,7 @@ export function resolveHeroPosterPath(envPath) {
   const trimmed = String(envPath).trim()
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   const file = trimmed.split('/').pop() || trimmed
-  return bundledPosterUrl(file) || BY_FILENAME[file] || (trimmed.startsWith('/') ? trimmed : `/${trimmed}`)
+  return BY_FILENAME[file] || (trimmed.startsWith('/') ? trimmed : `/${trimmed}`)
 }
 
 /** True when VITE_HERO_VIDEO_POSTER is set — never use YouTube frame as poster */
