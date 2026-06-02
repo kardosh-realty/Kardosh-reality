@@ -1,4 +1,4 @@
-import { processImageProxy } from '../server/imageProxyCore.mjs'
+import { processImageProxy } from '../lib/imageProxyCore.mjs'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') {

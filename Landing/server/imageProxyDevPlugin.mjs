@@ -1,4 +1,4 @@
-import { processImageProxy } from './imageProxyCore.mjs'
+import { processImageProxy } from '../lib/imageProxyCore.mjs'
 
 /** Vite dev server — same /api/proxy-image compression as Vercel production. */
 export function imageProxyDevPlugin() {

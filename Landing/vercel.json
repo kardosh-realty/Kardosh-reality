@@ -20,26 +20,14 @@
           "value": "public, max-age=604800, stale-while-revalidate=86400"
         }
       ]
-    },
-    {
-      "source": "/(.*\\.(webp|png|jpg|jpeg|gif|svg|ico|woff2?|mp4|webm))",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/api/proxy-image",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable, s-maxage=31536000"
-        }
-      ]
     }
   ],
+  "functions": {
+    "api/proxy-image.js": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
   "redirects": [
     {
       "source": "/:path*",
