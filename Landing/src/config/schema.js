@@ -1,6 +1,7 @@
 import { BRAND, SOCIAL } from '@/config/brand'
 import { BRAND_ICON } from '@/config/brand-assets'
 import { CONTACT } from '@/config/uae'
+import { site } from '@/composables/useSiteSettings'
 import { buildBreadcrumbItems } from '@/config/breadcrumbs'
 import {
   SITE_URL,
@@ -43,20 +44,32 @@ function toJsonLd(graph) {
   }
 }
 
+function schemaSiteName() {
+  return site.companyName || BRAND.name
+}
+
+function schemaSameAs() {
+  const fromAdmin = (site.socials || [])
+    .map((s) => s?.url)
+    .filter((url) => url && /^https?:\/\//i.test(url))
+  if (fromAdmin.length) return fromAdmin
+  return [SOCIAL.linkedin, SOCIAL.instagram].filter(Boolean)
+}
+
 function organizationNode() {
   return {
     '@type': ['RealEstateAgent', 'LocalBusiness'],
     '@id': SCHEMA_IDS.organization,
-    name: SITE_NAME,
+    name: schemaSiteName(),
     url: SITE_URL,
     logo: absoluteUrl(BRAND_ICON),
     image: absoluteUrl(BRAND_ICON),
-    email: BRAND.email,
-    telephone: BRAND.phone,
-    description: BRAND.tagline,
+    email: site.email || BRAND.email,
+    telephone: site.phone || BRAND.phone,
+    description: site.tagline || BRAND.tagline,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONTACT.address,
+      streetAddress: site.address || CONTACT.address,
       addressLocality: 'Dubai',
       addressRegion: 'Dubai',
       addressCountry: 'AE',
@@ -65,7 +78,7 @@ function organizationNode() {
       '@type': 'Country',
       name: 'United Arab Emirates',
     },
-    sameAs: [SOCIAL.linkedin, SOCIAL.instagram].filter(Boolean),
+    sameAs: schemaSameAs(),
   }
 }
 
@@ -74,8 +87,8 @@ function websiteNode() {
     '@type': 'WebSite',
     '@id': SCHEMA_IDS.website,
     url: SITE_URL,
-    name: SITE_NAME,
-    description: BRAND.tagline,
+    name: schemaSiteName(),
+    description: site.tagline || BRAND.tagline,
     publisher: { '@id': SCHEMA_IDS.organization },
     inLanguage: 'en-AE',
     potentialAction: {
@@ -176,7 +189,8 @@ export function buildStaticRouteSchema(route) {
 
   const preset = route.meta.seo || ROUTE_SEO[route.name]
   const path = route.fullPath.split('?')[0]
-  const name = preset?.title?.replace(` | ${SITE_NAME}`, '') || SITE_NAME
+  const siteName = schemaSiteName()
+  const name = preset?.title?.replace(` | ${SITE_NAME}`, '')?.replace(` | ${siteName}`, '') || siteName
   const description = preset?.description || BRAND.tagline
   const pageType = ROUTE_PAGE_TYPES[route.name] || 'WebPage'
   const breadcrumbs = breadcrumbsForRoute(route)
@@ -350,12 +364,12 @@ export function buildBlogPostingSchema(post, path) {
     inLanguage: 'en-AE',
     author: {
       '@type': 'Organization',
-      name: SITE_NAME,
+      name: schemaSiteName(),
       url: SITE_URL,
     },
     publisher: {
       '@type': 'Organization',
-      name: SITE_NAME,
+      name: schemaSiteName(),
       logo: {
         '@type': 'ImageObject',
         url: absoluteUrl(BRAND_ICON),

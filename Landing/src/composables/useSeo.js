@@ -8,6 +8,17 @@ import {
   truncateDescription,
 } from '@/config/seo'
 import { buildStaticRouteSchema } from '@/config/schema'
+import { site } from '@/composables/useSiteSettings'
+
+function trackSiteSettingsForHead() {
+  // Re-run head tags when admin updates contact/socials in Supabase.
+  void site.companyName
+  void site.email
+  void site.phone
+  void site.address
+  void site.tagline
+  void site.socials
+}
 
 function schemaScripts(schema) {
   if (!schema) return undefined
@@ -58,7 +69,10 @@ function buildHead(input = {}) {
 export function useSeo(getOptions) {
   const resolve = typeof getOptions === 'function' ? getOptions : () => getOptions
 
-  useHead(() => buildHead(resolve()))
+  useHead(() => {
+    trackSiteSettingsForHead()
+    return buildHead(resolve())
+  })
 }
 
 /** Default SEO for static routes from `route.meta.seo` or `ROUTE_SEO[name]`. */
@@ -67,6 +81,7 @@ export function useRouteSeo() {
 
   useHead(() => {
     if (route.meta.dynamicSeo) return {}
+    trackSiteSettingsForHead()
     const preset = route.meta.seo || ROUTE_SEO[route.name]
     const path = route.fullPath.split('?')[0]
 

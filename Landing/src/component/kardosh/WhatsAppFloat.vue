@@ -92,19 +92,26 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const isOpen = ref(true)
+const isOpen = ref(false)
+
+function syncDockClass(open) {
+  if (typeof document === 'undefined') return
+  document.documentElement.classList.toggle('has-contact-dock-open', open)
+}
 
 onMounted(() => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'closed') isOpen.value = false
+    if (stored === 'open') isOpen.value = true
   } catch {
     /* private mode */
   }
+  syncDockClass(isOpen.value)
 })
 
 function openDock() {
   isOpen.value = true
+  syncDockClass(true)
   try {
     localStorage.setItem(STORAGE_KEY, 'open')
   } catch {
@@ -114,6 +121,7 @@ function openDock() {
 
 function closeDock() {
   isOpen.value = false
+  syncDockClass(false)
   try {
     localStorage.setItem(STORAGE_KEY, 'closed')
   } catch {
