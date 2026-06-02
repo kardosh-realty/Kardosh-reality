@@ -1,6 +1,6 @@
 /**
- * Compress large marketing images for PageSpeed (hero LCP, home sections).
- * Run before `vite build` — overwrites 001.webp in place when smaller.
+ * Compress marketing images for PageSpeed — desktop + mobile WebP variants.
+ * Run before `vite build` — outputs alongside sources in assets/.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -43,10 +43,25 @@ async function optimizeWebp(inFile, outFile, { maxWidth = 1920, quality = 72, re
   )
 }
 
+const COMMUNITY_JPGS = [
+  'business-bay.jpg',
+  'downtown-dubai.jpg',
+  'dubai-creek-harbour.jpg',
+  'dubai-hills.jpg',
+  'dubai-marina.jpg',
+  'jvc.jpg',
+  'palm-jumeirah.jpg',
+]
+
 async function main() {
   await optimizeWebp('src/assets/images/bg/001.webp', 'src/assets/images/bg/001-hero.webp', {
     maxWidth: 1600,
     quality: 70,
+  })
+
+  await optimizeWebp('src/assets/images/bg/001-hero.webp', 'src/assets/images/bg/001-hero-mobile.webp', {
+    maxWidth: 768,
+    quality: 68,
   })
 
   await optimizeWebp(
@@ -54,6 +69,25 @@ async function main() {
     'src/assets/images/why-invest-dubai.webp',
     { maxWidth: 1600, quality: 78 }
   )
+
+  await optimizeWebp(
+    'src/assets/images/why-invest-dubai.webp',
+    'src/assets/images/why-invest-dubai-mobile.webp',
+    { maxWidth: 768, quality: 72 }
+  )
+
+  for (const file of COMMUNITY_JPGS) {
+    const base = file.replace(/\.jpg$/i, '')
+    const src = `src/assets/images/communities/${file}`
+    await optimizeWebp(src, `src/assets/images/communities/${base}-480.webp`, {
+      maxWidth: 480,
+      quality: 72,
+    })
+    await optimizeWebp(src, `src/assets/images/communities/${base}-960.webp`, {
+      maxWidth: 960,
+      quality: 78,
+    })
+  }
 }
 
 main().catch((e) => {

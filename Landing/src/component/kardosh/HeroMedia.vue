@@ -10,6 +10,8 @@
           'hero-poster-slot--ready': posterImageReady,
         }"
         :src="heroPosterFullUrl"
+        :srcset="heroPosterSrcSet || undefined"
+        :sizes="heroPosterSrcSet ? HERO_POSTER_SIZES : undefined"
         alt=""
         width="1600"
         height="900"
@@ -45,6 +47,8 @@
           'hero-poster-slot--ready': posterImageReady,
         }"
         :src="heroPosterFullUrl"
+        :srcset="heroPosterSrcSet || undefined"
+        :sizes="heroPosterSrcSet ? HERO_POSTER_SIZES : undefined"
         alt=""
         width="1600"
         height="900"
@@ -103,6 +107,11 @@ import {
   shouldDeferHeroVideo,
   heroVideoDeferMs,
 } from '@/composables/useDeferUntilIdle'
+import {
+  DEFAULT_HERO_POSTER,
+  HERO_POSTER_SIZES,
+  HERO_POSTER_SRCSET,
+} from '@/config/hero-poster'
 
 const props = defineProps({
   mediaClass: { type: String, default: '' },
@@ -123,6 +132,10 @@ const embedVideo = ref(false)
 
 const { posterGateReady, posterImageReady, youtubeIframeReady, heroPosterFullUrl } =
   useHeroPosterGate({ hidePoster: props.hidePoster })
+
+const heroPosterSrcSet = computed(() =>
+  heroPosterFullUrl.value === DEFAULT_HERO_POSTER ? HERO_POSTER_SRCSET : ''
+)
 
 const embedIframeUrl = computed(() => {
   if (HERO_YOUTUBE_ID) {

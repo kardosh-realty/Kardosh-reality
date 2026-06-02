@@ -7,8 +7,12 @@
       class="community-card__media relative aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-slate-800 block"
     >
       <img
-        :src="image"
+        :src="image.src"
+        :srcset="image.srcset || undefined"
+        :sizes="image.sizes || undefined"
         :alt="`${community.name}, UAE`"
+        width="960"
+        height="600"
         class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
@@ -65,13 +69,13 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowRight } from 'lucide-vue-next'
 import { emirateLabel } from '@/config/communities'
-import { communityHeroImage } from '@/config/dubai-images'
+import { communityHeroImageResponsive } from '@/config/dubai-images'
 
 const props = defineProps({
   community: { type: Object, required: true },
 })
 
 const detailTo = computed(() => `/communities/${props.community.slug}`)
-const image = computed(() => communityHeroImage(props.community.slug))
+const image = computed(() => communityHeroImageResponsive(props.community.slug))
 const emirateName = computed(() => emirateLabel(props.community.emirate))
 </script>

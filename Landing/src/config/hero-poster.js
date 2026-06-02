@@ -3,9 +3,15 @@ import hero02 from '@/assets/images/bg/02.jpg'
 import hero03 from '@/assets/images/bg/03.jpg'
 import hero04 from '@/assets/images/bg/04.jpg'
 import hero001 from '@/assets/images/bg/001-hero.webp'
+import hero001Mobile from '@/assets/images/bg/001-hero-mobile.webp'
 
 /** Default hero still shown until background video plays */
 export const DEFAULT_HERO_POSTER = hero001
+
+/** Mobile LCP variant — ~75% smaller than desktop poster */
+export const HERO_POSTER_MOBILE = hero001Mobile
+export const HERO_POSTER_SRCSET = `${hero001Mobile} 768w, ${hero001} 1600w`
+export const HERO_POSTER_SIZES = '100vw'
 
 /** Map env paths / filenames → Vite-resolved asset URLs */
 const BY_FILENAME = {

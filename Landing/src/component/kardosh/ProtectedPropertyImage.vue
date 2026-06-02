@@ -7,7 +7,28 @@
     ]"
     @contextmenu.prevent
   >
+    <picture v-if="useGalleryPicture">
+      <source
+        media="(max-width: 767px)"
+        :srcset="mobileSrcSet"
+        :sizes="sizes"
+      />
+      <img
+        :src="resolvedSrc"
+        :srcset="desktopSrcSet"
+        :sizes="sizes"
+        :alt="alt"
+        :class="imgClass"
+        :width="width"
+        :height="height"
+        :loading="loading"
+        :fetchpriority="fetchpriority"
+        draggable="false"
+        @dragstart.prevent
+      />
+    </picture>
     <img
+      v-else
       :src="resolvedSrc"
       :srcset="resolvedSrcSet || undefined"
       :sizes="sizes"
@@ -29,6 +50,9 @@ import { computed } from 'vue'
 import PropertyImageWatermark from '@/component/kardosh/PropertyImageWatermark.vue'
 import {
   LISTING_CARD_IMAGE_WIDTH,
+  LISTING_GALLERY_DESKTOP_WIDTHS,
+  LISTING_GALLERY_IMAGE_WIDTH,
+  LISTING_GALLERY_MOBILE_WIDTHS,
   proxyReellyImageSrcSet,
   proxyReellyImageUrl,
 } from '@/services/reelly/imageProxy'
@@ -54,6 +78,12 @@ const props = defineProps({
 
 const displayWidth = computed(() => Number(props.width) || LISTING_CARD_IMAGE_WIDTH)
 
+const isGallerySize = computed(
+  () => props.responsive && displayWidth.value >= LISTING_GALLERY_IMAGE_WIDTH
+)
+
+const useGalleryPicture = computed(() => isGallerySize.value && Boolean(mobileSrcSet.value))
+
 const resolvedSrc = computed(() =>
   proxyReellyImageUrl(props.src, {
     width: displayWidth.value,
@@ -61,15 +91,31 @@ const resolvedSrc = computed(() =>
   })
 )
 
-const resolvedSrcSet = computed(() => {
+const mobileSrcSet = computed(() => {
+  if (!isGallerySize.value) return ''
+  return proxyReellyImageSrcSet(props.src, {
+    widths: LISTING_GALLERY_MOBILE_WIDTHS,
+    quality: Math.min(props.quality, 70),
+  })
+})
+
+const desktopSrcSet = computed(() => {
   if (!props.responsive) return ''
+  if (isGallerySize.value) {
+    return proxyReellyImageSrcSet(props.src, {
+      widths: LISTING_GALLERY_DESKTOP_WIDTHS,
+      quality: props.quality,
+    })
+  }
   const w = displayWidth.value
   const widths =
     w <= 200
       ? [120, 160, 200]
       : w >= 900
-        ? [480, 720, 960, 1280]
+        ? LISTING_GALLERY_DESKTOP_WIDTHS
         : [320, 480, 651, 800]
   return proxyReellyImageSrcSet(props.src, { widths, quality: props.quality })
 })
+
+const resolvedSrcSet = computed(() => desktopSrcSet.value)
 </script>

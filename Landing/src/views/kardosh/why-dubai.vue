@@ -33,7 +33,11 @@
           >
             <img
               :src="SECTION_IMAGES.whyInvest"
+              :srcset="WHY_INVEST_SRCSET"
+              :sizes="WHY_INVEST_SIZES"
               alt="Dubai skyline along the waterfront"
+              width="1600"
+              height="1200"
               class="absolute inset-0 w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-[1.02]"
               loading="lazy"
             />
@@ -408,7 +412,7 @@ import Footer from '@/component/footer.vue'
 import Switcher from '@/component/switcher.vue'
 import PageHero from '@/component/kardosh/PageHero.vue'
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
-import { PAGE_HERO_IMAGES, SECTION_IMAGES } from '@/config/dubai-images'
+import { PAGE_HERO_IMAGES, SECTION_IMAGES, WHY_INVEST_SIZES, WHY_INVEST_SRCSET } from '@/config/dubai-images'
 import {
   WHY_DUBAI_STATS,
   WHY_DUBAI_INTRO,

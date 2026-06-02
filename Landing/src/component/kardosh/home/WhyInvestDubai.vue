@@ -21,7 +21,11 @@
           >
             <img
               :src="SECTION_IMAGES.whyInvest"
+              :srcset="WHY_INVEST_SRCSET"
+              :sizes="WHY_INVEST_SIZES"
               alt="Dubai skyline along the waterfront"
+              width="1600"
+              height="1200"
               class="absolute inset-0 w-full h-full object-cover object-[center_40%] transition-transform duration-700 group-hover:scale-[1.02]"
               loading="lazy"
             />
@@ -164,7 +168,7 @@ import {
 } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { INVESTMENT_ADVANTAGES } from '@/config/marketing'
-import { SECTION_IMAGES } from '@/config/dubai-images'
+import { SECTION_IMAGES, WHY_INVEST_SIZES, WHY_INVEST_SRCSET } from '@/config/dubai-images'
 import { HOME_STRIP_CAROUSEL, toSwiperBreakpoints } from '@/config/home-carousels'
 
 import 'swiper/css'

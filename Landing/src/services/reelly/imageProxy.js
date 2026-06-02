@@ -4,6 +4,10 @@ export const LISTING_CARD_IMAGE_WIDTH = 651
 /** Gallery / detail hero slides */
 export const LISTING_GALLERY_IMAGE_WIDTH = 960
 
+/** Gallery srcset — mobile capped at 720w to cut PageSpeed overserving on 3x DPR */
+export const LISTING_GALLERY_MOBILE_WIDTHS = [360, 480, 640, 720]
+export const LISTING_GALLERY_DESKTOP_WIDTHS = [720, 960, 1280]
+
 /** Map marker preview thumbnail */
 export const MAP_MARKER_IMAGE_WIDTH = 420
 

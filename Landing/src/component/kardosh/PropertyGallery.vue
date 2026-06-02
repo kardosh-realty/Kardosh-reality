@@ -52,7 +52,7 @@
                 :alt="item.label"
                 :width="960"
                 :quality="75"
-                :sizes="'100vw'"
+                sizes="(max-width: 767px) 100vw, 960px"
                 watermark-size="lg"
                 wrapper-class="absolute inset-0"
               />
