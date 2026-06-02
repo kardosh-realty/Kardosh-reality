@@ -51,7 +51,7 @@ function collectImages(raw) {
   const urls = []
   const push = (url) => {
     if (!url || typeof url !== 'string') return
-    const proxied = proxyReellyImageUrl(url, { width: MAP_MARKER_IMAGE_WIDTH, quality: 78 })
+    const proxied = proxyReellyImageUrl(url, { width: MAP_MARKER_IMAGE_WIDTH, quality: 72 })
     if (!urls.includes(proxied)) urls.push(proxied)
   }
   push(raw.cover_image?.url)

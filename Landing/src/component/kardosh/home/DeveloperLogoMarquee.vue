@@ -24,7 +24,7 @@
         >
           <img
             v-if="dev.logo?.url"
-            :src="dev.logo.url"
+            :src="logoSrc(dev.logo.url)"
             :alt="`${dev.name} logo`"
             class="developer-logo-marquee__logo-img"
             loading="lazy"
@@ -54,8 +54,16 @@ import Marquee from '@/components/ui/Marquee.vue'
 import { useReelly } from '@/composables/useReelly'
 import { useDeferredCatalogLoad } from '@/composables/useDeferredCatalogLoad'
 import { developerProfileRoute } from '@/utils/mapDeveloper'
+import {
+  DEVELOPER_LOGO_WIDTH,
+  proxyReellyImageUrl,
+} from '@/services/reelly/imageProxy'
 
 const { uaeDevelopers, loadProjects, loadDeveloperLogos } = useReelly()
+
+function logoSrc(url) {
+  return proxyReellyImageUrl(url, { width: DEVELOPER_LOGO_WIDTH, quality: 70 })
+}
 
 const marqueeItems = computed(() => {
   const withLogo = uaeDevelopers.value.filter((d) => d.logo?.url)

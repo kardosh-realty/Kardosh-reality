@@ -16,7 +16,7 @@ const GROUP_LABELS = {
 export function mediaUrl(item) {
   const url = item?.url || null
   return url
-    ? proxyReellyImageUrl(url, { width: LISTING_GALLERY_IMAGE_WIDTH, quality: 80 })
+    ? proxyReellyImageUrl(url, { width: LISTING_GALLERY_IMAGE_WIDTH, quality: 75 })
     : null
 }
 

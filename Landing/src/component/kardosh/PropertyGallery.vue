@@ -50,6 +50,9 @@
                 fill
                 :src="item.url"
                 :alt="item.label"
+                :width="960"
+                :quality="75"
+                :sizes="'100vw'"
                 watermark-size="lg"
                 wrapper-class="absolute inset-0"
               />
@@ -140,6 +143,9 @@
                 fill
                 :src="item.url"
                 :alt="item.label"
+                :width="160"
+                :quality="68"
+                :responsive="false"
                 watermark-size="thumb"
                 wrapper-class="absolute inset-0"
               />
@@ -158,6 +164,9 @@
             fill
             :src="filtered[0].url"
             :alt="filtered[0].label"
+            :width="160"
+            :quality="68"
+            :responsive="false"
             watermark-size="thumb"
             wrapper-class="absolute inset-0"
           />

@@ -107,7 +107,7 @@ export function mapReellyProject(project, { full = false } = {}) {
   const mapped = {
     id: project.id,
     slug: project.slug_name,
-    image: proxyReellyImageUrl(project.cover_image?.url) || DUBAI_PROPERTY_FALLBACK,
+    image: proxyReellyImageUrl(project.cover_image?.url, { quality: 72 }) || DUBAI_PROPERTY_FALLBACK,
     name: `${project.name}, ${locationLabel(project.location)}`,
     title: project.name,
     square,
