@@ -1,4 +1,5 @@
 import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
+import { proxyReellyImageUrl } from '@/services/reelly/imageProxy'
 import { formatAedInMillions, formatArea } from '@/config/uae'
 import { parseOverviewToFaq } from '@/utils/parseOverviewFaq'
 import { collectProjectMedia } from './media'
@@ -106,7 +107,7 @@ export function mapReellyProject(project, { full = false } = {}) {
   const mapped = {
     id: project.id,
     slug: project.slug_name,
-    image: project.cover_image?.url || DUBAI_PROPERTY_FALLBACK,
+    image: proxyReellyImageUrl(project.cover_image?.url) || DUBAI_PROPERTY_FALLBACK,
     name: `${project.name}, ${locationLabel(project.location)}`,
     title: project.name,
     square,

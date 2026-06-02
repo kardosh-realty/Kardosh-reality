@@ -8,7 +8,7 @@
     @contextmenu.prevent
   >
     <img
-      :src="src"
+      :src="resolvedSrc"
       :alt="alt"
       :class="imgClass"
       :width="width"
@@ -23,9 +23,14 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import PropertyImageWatermark from '@/component/kardosh/PropertyImageWatermark.vue'
+import {
+  LISTING_CARD_IMAGE_WIDTH,
+  proxyReellyImageUrl,
+} from '@/services/reelly/imageProxy'
 
-defineProps({
+const props = defineProps({
   src: { type: String, required: true },
   alt: { type: String, default: '' },
   imgClass: { type: String, default: '' },
@@ -38,4 +43,10 @@ defineProps({
   /** Image fills the wrapper (absolute inset-0 cover) */
   fill: { type: Boolean, default: false },
 })
+
+const resolvedSrc = computed(() =>
+  proxyReellyImageUrl(props.src, {
+    width: Number(props.width) || LISTING_CARD_IMAGE_WIDTH,
+  })
+)
 </script>

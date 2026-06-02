@@ -1,5 +1,10 @@
 /** @see https://docs.reelly.ai/docs/media-documents */
 
+import {
+  LISTING_GALLERY_IMAGE_WIDTH,
+  proxyReellyImageUrl,
+} from '@/services/reelly/imageProxy'
+
 const GROUP_LABELS = {
   cover: 'Cover',
   lobby: 'Lobby',
@@ -9,7 +14,10 @@ const GROUP_LABELS = {
 }
 
 export function mediaUrl(item) {
-  return item?.url || null
+  const url = item?.url || null
+  return url
+    ? proxyReellyImageUrl(url, { width: LISTING_GALLERY_IMAGE_WIDTH, quality: 80 })
+    : null
 }
 
 function isImageUrl(url) {

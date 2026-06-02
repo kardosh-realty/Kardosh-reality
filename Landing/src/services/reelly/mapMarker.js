@@ -1,4 +1,8 @@
 import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
+import {
+  MAP_MARKER_IMAGE_WIDTH,
+  proxyReellyImageUrl,
+} from '@/services/reelly/imageProxy'
 import { formatAedInMillions } from '@/config/uae'
 import { normalizePaymentPlans } from '@/utils/parsePaymentPlans'
 import { extractProjectBedrooms } from './mapProject'
@@ -46,7 +50,9 @@ export function formatBedroomsLabel(bedrooms = []) {
 function collectImages(raw) {
   const urls = []
   const push = (url) => {
-    if (url && typeof url === 'string' && !urls.includes(url)) urls.push(url)
+    if (!url || typeof url !== 'string') return
+    const proxied = proxyReellyImageUrl(url, { width: MAP_MARKER_IMAGE_WIDTH, quality: 78 })
+    if (!urls.includes(proxied)) urls.push(proxied)
   }
   push(raw.cover_image?.url)
   push(raw.image)
@@ -75,7 +81,10 @@ export function enrichMapMarker(raw) {
     longitude: location.longitude ?? raw.longitude,
     location,
     locationLine: formatMapLocationLine(location, title),
-    image: raw.cover_image?.url || raw.image || DUBAI_PROPERTY_FALLBACK,
+    image:
+      proxyReellyImageUrl(raw.cover_image?.url || raw.image, {
+        width: MAP_MARKER_IMAGE_WIDTH,
+      }) || DUBAI_PROPERTY_FALLBACK,
     images: collectImages(raw),
     minPrice,
     launchPrice: formatAedInMillions(minPrice),
