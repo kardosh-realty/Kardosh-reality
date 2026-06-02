@@ -4,7 +4,7 @@
   "framework": "vite",
   "headers": [
     {
-      "source": "/assets/(.*)",
+      "source": "/assets/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "source": "/videos/(.*)",
+      "source": "/videos/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -48,7 +48,10 @@
       "destination": "/api/proxy-reelly?path=:path*"
     },
     {
-      "source": "/((?!api/).*)",
+      "handle": "filesystem"
+    },
+    {
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
