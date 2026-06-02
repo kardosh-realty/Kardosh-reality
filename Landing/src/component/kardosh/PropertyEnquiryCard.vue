@@ -138,9 +138,9 @@ const propertyWhatsApp = computed(() => {
   --pcc-divider: var(--kardosh-border, #e2e8f0);
   --pcc-mark-bg: var(--kardosh-logo-surface, var(--kardosh-surface-muted, #f1f5f9));
   --pcc-shadow: 0 16px 48px -20px rgb(15 23 42 / 0.12);
-  --pcc-btn-primary-bg: var(--btn-primary-bg, var(--color-primary, #00a63e));
+  --pcc-btn-primary-bg: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
   --pcc-btn-primary-fg: var(--btn-primary-text, #ffffff);
-  --pcc-btn-primary-border: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
+  --pcc-btn-primary-border: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
   --pcc-btn-secondary-bg: var(--kardosh-surface, #ffffff);
   --pcc-btn-secondary-border: var(--kardosh-border, #cbd5e1);
   --pcc-btn-secondary-fg: var(--kardosh-ink, #0f172a);
@@ -346,8 +346,8 @@ const propertyWhatsApp = computed(() => {
 }
 
 .property-contact-card__btn--primary:hover {
-  background: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
-  border-color: var(--btn-primary-hover, var(--color-primary-dark, #008f34));
+  background: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
+  border-color: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
   color: var(--btn-primary-text, #ffffff);
   transform: translateY(-1px);
 }
@@ -384,13 +384,13 @@ const propertyWhatsApp = computed(() => {
 }
 
 .property-contact-card__btn--outline:hover {
-  border-color: var(--btn-primary-bg, var(--color-primary, #00a63e));
+  border-color: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
   background: var(--btn-secondary-hover-bg, rgb(240 253 244));
-  color: var(--btn-secondary-hover-text, var(--color-primary-dark, #008f34));
+  color: var(--btn-secondary-hover-text, var(--color-primary-dark, #152a45));
 }
 
 .dark .property-contact-card__btn--outline:hover {
-  border-color: var(--btn-primary-bg, var(--color-primary, #00cc4b));
+  border-color: var(--btn-primary-bg, var(--color-primary, #7eb3e8));
   background: var(--btn-secondary-hover-bg, rgb(5 46 22 / 0.45));
   color: var(--btn-secondary-hover-text, var(--color-primary-300, #00f55a));
 }

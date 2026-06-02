@@ -1,18 +1,7 @@
-import { ref, readonly } from 'vue'
-import {
-  COLOR_PALETTES,
-  DEFAULT_PALETTE_ID,
-  PALETTE_IDS,
-  getPalette,
-} from '@kardosh/shared/config/colorPalettes'
-import { canPersistPaletteChoice, isPaletteReviewEnabled } from '@kardosh/shared/config/paletteReview'
+import { ref } from 'vue'
+import { DEFAULT_PALETTE_ID, getPalette } from '@kardosh/shared/config/colorPalettes'
 
-const STORAGE_KEY = 'kardosh-palette-dev'
-
-/** Dev-only: apply this palette on first visit when nothing is stored (?palette= still wins). */
-const DEV_PREVIEW_PALETTE_ID = 'palette-b'
-
-const currentPaletteId = ref(DEFAULT_PALETTE_ID)
+const LEGACY_STORAGE_KEY = 'kardosh-palette-dev'
 
 /** Bumped whenever CSS palette vars are reapplied (charts, etc.). */
 export const paletteRevision = ref(0)
@@ -33,7 +22,7 @@ function applyPaletteVars(palette, dark) {
   const root = document.documentElement
   const mode = dark ? palette.dark : palette.light
 
-  root.dataset.palette = currentPaletteId.value
+  root.dataset.palette = DEFAULT_PALETTE_ID
   if (palette.logoSafe) {
     root.dataset.logoSafe = 'true'
   } else {
@@ -84,60 +73,19 @@ function isDarkMode() {
 
 export function applyCurrentPalette() {
   if (typeof document === 'undefined') return
-  applyPaletteVars(getPalette(currentPaletteId.value), isDarkMode())
+  applyPaletteVars(getPalette(DEFAULT_PALETTE_ID), isDarkMode())
 }
 
 export function initPalette() {
   if (typeof window === 'undefined') return
-
-  const fromUrl = new URLSearchParams(window.location.search).get('palette')
-  const stored = localStorage.getItem(STORAGE_KEY)
-  const devDefault =
-    import.meta.env.DEV &&
-    DEV_PREVIEW_PALETTE_ID in COLOR_PALETTES &&
-    DEV_PREVIEW_PALETTE_ID
-
-  const id =
-    (fromUrl && COLOR_PALETTES[fromUrl] && fromUrl) ||
-    (stored && COLOR_PALETTES[stored] && stored) ||
-    devDefault ||
-    DEFAULT_PALETTE_ID
-
-  currentPaletteId.value = id
-  applyCurrentPalette()
-
-  if (canPersistPaletteChoice() && fromUrl && COLOR_PALETTES[fromUrl]) {
-    localStorage.setItem(STORAGE_KEY, fromUrl)
-  }
-}
-
-function syncPaletteQuery(id) {
-  if (!isPaletteReviewEnabled() || typeof window === 'undefined') return
-  const url = new URL(window.location.href)
-  url.searchParams.set('palette', id)
-  window.history.replaceState({}, '', url)
-}
-
-export function setPalette(id) {
-  if (!COLOR_PALETTES[id]) return
-  currentPaletteId.value = id
-  if (canPersistPaletteChoice()) {
-    localStorage.setItem(STORAGE_KEY, id)
-    syncPaletteQuery(id)
+  try {
+    localStorage.removeItem(LEGACY_STORAGE_KEY)
+  } catch {
+    /* ignore */
   }
   applyCurrentPalette()
 }
 
 export function onThemeChanged() {
   applyCurrentPalette()
-}
-
-export function usePalette() {
-  return {
-    paletteId: readonly(currentPaletteId),
-    palettes: COLOR_PALETTES,
-    paletteIds: PALETTE_IDS,
-    setPalette,
-    applyCurrentPalette,
-  }
 }

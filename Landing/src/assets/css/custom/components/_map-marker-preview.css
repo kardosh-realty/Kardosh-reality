@@ -148,7 +148,7 @@
 
 .map-marker-preview__badge--brand {
     color: #ffffff;
-    background: var(--color-primary, #00a63e);
+    background: var(--color-primary, #1e3a5f);
     box-shadow: 0 2px 8px rgb(0 166 62 / 0.35);
 }
 
@@ -240,7 +240,7 @@
 }
 
 .map-marker-preview__title:hover {
-    color: var(--color-primary, #00a63e);
+    color: var(--color-primary, #1e3a5f);
 }
 
 .dark .map-marker-preview__title {
@@ -344,7 +344,7 @@
     height: 0.8rem;
     flex-shrink: 0;
     margin-top: 0.1rem;
-    color: var(--color-primary, #00a63e);
+    color: var(--color-primary, #1e3a5f);
     opacity: 0.85;
 }
 
@@ -361,7 +361,7 @@
     font-weight: 600;
     text-decoration: none;
     color: #ffffff;
-    background: var(--color-primary, #00a63e);
+    background: var(--color-primary, #1e3a5f);
     box-shadow: 0 4px 14px rgb(0 166 62 / 0.28);
     transition:
         background-color 0.2s ease,
@@ -370,7 +370,7 @@
 }
 
 .map-marker-preview__cta:hover {
-    background: var(--color-primary-dark, #008f34);
+    background: var(--color-primary-dark, #152a45);
     box-shadow: 0 6px 18px rgb(0 166 62 / 0.35);
     transform: translateY(-1px);
 }

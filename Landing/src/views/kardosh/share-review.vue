@@ -356,7 +356,7 @@ async function onSubmit() {
 }
 
 .share-review-input:focus {
-  border-color: var(--color-primary, #00a63e);
+  border-color: var(--color-primary, #1e3a5f);
   box-shadow: 0 0 0 2px rgb(0 166 62 / 0.2);
 }
 

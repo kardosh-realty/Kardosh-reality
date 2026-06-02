@@ -5,8 +5,6 @@ import { useRouteSeo } from '@/composables/useSeo'
 import ScrollToTop from './component/scroll-to-top.vue'
 import WhatsAppFloat from './component/kardosh/WhatsAppFloat.vue'
 import AnalyticsScripts from './component/kardosh/AnalyticsScripts.vue'
-import PaletteDevSwitcher from './component/kardosh/PaletteDevSwitcher.vue'
-
 const route = useRoute()
 useRouteSeo()
 
@@ -44,5 +42,4 @@ const pageTransitionName = computed(() =>
   </div>
   <WhatsAppFloat v-if="!hideChrome" />
   <ScrollToTop v-if="!hideChrome" />
-  <PaletteDevSwitcher />
 </template>

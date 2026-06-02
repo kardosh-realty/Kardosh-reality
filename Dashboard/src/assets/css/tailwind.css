@@ -27,15 +27,15 @@
    --breakpoint-lg: 960px;
    --breakpoint-xl: 1140px;
    --breakpoint-2xl: 1140px;
-   /* Colors */
-   --color-primary: #00a63e;
-   --color-primary-50: #33ff7e;
-   --color-primary-100: #1fff71;
-   --color-primary-200: #0aff64;
-   --color-primary-300: #00f55a;
-   --color-primary-400: #00e052;
-   --color-primary-500: #00cc4b;
-   --color-primary-dark: #008f34;
+   /* Kardosh brand — navy steel blue */
+   --color-primary: #1e3a5f;
+   --color-primary-50: #f1f5f9;
+   --color-primary-100: #e2e8f0;
+   --color-primary-200: #cbd5e1;
+   --color-primary-300: #2a5080;
+   --color-primary-400: #1e3a5f;
+   --color-primary-500: #2a5080;
+   --color-primary-dark: #152a45;
    --color-red: #d72a1d;
    /* Font Sizes */
    --text-base: 17px;

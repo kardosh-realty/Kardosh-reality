@@ -9,8 +9,8 @@
     min-height: 2.5rem;
     padding: 0 1.25rem;
     border-radius: 9999px;
-    border: 1px solid var(--btn-hero-border, var(--color-primary-dark, #008f34));
-    background: var(--btn-hero-bg, var(--btn-primary-bg, var(--color-primary, #00a63e)));
+    border: 1px solid var(--btn-hero-border, var(--color-primary-dark, #152a45));
+    background: var(--btn-hero-bg, var(--btn-primary-bg, var(--color-primary, #1e3a5f)));
     color: var(--btn-hero-text, var(--btn-primary-text, #ffffff));
     font-size: 1rem;
     font-weight: 600;
@@ -37,8 +37,8 @@
 }
 
 .kardosh-contact-swap-btn:hover {
-    background: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #008f34)));
-    border-color: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #008f34)));
+    background: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #152a45)));
+    border-color: var(--btn-hero-hover, var(--btn-primary-hover, var(--color-primary-dark, #152a45)));
     color: var(--btn-hero-text, var(--btn-primary-text, #ffffff));
     box-shadow: 0 8px 22px var(--btn-primary-shadow, rgb(0 0 0 / 0.22));
     transform: translateY(-1px);

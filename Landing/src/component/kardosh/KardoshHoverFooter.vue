@@ -1,5 +1,5 @@
 <template>
-  <footer class="kardosh-hover-footer relative h-fit rounded-3xl overflow-hidden mx-4 sm:mx-6 lg:mx-8 mt-24 mb-6 text-slate-300">
+  <footer class="kardosh-hover-footer relative h-fit rounded-3xl overflow-hidden mx-4 sm:mx-6 lg:mx-8 mt-24 mb-6 text-white">
     <FooterBackgroundGradient />
 
     <div class="container-fluid max-w-7xl p-8 md:p-12 lg:p-14 relative z-20">
@@ -8,7 +8,7 @@
           <RouterLink to="/" class="kardosh-hover-footer__logo-link focus:outline-none">
             <BrandLogo variant="full" size="footer" invert-on-dark />
           </RouterLink>
-          <p class="kardosh-hover-footer__tagline text-sm leading-relaxed text-slate-400">
+          <p class="kardosh-hover-footer__tagline text-sm leading-relaxed text-white">
             {{ site.tagline }}
           </p>
         </div>
@@ -28,7 +28,7 @@
             >
               <span class="text-white text-lg font-semibold">{{ section.title }}</span>
               <ChevronDown
-                class="kardosh-footer-accordion__chevron size-5 shrink-0 text-slate-400"
+                class="kardosh-footer-accordion__chevron size-5 shrink-0 text-white"
                 :class="{ 'kardosh-footer-accordion__chevron--open': isOpen(section.id) }"
                 aria-hidden="true"
               />
@@ -69,7 +69,7 @@
             >
               <span class="text-white text-lg font-semibold">Contact us</span>
               <ChevronDown
-                class="kardosh-footer-accordion__chevron size-5 shrink-0 text-slate-400"
+                class="kardosh-footer-accordion__chevron size-5 shrink-0 text-white"
                 :class="{ 'kardosh-footer-accordion__chevron--open': isOpen('contact') }"
                 aria-hidden="true"
               />
@@ -84,7 +84,7 @@
             >
               <ul class="space-y-4 text-sm">
                 <li v-for="(item, i) in contactInfo" :key="i" class="flex items-start gap-3">
-                  <component :is="item.icon" class="size-[18px] shrink-0 text-slate-300 mt-0.5" aria-hidden="true" />
+                  <component :is="item.icon" class="size-[18px] shrink-0 text-white mt-0.5" aria-hidden="true" />
                   <a
                     v-if="item.href"
                     :href="item.href"
@@ -94,7 +94,7 @@
                   >
                     {{ item.text }}
                   </a>
-                  <span v-else class="text-slate-400">{{ item.text }}</span>
+                  <span v-else class="text-white">{{ item.text }}</span>
                 </li>
               </ul>
             </div>
@@ -102,10 +102,10 @@
         </div>
       </div>
 
-      <hr class="border-t border-slate-800 my-8" />
+      <hr class="border-t border-white/20 my-8" />
 
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-        <div class="flex flex-wrap items-center justify-center md:justify-start gap-1.5 text-slate-400 footer-social-row">
+        <div class="flex flex-wrap items-center justify-center md:justify-start gap-1.5 text-white footer-social-row">
           <FooterLanguageSwitcher />
           <a
             v-for="social in socialLinks"
@@ -114,13 +114,13 @@
             :aria-label="social.label"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-center size-9 rounded-md border border-slate-800 text-slate-400 hover:text-white hover:border-slate-500 transition-colors"
+            class="inline-flex items-center justify-center size-9 rounded-md border border-white/30 text-white transition-colors"
           >
             <component :is="social.icon" class="size-4" />
           </a>
         </div>
 
-        <p class="text-center md:text-end text-slate-500">
+        <p class="text-center md:text-end text-white">
           <span class="block sm:inline">{{ reraLabel }}</span>
           <span class="hidden sm:inline mx-2" aria-hidden="true">·</span>
           <span class="block sm:inline">© {{ year }} {{ site.companyName }}.</span>
@@ -128,7 +128,7 @@
             href="https://logixcontact.com/"
             target="_blank"
             rel="noopener noreferrer"
-            class="hover:text-white transition-colors"
+            class="text-white hover:text-[#9ecbf0] transition-colors"
           >Developed by Logix Contact</a>
         </p>
       </div>

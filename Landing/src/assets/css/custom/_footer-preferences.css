@@ -37,8 +37,8 @@
 
 .footer-pref-btn--active {
     color: #ffffff;
-    background: var(--color-primary, #0a0a0a);
-    border-color: var(--color-primary, #0a0a0a);
+    background: var(--btn-primary-bg, #1e3a5f);
+    border-color: var(--btn-primary-bg, #1e3a5f);
 }
 
 .footer-social-row {
@@ -81,8 +81,8 @@
 }
 
 .footer-lang-dropdown__wrap:hover {
-    border-color: var(--color-primary, #0a0a0a);
-    background: var(--color-primary, #0a0a0a);
+    border-color: var(--btn-primary-bg, #1e3a5f);
+    background: var(--btn-primary-bg, #1e3a5f);
 }
 
 .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__icon,
@@ -91,11 +91,34 @@
     color: #ffffff;
 }
 
-/* Dark: primary is light — hover needs dark text on light fill */
 .dark .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__icon,
 .dark .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__chevron,
 .dark .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__label {
-    color: rgb(15 23 42);
+    color: #ffffff;
+}
+
+/* Inside navy footer — steel blue hover (overrides generic rules above) */
+.kardosh-hover-footer .footer-lang-dropdown__wrap:hover {
+    border-color: #5b8ec4;
+    background: #5b8ec4;
+}
+
+.kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__icon,
+.kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__chevron,
+.kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__label {
+    color: #ffffff !important;
+}
+
+.dark .kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__icon,
+.dark .kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__chevron,
+.dark .kardosh-hover-footer .footer-lang-dropdown__wrap:hover .footer-lang-dropdown__label {
+    color: #ffffff !important;
+}
+
+.kardosh-hover-footer .footer-lang-dropdown__icon,
+.kardosh-hover-footer .footer-lang-dropdown__chevron,
+.kardosh-hover-footer .footer-lang-dropdown__label {
+    color: #ffffff;
 }
 
 .footer-lang-dropdown__icon,

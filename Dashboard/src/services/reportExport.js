@@ -7,7 +7,7 @@ import { sourceLabel } from '@/services/reports'
 import { leadStatusLabel } from '@/utils/leadFilters'
 
 const SLATE_RGB = [71, 85, 105]
-const FALLBACK_PRIMARY_RGB = [0, 166, 62]
+const FALLBACK_PRIMARY_RGB = [30, 58, 95]
 
 function readCssColor(varName, fallback) {
   if (typeof document === 'undefined') return fallback
@@ -36,7 +36,7 @@ function hexToRgb(hex) {
 /** Live theme from the active website/dashboard palette (CSS variables). */
 export function getReportTheme() {
   const primaryHex =
-    readCssColor('--btn-primary-bg', '') || readCssColor('--color-primary', '#00a63e')
+    readCssColor('--btn-primary-bg', '') || readCssColor('--color-primary', '#1e3a5f')
   const primaryRgb = hexToRgb(primaryHex) || FALLBACK_PRIMARY_RGB
   const rowTintRgb = primaryRgb.map((c) => Math.min(255, Math.round(c * 0.06 + 255 * 0.94)))
   return {

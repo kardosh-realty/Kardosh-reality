@@ -73,8 +73,8 @@
 }
 
 .property-details-tab--active {
-    background: var(--color-primary, #00a63e);
-    border-color: var(--color-primary, #00a63e);
+    background: var(--color-primary, #1e3a5f);
+    border-color: var(--color-primary, #1e3a5f);
     color: #ffffff;
 }
 
@@ -98,8 +98,8 @@
 }
 
 .dark .property-details-tab--active {
-    background: var(--color-primary, #00cc4b);
-    border-color: var(--color-primary, #00cc4b);
+    background: var(--color-primary, #7eb3e8);
+    border-color: var(--color-primary, #7eb3e8);
     color: #ffffff;
 }
 
@@ -148,7 +148,7 @@
     border-radius: 0.875rem;
     border: 1px solid var(--kardosh-primary-border, rgb(0 166 62 / 0.2));
     border-left-width: 3px;
-    border-left-color: var(--color-primary, #00a63e);
+    border-left-color: var(--color-primary, #1e3a5f);
     background: var(--kardosh-primary-tint, rgb(0 166 62 / 0.06));
     font-size: 0.875rem;
     line-height: 1.55;

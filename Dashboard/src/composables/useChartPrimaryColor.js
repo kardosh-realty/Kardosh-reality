@@ -13,12 +13,12 @@ function readCssColor(varName, fallback) {
 export function useChartPrimaryColor() {
   const primary = computed(() => {
     paletteRevision.value
-    return readCssColor('--color-primary', '#00a63e')
+    return readCssColor('--color-primary', '#1e3a5f')
   })
 
   const primaryDark = computed(() => {
     paletteRevision.value
-    return readCssColor('--color-primary-dark', '#008f34')
+    return readCssColor('--color-primary-dark', '#152a45')
   })
 
   const colors = computed(() => [primary.value])

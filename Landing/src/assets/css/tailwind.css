@@ -27,15 +27,15 @@
    --breakpoint-lg: 1024px;
    --breakpoint-xl: 1280px;
    --breakpoint-2xl: 1536px;
-   /* Kardosh brand green (matches Dashboard) */
-   --color-primary: #00a63e;
-   --color-primary-50: #33ff7e;
-   --color-primary-100: #1fff71;
-   --color-primary-200: #0aff64;
-   --color-primary-300: #00f55a;
-   --color-primary-400: #00e052;
-   --color-primary-500: #00cc4b;
-   --color-primary-dark: #008f34;
+   /* Kardosh brand — navy steel blue */
+   --color-primary: #1e3a5f;
+   --color-primary-50: #f1f5f9;
+   --color-primary-100: #e2e8f0;
+   --color-primary-200: #cbd5e1;
+   --color-primary-300: #2a5080;
+   --color-primary-400: #1e3a5f;
+   --color-primary-500: #2a5080;
+   --color-primary-dark: #152a45;
    --color-red: #404040;
    /* Font Sizes */
    --text-base: 18px;
@@ -126,14 +126,14 @@
    border-color: var(--color-primary);
 }
 
-/* Dark mode — brighter green for links & CTAs (skipped when testing a palette) */
-.dark:not([data-palette]) {
-   --color-primary: #00cc4b;
-   --color-primary-50: #052e16;
-   --color-primary-100: #064e26;
-   --color-primary-200: #047a38;
-   --color-primary-300: #00a63e;
-   --color-primary-400: #00e052;
-   --color-primary-500: #33ff7e;
-   --color-primary-dark: #00a63e;
+/* Dark mode — steel blue accents */
+.dark {
+   --color-primary: #7eb3e8;
+   --color-primary-50: #0f172a;
+   --color-primary-100: #1e293b;
+   --color-primary-200: #334155;
+   --color-primary-300: #5b8ec4;
+   --color-primary-400: #7eb3e8;
+   --color-primary-500: #9ecbf0;
+   --color-primary-dark: #5b8ec4;
 }

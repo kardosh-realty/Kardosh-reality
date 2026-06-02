@@ -57,9 +57,9 @@
 .page-view .btn.border.border-slate-200:hover,
 .page-view a.btn.border.border-slate-200:hover,
 .page-view button.btn.border.border-slate-200:hover {
-    border-color: var(--color-primary, #00a63e) !important;
+    border-color: var(--color-primary, #1e3a5f) !important;
     background: rgb(236 253 245) !important;
-    color: var(--color-primary-dark, #008f34) !important;
+    color: var(--color-primary-dark, #152a45) !important;
     box-shadow: 0 4px 14px rgb(5 150 105 / 0.12);
     transform: translateY(-1px);
 }
@@ -87,7 +87,7 @@
     min-height: 2.75rem;
     padding: 0.625rem 1.5rem;
     border-radius: 0.625rem !important;
-    border: 1.5px solid var(--color-primary, #00a63e) !important;
+    border: 1.5px solid var(--color-primary, #1e3a5f) !important;
     background: #ffffff !important;
     color: var(--color-primary-dark, #047857) !important;
     box-shadow: 0 1px 3px rgb(5 150 105 / 0.08);
@@ -104,8 +104,8 @@
 .btn-outline:hover,
 .page-view .btn.bg-transparent.border-primary:hover,
 .page-view .btn.border-primary.text-primary:not(.bg-primary):not(.btn-icon):hover {
-    border-color: var(--color-primary-dark, #008f34) !important;
-    background: var(--color-primary, #00a63e) !important;
+    border-color: var(--color-primary-dark, #152a45) !important;
+    background: var(--color-primary, #1e3a5f) !important;
     color: #ffffff !important;
 }
 
@@ -132,8 +132,8 @@
 }
 
 .btn.btn-icon.border:hover {
-    border-color: var(--color-primary, #00a63e) !important;
-    background: var(--color-primary, #00a63e) !important;
+    border-color: var(--color-primary, #1e3a5f) !important;
+    background: var(--color-primary, #1e3a5f) !important;
     color: #ffffff !important;
 }
 
@@ -158,8 +158,8 @@
 }
 
 .property-search-tabs button[role='tab'][aria-selected='true'] {
-    border-color: var(--color-primary-dark, #008f34) !important;
-    background: var(--color-primary, #00a63e) !important;
+    border-color: var(--color-primary-dark, #152a45) !important;
+    background: var(--color-primary, #1e3a5f) !important;
     color: #ffffff !important;
 }
 
