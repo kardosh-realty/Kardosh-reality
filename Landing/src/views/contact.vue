@@ -107,7 +107,9 @@
         blur="15px"
       >
         <img
-          :src="PAGE_HERO_IMAGES.contact"
+          :src="decorativeHeroImage.src"
+          :srcset="decorativeHeroImage.srcset || undefined"
+          :sizes="decorativeHeroImage.sizes || undefined"
           alt="UAE skyline"
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
@@ -148,6 +150,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ChevronDown } from 'lucide-vue-next'
 import Navbar from '@/component/navbar.vue'
@@ -157,10 +160,12 @@ import PageHero from '@/component/kardosh/PageHero.vue'
 import BlurVignette from '@/component/ui/BlurVignette.vue'
 import BlurVignetteArticle from '@/component/ui/BlurVignetteArticle.vue'
 import HomeGetInTouch from '@/component/kardosh/home/HomeGetInTouch.vue'
-import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
+import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import {
   CONTACT_PAGE_STATS,
   CONTACT_EXPECTATIONS,
   CONTACT_FAQ,
 } from '@/config/contact-page'
+
+const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.contact))
 </script>

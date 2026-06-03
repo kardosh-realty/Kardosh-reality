@@ -64,8 +64,8 @@ const props = defineProps({
   wrapperClass: { type: String, default: '' },
   loading: { type: String, default: 'lazy' },
   fetchpriority: { type: String, default: undefined },
-  width: { type: [Number, String], default: 651 },
-  height: { type: [Number, String], default: 394 },
+  width: { type: [Number, String], default: 560 },
+  height: { type: [Number, String], default: 338 },
   sizes: { type: String, default: '(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 400px' },
   /** JPEG/WebP quality passed to the image proxy (lower = smaller files). */
   quality: { type: Number, default: 72 },
@@ -113,7 +113,7 @@ const desktopSrcSet = computed(() => {
       ? [120, 160, 200]
       : w >= 900
         ? LISTING_GALLERY_DESKTOP_WIDTHS
-        : [320, 480, 651, 800]
+        : LISTING_CARD_SRCSET_WIDTHS
   return proxyReellyImageSrcSet(props.src, { widths, quality: props.quality })
 })
 

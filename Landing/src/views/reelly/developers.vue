@@ -189,7 +189,9 @@
         blur="15px"
       >
         <img
-          :src="PAGE_HERO_IMAGES.developers"
+          :src="decorativeHeroImage.src"
+          :srcset="decorativeHeroImage.srcset || undefined"
+          :sizes="decorativeHeroImage.sizes || undefined"
           alt="UAE property developers"
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
@@ -239,11 +241,12 @@ import DeveloperCard from '@/component/kardosh/DeveloperCard.vue'
 import BlurVignette from '@/component/ui/BlurVignette.vue'
 import BlurVignetteArticle from '@/component/ui/BlurVignetteArticle.vue'
 import DeveloperGridSkeleton from '@/component/kardosh/skeleton/DeveloperGridSkeleton.vue'
-import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
+import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import { useReelly } from '@/composables/useReelly'
 import { developerProfileRoute } from '@/utils/mapDeveloper'
 
 const { uaeDevelopers, loading, error, loadProjects, loadDeveloperLogos } = useReelly()
+const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.developers))
 const searchQuery = ref('')
 
 const filteredDevelopers = computed(() => {

@@ -1,5 +1,8 @@
-/** Width tuned for property cards (~651px display in Lighthouse). */
-export const LISTING_CARD_IMAGE_WIDTH = 651
+/** Width tuned for property cards — capped for mobile PageSpeed. */
+export const LISTING_CARD_IMAGE_WIDTH = 560
+
+/** Default responsive breakpoints for srcset (mobile loads smallest first). */
+export const LISTING_CARD_SRCSET_WIDTHS = [240, 320, 400, 480, 560]
 
 /** Gallery / detail hero slides */
 export const LISTING_GALLERY_IMAGE_WIDTH = 960
@@ -16,9 +19,6 @@ export const LISTING_THUMB_IMAGE_WIDTH = 160
 
 /** Developer logo strip */
 export const DEVELOPER_LOGO_WIDTH = 200
-
-/** Default responsive breakpoints for srcset (mobile loads smallest first). */
-export const LISTING_CARD_SRCSET_WIDTHS = [320, 480, 651, 800]
 
 const ALLOWED_HOST_SUFFIXES = ['storage.googleapis.com', 'googleapis.com', 'reelly.io']
 

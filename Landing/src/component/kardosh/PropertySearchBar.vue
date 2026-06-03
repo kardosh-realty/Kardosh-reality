@@ -144,11 +144,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Search } from 'lucide-vue-next'
 import vSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css'
 import {
   SEARCH_PLACEHOLDER,
   BUDGET_RANGE_OPTIONS,
@@ -322,6 +321,10 @@ watch(keyword, () => {
 
 watch([propertyType, developer, bedrooms, budgetRange], () => {
   if (isListing.value) submit()
+})
+
+onMounted(() => {
+  void import('vue-select/dist/vue-select.css')
 })
 </script>
 

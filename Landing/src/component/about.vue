@@ -5,7 +5,9 @@
         <div class="lg:col-span-5 relative group order-2 lg:order-1">
           <div class="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3] lg:aspect-[5/4]">
             <img
-              :src="image"
+              :src="aboutImage.src"
+              :srcset="aboutImage.srcset || undefined"
+              :sizes="aboutImage.sizes || undefined"
               alt="Dubai skyline and luxury residences"
               class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               loading="lazy"
@@ -159,8 +161,8 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import { BRAND } from '@/config/brand'
 import { HERO_YOUTUBE_ID, heroYouTubeEmbedUrl } from '@/config/marketing'
-import { SECTION_IMAGES } from '@/config/dubai-images'
-const image = SECTION_IMAGES.about
+import { SECTION_IMAGES, pageHeroImage } from '@/config/dubai-images'
+const aboutImage = computed(() => pageHeroImage(SECTION_IMAGES.about))
 
 const swiperModules = [Navigation]
 

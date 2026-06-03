@@ -2,9 +2,12 @@
   <section class="lg:mt-24 mt-16">
     <div class="container-fluid">
       <div
-        class="rounded-2xl px-8 py-12 md:py-16 text-center text-white relative overflow-hidden bg-no-repeat bg-center bg-cover"
-        :style="{ backgroundImage: `url(${SECTION_IMAGES.cta})` }"
+        class="rounded-2xl px-8 py-12 md:py-16 text-center text-white relative overflow-hidden"
       >
+        <ResponsiveCoverImage
+          :src="SECTION_IMAGES.cta"
+          class="absolute inset-0"
+        />
         <div class="absolute inset-0 bg-slate-900/70" />
         <div class="relative z-[1] max-w-2xl mx-auto">
           <h2 class="text-2xl md:text-3xl font-semibold">Ready to buy off plan property in Dubai?</h2>
@@ -34,6 +37,7 @@
 
 <script setup>
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
+import ResponsiveCoverImage from '@/component/kardosh/ResponsiveCoverImage.vue'
 import { whatsAppLink } from '@/config/marketing'
 import { SECTION_IMAGES } from '@/config/dubai-images'
 </script>

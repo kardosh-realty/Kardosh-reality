@@ -88,6 +88,28 @@ async function main() {
       quality: 78,
     })
   }
+
+  const PAGE_HERO_JPGS = ['01', '02', '03', '04']
+  for (const id of PAGE_HERO_JPGS) {
+    const src = `src/assets/images/bg/${id}.jpg`
+    await optimizeWebp(src, `src/assets/images/bg/${id}-768.webp`, {
+      maxWidth: 768,
+      quality: 68,
+    })
+    await optimizeWebp(src, `src/assets/images/bg/${id}-1280.webp`, {
+      maxWidth: 1280,
+      quality: 72,
+    })
+  }
+
+  await optimizeWebp('src/assets/images/about.jpg', 'src/assets/images/about-480.webp', {
+    maxWidth: 480,
+    quality: 72,
+  })
+  await optimizeWebp('src/assets/images/about.jpg', 'src/assets/images/about-768.webp', {
+    maxWidth: 768,
+    quality: 74,
+  })
 }
 
 main().catch((e) => {

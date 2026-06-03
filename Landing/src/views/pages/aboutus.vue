@@ -196,7 +196,9 @@
         blur="15px"
       >
         <img
-          :src="PAGE_HERO_IMAGES.about"
+          :src="decorativeHeroImage.src"
+          :srcset="decorativeHeroImage.srcset || undefined"
+          :sizes="decorativeHeroImage.sizes || undefined"
           alt=""
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
@@ -384,7 +386,9 @@
         blur="15px"
       >
         <img
-          :src="PAGE_HERO_IMAGES.about"
+          :src="decorativeHeroImage.src"
+          :srcset="decorativeHeroImage.srcset || undefined"
+          :sizes="decorativeHeroImage.sizes || undefined"
           alt="UAE property advisory"
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
@@ -444,7 +448,7 @@ import About from '@/component/about.vue'
 import InternationalBrokerStrip from '@/component/kardosh/home/InternationalBrokerStrip.vue'
 import HomeGetInTouch from '@/component/kardosh/home/HomeGetInTouch.vue'
 import { BRAND, SOCIAL } from '@/config/brand'
-import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
+import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import {
   ABOUT_STATS,
   ABOUT_MISSION,
@@ -459,6 +463,7 @@ import { teamMembers } from '@/composables/useTeam'
 import { teamDisplayLinks } from '@/utils/teamLinks'
 
 const aboutTestimonials = computed(() => getAboutPageTestimonials(testimonials.value))
+const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.about))
 
 /** Up to 4 visible on xl; loop + autoplay when more members are added */
 const TEAM_VISIBLE_XL = 4

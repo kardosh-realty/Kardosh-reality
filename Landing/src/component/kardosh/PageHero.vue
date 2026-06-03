@@ -1,15 +1,25 @@
 <template>
   <section
-    class="page-hero relative table w-full bg-no-repeat bg-center bg-cover"
+    class="page-hero relative table w-full overflow-hidden"
     :class="[
       compact ? 'page-hero--compact' : 'page-hero--default',
-      { 'bg-slate-900': !image },
+      { 'bg-slate-900': !resolvedHero.src },
     ]"
-    :style="image ? { backgroundImage: `url(${image})` } : undefined"
   >
+    <img
+      v-if="resolvedHero.src"
+      class="page-hero__bg absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+      :src="resolvedHero.src"
+      :srcset="resolvedHero.srcset || undefined"
+      :sizes="resolvedHero.sizes || undefined"
+      alt=""
+      fetchpriority="high"
+      decoding="async"
+      aria-hidden="true"
+    />
     <div
       class="absolute inset-0"
-      :class="image ? 'bg-slate-900/75' : 'bg-gradient-to-br from-slate-900 via-slate-900 to-primary/30'"
+      :class="resolvedHero.src ? 'bg-slate-900/75' : 'bg-gradient-to-br from-slate-900 via-slate-900 to-primary/30'"
     />
     <div class="container relative text-center z-[1]">
       <KardoshBreadcrumbs variant="hero" />
@@ -32,9 +42,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import KardoshBreadcrumbs from '@/component/kardosh/KardoshBreadcrumbs.vue'
+import { pageHeroImage } from '@/config/dubai-images'
 
-defineProps({
+const props = defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },
   eyebrow: { type: String, default: '' },
@@ -44,6 +56,8 @@ defineProps({
   /** Skip wave divider (map page) */
   hideShape: { type: Boolean, default: false },
 })
+
+const resolvedHero = computed(() => pageHeroImage(props.image))
 </script>
 
 <style scoped>

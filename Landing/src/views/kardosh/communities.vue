@@ -173,7 +173,9 @@
         blur="15px"
       >
         <img
-          :src="PAGE_HERO_IMAGES.communities"
+          :src="decorativeHeroImage.src"
+          :srcset="decorativeHeroImage.srcset || undefined"
+          :sizes="decorativeHeroImage.sizes || undefined"
           alt="UAE skyline and communities"
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
@@ -228,10 +230,11 @@ import {
   EMIRATE_OVERVIEWS,
   communitiesByEmirate,
 } from '@/config/communities'
-import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
+import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import { loadVisibility, isCommunityHidden } from '@/services/visibility'
 
 const route = useRoute()
+const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.communities))
 const activeEmirate = ref('all')
 const visibilityReady = ref(false)
 

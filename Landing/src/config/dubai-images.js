@@ -8,9 +8,20 @@ import heroDistrict from '@/assets/images/bg/03.jpg'
 import heroTwilight from '@/assets/images/bg/04.jpg'
 import { DEFAULT_HERO_POSTER } from '@/config/hero-poster'
 import aboutEditorial from '@/assets/images/about.jpg'
+import about480 from '@/assets/images/about-480.webp'
+import about768 from '@/assets/images/about-768.webp'
 import whyInvestDubai from '@/assets/images/why-invest-dubai.webp'
 import whyInvestDubaiMobile from '@/assets/images/why-invest-dubai-mobile.webp'
 import property1 from '@/assets/images/property/1.jpg'
+
+import hero01Mobile from '@/assets/images/bg/01-768.webp'
+import hero01Desktop from '@/assets/images/bg/01-1280.webp'
+import hero02Mobile from '@/assets/images/bg/02-768.webp'
+import hero02Desktop from '@/assets/images/bg/02-1280.webp'
+import hero03Mobile from '@/assets/images/bg/03-768.webp'
+import hero03Desktop from '@/assets/images/bg/03-1280.webp'
+import hero04Mobile from '@/assets/images/bg/04-768.webp'
+import hero04Desktop from '@/assets/images/bg/04-1280.webp'
 
 import downtownDubai from '@/assets/images/communities/downtown-dubai.jpg'
 import businessBay from '@/assets/images/communities/business-bay.jpg'
@@ -41,9 +52,63 @@ export const DUBAI_PROPERTY_FALLBACK = property1
 /** Community card srcset — matches 1 / 2 / 4 column grid */
 export const COMMUNITY_CARD_SIZES = '(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 320px'
 
+/** Full-bleed page hero / cover backgrounds */
+export const PAGE_HERO_SIZES = '100vw'
+
+/** About section image on home */
+export const ABOUT_SECTION_SIZES = '(max-width: 1023px) 92vw, 640px'
+
 /** Why-invest section image srcset */
 export const WHY_INVEST_SRCSET = `${whyInvestDubaiMobile} 768w, ${whyInvestDubai} 1600w`
 export const WHY_INVEST_SIZES = '(max-width: 1023px) 92vw, 640px'
+
+const PAGE_HERO_BG_RESPONSIVE = {
+  [heroSkyline]: {
+    src: hero01Desktop,
+    srcset: `${hero01Mobile} 768w, ${hero01Desktop} 1280w`,
+    sizes: PAGE_HERO_SIZES,
+  },
+  [heroMarina]: {
+    src: hero02Desktop,
+    srcset: `${hero02Mobile} 768w, ${hero02Desktop} 1280w`,
+    sizes: PAGE_HERO_SIZES,
+  },
+  [heroDistrict]: {
+    src: hero03Desktop,
+    srcset: `${hero03Mobile} 768w, ${hero03Desktop} 1280w`,
+    sizes: PAGE_HERO_SIZES,
+  },
+  [heroTwilight]: {
+    src: hero04Desktop,
+    srcset: `${hero04Mobile} 768w, ${hero04Desktop} 1280w`,
+    sizes: PAGE_HERO_SIZES,
+  },
+  [aboutEditorial]: {
+    src: about768,
+    srcset: `${about480} 480w, ${about768} 768w`,
+    sizes: ABOUT_SECTION_SIZES,
+  },
+  [downtownDubai]: {
+    src: downtownDubai960,
+    srcset: `${downtownDubai480} 480w, ${downtownDubai960} 960w`,
+    sizes: PAGE_HERO_SIZES,
+  },
+}
+
+/**
+ * Responsive WebP for page heroes and cover backgrounds.
+ * Accepts a resolved asset URL from PAGE_HERO_IMAGES / SECTION_IMAGES.
+ */
+export function pageHeroImage(src) {
+  if (!src) return { src: '', srcset: '', sizes: PAGE_HERO_SIZES }
+  return (
+    PAGE_HERO_BG_RESPONSIVE[src] || {
+      src,
+      srcset: '',
+      sizes: PAGE_HERO_SIZES,
+    }
+  )
+}
 
 /** Inner-page heroes (full-bleed banner like About) */
 export const PAGE_HERO_IMAGES = {

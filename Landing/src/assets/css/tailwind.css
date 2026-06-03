@@ -12,6 +12,21 @@
 /* Tailwind CSS */
 @import "tailwindcss";
 
+/* Exclude unused Hously demo templates from CSS generation */
+@source not "../../views/index/index-two.vue";
+@source not "../../views/index/index-three.vue";
+@source not "../../views/index/index-four.vue";
+@source not "../../views/index/index-five.vue";
+@source not "../../views/index/index-six.vue";
+@source not "../../views/index/index-seven.vue";
+@source not "../../views/index/index-eight.vue";
+@source not "../../views/index/index-nine.vue";
+@source not "../../views/index/index-ten.vue";
+@source not "../../views/index/index-eleven.vue";
+@source not "../../views/index/index-twelve.vue";
+@source not "../../views/index/index-thirteen.vue";
+@source not "../../views/index/index-fourteen.vue";
+
 /* Dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
