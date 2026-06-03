@@ -19,8 +19,10 @@ export const ROUTE_BREADCRUMB_TRAILS = {
   contact: [{ label: 'Contact', to: '/contact' }],
   blogs: [{ label: 'Insights', to: '/blogs' }],
   'blog-detail': [{ label: 'Insights', to: '/blogs' }],
-  terms: [{ label: 'Terms', to: '/terms' }],
-  privacy: [{ label: 'Privacy', to: '/privacy' }],
+  terms: [{ label: 'Terms & conditions', to: '/terms' }],
+  privacy: [{ label: 'Privacy policy', to: '/privacy' }],
+  'cookie-policy': [{ label: 'Cookie policy', to: '/cookie-policy' }],
+  'finance-policy': [{ label: 'Finance policy', to: '/finance-policy' }],
   NotFound: [{ label: 'Page not found' }],
 }
 

@@ -79,6 +79,8 @@ const STATIC_PATHS = [
   '/blogs',
   '/terms',
   '/privacy',
+  '/cookie-policy',
+  '/finance-policy',
 ]
 
 function xmlEscape(s) {

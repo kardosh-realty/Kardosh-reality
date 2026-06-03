@@ -123,12 +123,26 @@ const routes = [
   {
     path: '/terms',
     name: 'terms',
-    component: () => import('@/views/pages/utility/terms.vue'),
+    component: () => import('@/views/pages/utility/LegalDocumentView.vue'),
+    props: { legalKey: 'terms' },
   },
   {
     path: '/privacy',
     name: 'privacy',
-    component: () => import('@/views/pages/utility/privacy.vue'),
+    component: () => import('@/views/pages/utility/LegalDocumentView.vue'),
+    props: { legalKey: 'privacy' },
+  },
+  {
+    path: '/cookie-policy',
+    name: 'cookie-policy',
+    component: () => import('@/views/pages/utility/LegalDocumentView.vue'),
+    props: { legalKey: 'cookie' },
+  },
+  {
+    path: '/finance-policy',
+    name: 'finance-policy',
+    component: () => import('@/views/pages/utility/LegalDocumentView.vue'),
+    props: { legalKey: 'finance' },
   },
   {
     path: '/blogs',

@@ -15,6 +15,8 @@
               We use essential cookies to run the site and optional analytics cookies to understand
               how visitors use Kardosh Realty. You can accept all cookies or continue with essential
               cookies only.
+              <RouterLink to="/cookie-policy" class="cookie-consent__link">Cookie policy</RouterLink>
+              and
               <RouterLink to="/privacy" class="cookie-consent__link">Privacy policy</RouterLink>
             </p>
           </div>

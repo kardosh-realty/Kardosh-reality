@@ -16,7 +16,7 @@ export const SCHEMA_IDS = {
   website: `${SITE_URL}/#website`,
 }
 
-const NOINDEX_ROUTES = new Set(['terms', 'privacy', 'NotFound', 'share-review'])
+const NOINDEX_ROUTES = new Set(['terms', 'privacy', 'cookie-policy', 'finance-policy', 'NotFound', 'share-review'])
 
 /** Map vue-router route names to Schema.org page types. */
 const ROUTE_PAGE_TYPES = {
@@ -33,6 +33,8 @@ const ROUTE_PAGE_TYPES = {
   blogs: 'CollectionPage',
   terms: 'WebPage',
   privacy: 'WebPage',
+  'cookie-policy': 'WebPage',
+  'finance-policy': 'WebPage',
 }
 
 function toJsonLd(graph) {

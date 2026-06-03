@@ -65,13 +65,23 @@ export const ROUTE_SEO = {
       'Market updates, area guides, and off-plan insights from the Kardosh Realty team.',
   },
   terms: {
-    title: `Terms of Use | ${SITE_NAME}`,
-    description: `Terms of use for the ${SITE_NAME} website.`,
+    title: `Terms & Conditions | ${SITE_NAME}`,
+    description: `Terms and conditions for using the ${SITE_NAME} website.`,
     robots: 'noindex, follow',
   },
   privacy: {
     title: `Privacy Policy | ${SITE_NAME}`,
     description: `Privacy policy for the ${SITE_NAME} website.`,
+    robots: 'noindex, follow',
+  },
+  'cookie-policy': {
+    title: `Cookie Policy | ${SITE_NAME}`,
+    description: `Cookie policy for the ${SITE_NAME} website.`,
+    robots: 'noindex, follow',
+  },
+  'finance-policy': {
+    title: `Finance Policy | ${SITE_NAME}`,
+    description: `Finance policy for the ${SITE_NAME} website.`,
     robots: 'noindex, follow',
   },
   NotFound: {

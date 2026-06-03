@@ -144,12 +144,14 @@ import { site, reraLabel, whatsappHref, socialLinks } from '@/composables/useSit
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
 import FooterLanguageSwitcher from '@/component/kardosh/FooterLanguageSwitcher.vue'
 import FooterBackgroundGradient from '@/component/ui/FooterBackgroundGradient.vue'
+import { LEGAL_FOOTER_LINKS } from '@/config/legal-content'
 
 const year = new Date().getFullYear()
 
 const openSections = reactive({
   explore: false,
   helpful: false,
+  legal: false,
   contact: false,
 })
 
@@ -180,9 +182,12 @@ const footerLinks = [
       { label: 'Blog', to: '/blogs' },
       { label: 'Contact', to: '/contact', pulse: true },
       { label: 'Map view', to: '/grid-map' },
-      { label: 'Terms of service', to: '/terms' },
-      { label: 'Privacy policy', to: '/privacy' },
     ],
+  },
+  {
+    id: 'legal',
+    title: 'Legal',
+    links: LEGAL_FOOTER_LINKS.map(({ label, to }) => ({ label, to })),
   },
 ]
 

@@ -50,11 +50,18 @@
                             </div>
 
                             <div class="lg:col-span-3 md:col-span-4">
+                                <h5 class="tracking-[1px] text-slate-900 dark:text-white font-semibold">Legal</h5>
+                                <ul class="list-none footer-list mt-6">
+                                    <li v-for="link in legalLinks" :key="link.to" :class="{ 'mt-2.5': link.to !== legalLinks[0].to }">
+                                        <RouterLink :to="link.to" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> {{ link.label }}</RouterLink>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="lg:col-span-3 md:col-span-4">
                                 <h5 class="tracking-[1px] text-slate-900 dark:text-white font-semibold">Usefull Links</h5>
                                 <ul class="list-none footer-list mt-6">
-                                    <li><RouterLink to="/terms" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> Terms of Services</RouterLink></li>
-                                    <li class="mt-2.5"><RouterLink to="/privacy" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> Privacy Policy</RouterLink></li>
-                                    <li class="mt-2.5"><RouterLink to="/grid" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> Listing</RouterLink></li>
+                                    <li><RouterLink to="/grid" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> Listing</RouterLink></li>
                                     <li class="mt-2.5"><RouterLink to="/contact" class="text-slate-400 inline-flex hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-400 duration-500 ease-in-out"><ChevronRight :style="{ width: 20,height:20 }" class="me-1 text-xl"/> Contact</RouterLink></li>
                                 </ul>
                             </div>
@@ -115,6 +122,7 @@
 
 <script setup>
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
+import { LEGAL_FOOTER_LINKS } from '@/config/legal-content'
 
 import {
     Mail,
@@ -132,4 +140,5 @@ import {
 } from 'lucide-vue-next'
 
 const year = new Date().getFullYear()
+const legalLinks = LEGAL_FOOTER_LINKS
 </script>
