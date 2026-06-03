@@ -5,7 +5,7 @@
         Featured off-plan projects
       </h3>
       <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-        Hand-picked Dubai developments for international investors — live data via Reelly.
+        Hand-picked Dubai developments for international investors — live catalogue data on Kardosh Realty.
       </p>
     </div>
 

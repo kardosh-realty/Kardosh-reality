@@ -32,7 +32,7 @@ async function reellyFetch(path, params = {}) {
     })
   } catch (e) {
     if (e?.name === 'AbortError') {
-      const err = new Error('Reelly API timed out — the server took too long to respond.')
+      const err = new Error('The project catalogue took too long to load. Please try again.')
       err.status = 408
       throw err
     }
@@ -42,7 +42,7 @@ async function reellyFetch(path, params = {}) {
   }
 
   if (!res.ok) {
-    const err = new Error(`Reelly API error: ${res.status}`)
+    const err = new Error(`Unable to load project catalogue (${res.status})`)
     err.status = res.status
     throw err
   }

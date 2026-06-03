@@ -1,8 +1,8 @@
 <template>
   <Navbar nav-class="navbar-white" />
   <PageHero
-    title="Best areas to invest in Dubai & the UAE"
-    subtitle="Downtown Dubai, Business Bay, Dubai Hills, Palm Jumeirah, JVC, Dubai Creek Harbour, and more — off plan projects by community on Kardosh Realty."
+    title="Explore Dubai Communities"
+    subtitle="Discover off-plan projects across Dubai's most sought-after communities."
     :image="PAGE_HERO_IMAGES.communities"
   />
 
@@ -267,7 +267,7 @@ const VALUE_POINTS = [
   {
     icon: TrendingUp,
     title: 'Live catalogue',
-    text: 'Community pages pull matching stock from Reelly so listings stay current as developers launch.',
+    text: 'Community pages pull matching stock from our live catalogue so listings stay current as developers launch.',
   },
   {
     icon: Building2,

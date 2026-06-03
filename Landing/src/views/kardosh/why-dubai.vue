@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Dubai property investment guide"
-    subtitle="Best areas to invest in Dubai, off plan investment, golden visa property rules, and high ROI communities — explained by Kardosh Realty."
+    title="Why Invest in Dubai?"
+    subtitle="From lifestyle and connectivity to capital growth and investor-friendly regulations, Dubai offers a unique environment for building long-term wealth through real estate."
     :image="PAGE_HERO_IMAGES.whyDubai"
   />
 
@@ -427,7 +427,7 @@ import {
 
 const INTRO_POINTS = [
   'Freehold ownership for foreigners in designated zones',
-  'Live off-plan catalogue with AED pricing via Reelly',
+  'Live off-plan catalogue with AED pricing on Kardosh Realty',
   'Licensed brokerage and developer-backed payment plans',
 ]
 

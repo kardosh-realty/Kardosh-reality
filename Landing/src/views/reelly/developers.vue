@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Dubai property developers"
-    subtitle="Explore Emaar, DAMAC, Sobha, Binghatti, Meraas, Nakheel, and more — active off plan projects in Dubai and the UAE, curated on Kardosh Realty."
+    title="Explore Dubai's Leading Developers"
+    subtitle="Browse projects from Emaar, DAMAC, Sobha, Binghatti, Nakheel, Meraas, and more."
     :image="PAGE_HERO_IMAGES.developers"
   />
 
@@ -275,7 +275,7 @@ const valuePoints = [
   {
     icon: Handshake,
     title: 'Sales contacts',
-    text: 'Where Reelly provides them, reach licensed sales executives with WhatsApp and office hours.',
+    text: 'Where available, reach licensed sales executives with WhatsApp and office hours.',
   },
   {
     icon: MapPin,

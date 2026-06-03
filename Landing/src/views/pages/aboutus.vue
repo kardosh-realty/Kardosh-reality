@@ -4,7 +4,7 @@
   <div class="about-page">
   <PageHero
     title="About Kardosh Realty"
-    :subtitle="BRAND.tagline"
+    subtitle="Helping buyers discover off-plan projects in Dubai with confidence."
     :image="PAGE_HERO_IMAGES.about"
   />
 

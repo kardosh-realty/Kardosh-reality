@@ -3,8 +3,8 @@
 
   <div class="map-page-view">
   <PageHero
-    title="Off-plan map"
-    subtitle="Explore UAE off-plan projects on the map. Select a marker or list item for full details."
+    title="Explore Dubai Off-Plan Projects on the Map"
+    subtitle="Compare locations, communities, and off-plan opportunities across Dubai."
     :image="PAGE_HERO_IMAGES.map"
     :compact="isMobile"
     :hide-shape="isMobile"

@@ -189,7 +189,7 @@ export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = [
         count: 0,
         restricted: true,
         message:
-          'Live unit inventory requires a Reelly Business package. Typical units and brochures are still available below.',
+          'Live unit inventory is not available for this project. Typical units and brochures are still available below.',
       }
     }
     if (e.status === 408 || e.status === 502 || e.status === 504) {

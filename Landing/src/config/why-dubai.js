@@ -171,6 +171,6 @@ export const WHY_DUBAI_FAQ = [
     id: 'broker',
     question: 'Why use Kardosh Realty?',
     answer:
-      'We are a licensed brokerage based in Business Bay, Dubai, curating live UAE off-plan data via Reelly, with human advisory for comparison, reservation, and after-sales support.',
+      'We are a licensed brokerage based in Business Bay, Dubai, curating live UAE off-plan data on Kardosh Realty, with human advisory for comparison, reservation, and after-sales support.',
   },
 ]

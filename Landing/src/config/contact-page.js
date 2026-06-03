@@ -16,7 +16,7 @@ export const CONTACT_EXPECTATIONS = [
   },
   {
     title: 'Curated shortlist',
-    text: 'Live projects from our Reelly catalogue with AED pricing and payment plan context.',
+    text: 'Live projects from our off-plan catalogue with AED pricing and payment plan context.',
   },
   {
     title: 'Licensed next steps',

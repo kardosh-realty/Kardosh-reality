@@ -7,7 +7,7 @@
       Project availability
     </h3>
     <p class="property-detail-status__lead">
-      Live catalogue data from Reelly. Individual sale or transaction history is not exposed in the API.
+      Live catalogue data on Kardosh Realty. Individual sale or transaction history is not published on project pages.
     </p>
 
     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">

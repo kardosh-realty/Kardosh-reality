@@ -33,7 +33,7 @@ export const ABOUT_PILLARS = [
 export const ABOUT_SERVICES = [
   {
     title: 'Off-plan advisory',
-    desc: 'Compare developers, communities, and payment plans from our live Reelly catalogue.',
+    desc: 'Compare developers, communities, and payment plans from our live off-plan catalogue.',
     to: '/off-plan',
   },
   {
@@ -95,7 +95,7 @@ export const COUNTER_METRICS = [
 export const ABOUT_DIFFERENTIATORS = [
   {
     title: 'Live data',
-    text: 'Off-plan stock synced via Reelly so prices and availability stay current.',
+    text: 'Off-plan stock synced to our catalogue so prices and availability stay current.',
   },
   {
     title: 'Licensed brokerage',

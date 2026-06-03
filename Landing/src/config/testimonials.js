@@ -48,7 +48,7 @@ export const TESTIMONIALS = [
     role: 'UAE National',
   },
   {
-    text: 'Brochures, floor plans, and payment schedules in one place. The Reelly-powered catalogue on their site is a huge time-saver for busy executives.',
+    text: 'Brochures, floor plans, and payment schedules in one place. The live catalogue on their site is a huge time-saver for busy executives.',
     image: 'https://images.unsplash.com/photo-1519345182560-3f0c02d9318?w=80&h=80&fit=crop&crop=face',
     name: 'Michael Torres',
     role: 'Corporate Buyer',
