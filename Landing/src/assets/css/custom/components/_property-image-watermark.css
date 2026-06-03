@@ -14,12 +14,25 @@
 }
 
 .protected-property-image--fill .protected-property-image__img,
+.protected-property-image--fill > picture,
 .protected-property-image--fill > img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+}
+
+.protected-property-image--fill > picture {
+    display: block;
+}
+
+.protected-property-image--fill .protected-property-image__img,
+.protected-property-image--fill > picture img,
+.protected-property-image--fill > img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .property-image-watermark {

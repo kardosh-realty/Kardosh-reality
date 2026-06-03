@@ -328,6 +328,12 @@ watch(filtered, (list) => {
 <style scoped>
 .property-gallery-main :deep(.swiper-slide) {
   height: auto;
+  width: 100%;
+}
+
+.property-gallery-main :deep(.swiper),
+.property-gallery-main :deep(.swiper-wrapper) {
+  width: 100%;
 }
 
 .property-gallery-main__bottom {
@@ -412,13 +418,13 @@ watch(filtered, (list) => {
 
 .property-gallery-thumb-btn--active {
   opacity: 1;
-  box-shadow: 0 0 0 2px #0a0a0a;
+  box-shadow: 0 0 0 2px var(--color-primary, #1e3a5f);
   outline: 2px solid #fff;
   outline-offset: 1px;
 }
 
 .dark .property-gallery-thumb-btn--active {
-  box-shadow: 0 0 0 2px #f8fafc;
+  box-shadow: 0 0 0 2px var(--color-primary, #1e3a5f);
   outline-color: #0f172a;
 }
 
@@ -513,13 +519,23 @@ watch(filtered, (list) => {
 }
 
 .property-gallery-filter--active {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
+  color: var(--btn-primary-text, #ffffff);
+}
+
+.property-gallery-filter--active:hover {
+  background: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
+  color: var(--btn-primary-text, #ffffff);
 }
 
 .dark .property-gallery-filter--active {
-  background: #f8fafc;
-  color: #0a0a0a;
+  background: var(--btn-primary-bg, var(--color-primary, #1e3a5f));
+  color: var(--btn-primary-text, #ffffff);
+}
+
+.dark .property-gallery-filter--active:hover {
+  background: var(--btn-primary-hover, var(--color-primary-dark, #152a45));
+  color: var(--btn-primary-text, #ffffff);
 }
 
 </style>
