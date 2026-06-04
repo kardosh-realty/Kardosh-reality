@@ -41,13 +41,13 @@
                   v-if="property.saleStatus"
                   class="property-detail-meta__chip capitalize"
                 >
-                  {{ property.saleStatus.replace(/_/g, ' ') }}
+                  {{ property.saleStatus }}
                 </li>
                 <li
                   v-if="property.constructionStatus"
                   class="property-detail-meta__chip capitalize"
                 >
-                  {{ property.constructionStatus.replace(/_/g, ' ') }}
+                  {{ property.constructionStatus }}
                 </li>
               </ul>
             </header>

@@ -3,8 +3,8 @@
 
   <div class="about-page">
   <PageHero
-    title="About Kardosh Realty"
-    subtitle="Helping buyers discover off-plan projects in Dubai with confidence."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.about"
   />
 
@@ -14,7 +14,7 @@
       <ul
         class="about-stats listings-search-glass kardosh-profile-stats kardosh-profile-stats--cols-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 list-none p-0 m-0"
       >
-        <li v-for="stat in ABOUT_STATS" :key="stat.label" class="text-center px-2">
+        <li v-for="stat in aboutStats" :key="stat.label" class="text-center px-2">
           <p class="kardosh-profile-stats__value text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
             {{ stat.value }}
           </p>
@@ -39,16 +39,16 @@
         class="about-page__mission-card max-w-3xl mx-auto text-center rounded-2xl px-6 py-8 md:px-10 md:py-10"
       >
         <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">
-          {{ ABOUT_MISSION.eyebrow }}
+          {{ aboutMission.eyebrow }}
         </p>
         <h2
           id="mission-heading"
           class="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
         >
-          {{ ABOUT_MISSION.title }}
+          {{ aboutMission.title }}
         </h2>
         <p class="about-lead mt-4">
-          {{ ABOUT_MISSION.body }}
+          {{ aboutMission.body }}
         </p>
       </article>
     </div>
@@ -58,21 +58,21 @@
   <section class="lg:py-20 py-14" aria-labelledby="services-heading">
     <div class="container-fluid">
       <div class="about-services__intro">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">What we do</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ servicesSection.eyebrow }}</p>
         <h2
           id="services-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
         >
-          One brokerage, full UAE coverage
+          {{ servicesSection.heading }}
         </h2>
         <p class="about-lead mt-4">
-          From off-plan launches to rentals and resale — explore the tools we built for modern property buyers.
+          {{ servicesSection.lead }}
         </p>
       </div>
 
       <div class="about-services__grid mt-10">
         <article
-          v-for="service in ABOUT_SERVICES"
+          v-for="service in aboutServices"
           :key="service.title"
           class="about-service-card community-card--luxury kardosh-property-card--luxury listings-search-glass group flex flex-col"
         >
@@ -83,7 +83,7 @@
             <p class="about-service-card__desc">{{ service.desc }}</p>
             <div class="community-card__footer">
               <div>
-                <p class="kardosh-property-card__price-label">Service</p>
+                <p class="kardosh-property-card__price-label">{{ servicesSection.serviceLabel }}</p>
                 <p class="kardosh-property-card__price-value">{{ service.title }}</p>
               </div>
               <RouterLink
@@ -91,7 +91,7 @@
                 class="kardosh-property-card__cta"
                 :aria-label="`View ${service.title}`"
               >
-                <span class="kardosh-property-card__cta-text">View</span>
+                <span class="kardosh-property-card__cta-text">{{ t('common.view') }}</span>
                 <span class="kardosh-property-card__cta-icon" aria-hidden="true">
                   <ArrowRight class="size-5" />
                 </span>
@@ -110,17 +110,17 @@
   >
     <div class="container-fluid">
       <div class="about-process__intro">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">How we work</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ processIntro.eyebrow }}</p>
         <h2
           id="process-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3"
         >
-          A clear path from hello to handover
+          {{ processIntro.heading }}
         </h2>
       </div>
       <ol class="about-process__grid mt-12 list-none p-0 m-0">
         <li
-          v-for="step in HOW_WE_WORK"
+          v-for="step in howWeWorkSteps"
           :key="step.step"
           class="about-process-card listings-search-glass group"
         >
@@ -139,15 +139,15 @@
     <div class="container-fluid">
       <div class="grid lg:grid-cols-12 gap-10 items-center">
         <div class="lg:col-span-5">
-          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Why Kardosh</p>
+          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ diffIntro.eyebrow }}</p>
           <h2
             id="why-kardosh-heading"
             class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
           >
-            Built for serious UAE property buyers
+            {{ diffIntro.heading }}
           </h2>
           <p class="about-lead mt-4">
-            We combine live market data with human advisory — so you compare like with like before you commit.
+            {{ diffIntro.lead }}
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
             <a
@@ -157,7 +157,7 @@
               class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
             >
               <Linkedin class="size-4" aria-hidden="true" />
-              LinkedIn
+              {{ diffIntro.linkedIn }}
             </a>
             <a
               :href="SOCIAL.instagram"
@@ -166,13 +166,13 @@
               class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
             >
               <Instagram class="size-4" aria-hidden="true" />
-              Instagram
+              {{ diffIntro.instagram }}
             </a>
           </div>
         </div>
         <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
           <article
-            v-for="item in ABOUT_DIFFERENTIATORS"
+            v-for="item in differentiators"
             :key="item.title"
             class="about-highlight-card rounded-2xl p-5 md:p-6"
           >
@@ -186,7 +186,7 @@
   </section>
 
   <!-- Animated counters — blur vignette (ui-layouts) -->
-  <section class="about-metrics pb-16 md:pb-20" aria-label="Company metrics">
+  <section class="about-metrics pb-16 md:pb-20" :aria-label="metricsAria">
     <div class="container-fluid">
       <BlurVignette
         root-class="about-metrics__vignette w-full min-h-[16rem] md:min-h-[20rem] aspect-auto"
@@ -213,7 +213,7 @@
           class="about-metrics__content relative z-10 flex min-h-[16rem] md:min-h-[20rem] flex-col items-center justify-center px-6 py-10 md:px-10 md:py-12"
         >
           <ul class="about-metrics__grid list-none p-0 m-0 w-full max-w-4xl">
-            <li v-for="(metric, i) in COUNTER_METRICS" :key="metric.label" class="text-center">
+            <li v-for="(metric, i) in counterMetrics" :key="metric.label" class="text-center">
               <p class="about-metrics__value tabular-nums">
                 {{ Math.floor(animatedCounts[i]) }}{{ metric.suffix }}
               </p>
@@ -230,15 +230,15 @@
     <section class="about-team lg:py-20 py-14" aria-labelledby="team-heading">
       <div class="container-fluid">
         <div class="about-team__intro">
-          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Our team</p>
+          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ teamSection.eyebrow }}</p>
           <h2
             id="team-heading"
             class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3"
           >
-            Licensed advisors across the UAE
+            {{ teamSection.heading }}
           </h2>
           <p class="about-lead mt-4">
-            Specialists in off-plan, leasing, and investment advisory — here to guide every step of your transaction.
+            {{ teamSection.lead }}
           </p>
         </div>
 
@@ -246,7 +246,7 @@
           <button
             type="button"
             class="about-team-carousel__nav about-team-carousel__nav--prev"
-            aria-label="Previous team member"
+            :aria-label="teamSection.prevAria"
           >
             <ChevronLeft class="size-5" aria-hidden="true" />
           </button>
@@ -306,7 +306,7 @@
           <button
             type="button"
             class="about-team-carousel__nav about-team-carousel__nav--next"
-            aria-label="Next team member"
+            :aria-label="teamSection.nextAria"
           >
             <ChevronRight class="size-5" aria-hidden="true" />
           </button>
@@ -321,15 +321,15 @@
     >
     <div class="container-fluid">
       <div class="max-w-3xl mx-auto text-center mb-10 lg:mb-12">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Client stories</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ testimonialsSection.eyebrow }}</p>
         <h2
           id="testimonials-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3"
         >
-          What our clients say
+          {{ testimonialsSection.heading }}
         </h2>
         <p class="about-lead mt-4">
-          Real experiences from buyers and investors who worked with Kardosh Realty in Dubai.
+          {{ testimonialsSection.lead }}
         </p>
       </div>
 
@@ -401,22 +401,22 @@
         <div
           class="about-cta__content relative z-10 flex min-h-[20rem] md:min-h-[22rem] flex-col items-center justify-center px-8 py-10 text-center text-white md:px-12 md:py-14"
         >
-          <h2 class="text-2xl font-semibold md:text-3xl">Ready to explore the UAE market?</h2>
+          <h2 class="text-2xl font-semibold md:text-3xl">{{ aboutCta.heading }}</h2>
           <p class="mt-3 max-w-2xl leading-relaxed text-white/85">
-            Browse off-plan projects, open the map, or book a call with our Dubai team.
+            {{ aboutCta.lead || aboutCta.body }}
           </p>
           <div class="kardosh-btn-row kardosh-btn-row--center mt-8">
             <RouterLink
               to="/off-plan"
               class="about-cta__btn-primary btn inline-flex items-center justify-center rounded-lg bg-white px-8 font-semibold hover:bg-slate-100"
             >
-              View off-plan
+              {{ aboutCta.viewOffPlan }}
             </RouterLink>
             <RouterLink
               to="/contact"
               class="btn inline-flex items-center justify-center rounded-lg border border-white/40 px-8 text-white hover:bg-white/10"
             >
-              Contact us
+              {{ aboutCta.contactUs }}
             </RouterLink>
           </div>
         </div>
@@ -429,7 +429,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Navigation } from 'swiper/modules'
@@ -449,18 +449,113 @@ import InternationalBrokerStrip from '@/component/kardosh/home/InternationalBrok
 import HomeGetInTouch from '@/component/kardosh/home/HomeGetInTouch.vue'
 import { BRAND, SOCIAL } from '@/config/brand'
 import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
-import {
-  ABOUT_STATS,
-  ABOUT_MISSION,
-  ABOUT_SERVICES,
-  HOW_WE_WORK,
-  COUNTER_METRICS,
-  ABOUT_DIFFERENTIATORS,
-} from '@/config/about'
+import { ABOUT_SERVICES as SERVICE_ROUTES } from '@/config/about'
+import { usePageHero } from '@/composables/usePageHero'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
 import { getAboutPageTestimonials } from '@/config/testimonials'
 import { testimonials } from '@/composables/useTestimonials'
 import { teamMembers } from '@/composables/useTeam'
 import { teamDisplayLinks } from '@/utils/teamLinks'
+
+const t = useT()
+const messages = useMessages()
+const hero = usePageHero('about')
+const about = computed(() => messages.value.about || {})
+
+const aboutStats = computed(() => about.value.stats || [])
+const aboutMission = computed(() => about.value.mission || {})
+
+const servicesSection = computed(() => {
+  const s = about.value.services
+  const page = about.value.page?.servicesSection
+  if (s && !Array.isArray(s)) {
+    return {
+      eyebrow: s.eyebrow || page?.eyebrow,
+      heading: s.heading || page?.heading,
+      lead: s.subheading || page?.lead,
+      serviceLabel: t('common.service'),
+    }
+  }
+  return {
+    eyebrow: page?.eyebrow || '',
+    heading: page?.heading || '',
+    lead: page?.lead || '',
+    serviceLabel: page?.serviceLabel || t('common.service'),
+  }
+})
+
+const aboutServices = computed(() => {
+  const s = about.value.services
+  const items = Array.isArray(s) ? s : s?.items || []
+  return items.map((item, i) => ({
+    ...item,
+    to: SERVICE_ROUTES[i]?.to ?? item.to ?? '/off-plan',
+  }))
+})
+
+const processIntro = computed(() => {
+  const w = about.value.howWeWork
+  if (w && !Array.isArray(w)) {
+    return { eyebrow: w.eyebrow, heading: w.heading }
+  }
+  return about.value.page?.processSection || { eyebrow: '', heading: '' }
+})
+
+const howWeWorkSteps = computed(() => {
+  const w = about.value.howWeWork
+  if (Array.isArray(w)) return w
+  return w?.steps || []
+})
+
+const diffIntro = computed(() => {
+  const d = about.value.differentiators
+  if (d && !Array.isArray(d)) {
+    return {
+      eyebrow: d.eyebrow,
+      heading: d.heading,
+      lead: d.subheading,
+      linkedIn: t('common.linkedin'),
+      instagram: t('common.instagram'),
+    }
+  }
+  const p = about.value.page?.whyKardosh || {}
+  return {
+    eyebrow: p.eyebrow,
+    heading: p.heading,
+    lead: p.lead,
+    linkedIn: p.linkedIn || t('common.linkedin'),
+    instagram: p.instagram || t('common.instagram'),
+  }
+})
+
+const differentiators = computed(() => {
+  const d = about.value.differentiators
+  if (Array.isArray(d)) return d
+  return d?.items || []
+})
+
+const counterMetrics = computed(() => about.value.metrics || [])
+const metricsAria = computed(() => about.value.page?.metricsAria || 'Company metrics')
+const teamSection = computed(() => {
+  const team = about.value.team || about.value.page?.team || {}
+  return {
+    eyebrow: team.eyebrow || '',
+    heading: team.heading || '',
+    lead: team.subheading || team.lead || '',
+    prevAria: team.prevAria || '',
+    nextAria: team.nextAria || '',
+  }
+})
+const testimonialsSection = computed(() => {
+  const ts = about.value.testimonials || about.value.page?.testimonials || {}
+  return {
+    eyebrow: ts.eyebrow || '',
+    heading: ts.heading || '',
+    lead: ts.subheading || ts.lead || '',
+  }
+})
+const aboutCta = computed(() => about.value.cta || about.value.page?.cta || {})
 
 const aboutTestimonials = computed(() => getAboutPageTestimonials(testimonials.value))
 const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.about))
@@ -481,11 +576,19 @@ const teamCarouselAutoplay = computed(() =>
     : false,
 )
 
-const animatedCounts = ref(COUNTER_METRICS.map(() => 0))
+const animatedCounts = ref([])
+
+watch(
+  counterMetrics,
+  (metrics) => {
+    animatedCounts.value = metrics.map(() => 0)
+  },
+  { immediate: true }
+)
 
 onMounted(() => {
   const duration = 1200
-  const ends = COUNTER_METRICS.map((m) => m.target)
+  const ends = counterMetrics.value.map((m) => m.target)
   const starts = ends.map(() => 0)
   const increments = ends.map((end, i) => (end - starts[i]) / (duration / 16))
   let current = [...starts]

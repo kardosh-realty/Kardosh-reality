@@ -8,6 +8,9 @@ import {
   truncateDescription,
 } from '@/config/seo'
 import { buildStaticRouteSchema } from '@/config/schema'
+import { ogLocaleTag } from '@/config/i18n'
+import { getLocaleId } from '@/composables/useLanguage'
+import { getMessages } from '@/locales'
 import { site } from '@/composables/useSiteSettings'
 
 function trackSiteSettingsForHead() {
@@ -42,6 +45,9 @@ function buildHead(input = {}) {
   const robots = input.robots || 'index, follow'
   const ogType = input.ogType || 'website'
 
+  const ogLocale = ogLocaleTag(input.locale || getLocaleId())
+  const htmlLang = (input.locale || getLocaleId()) === 'pt' ? 'pt' : 'en'
+
   return {
     title,
     meta: [
@@ -53,14 +59,14 @@ function buildHead(input = {}) {
       { property: 'og:type', content: ogType },
       { property: 'og:url', content: canonical },
       { property: 'og:image', content: image },
-      { property: 'og:locale', content: 'en_AE' },
+      { property: 'og:locale', content: ogLocale },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
       { name: 'twitter:image', content: image },
     ],
     link: [{ rel: 'canonical', href: canonical }],
-    htmlAttrs: { lang: 'en' },
+    htmlAttrs: { lang: htmlLang },
     script: schemaScripts(input.schema),
   }
 }
@@ -82,7 +88,8 @@ export function useRouteSeo() {
   useHead(() => {
     if (route.meta.dynamicSeo) return {}
     trackSiteSettingsForHead()
-    const preset = route.meta.seo || ROUTE_SEO[route.name]
+    const locale = getLocaleId()
+    const preset = route.meta.seo || getMessages(locale).seo?.[route.name] || ROUTE_SEO[route.name]
     const path = route.fullPath.split('?')[0]
 
     if (!preset) {

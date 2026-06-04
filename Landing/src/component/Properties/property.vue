@@ -2,10 +2,10 @@
   <div ref="sectionRoot" class="container-fluid lg:mt-24 mt-16 home-section-compact scroll-mt-24">
     <div class="max-w-3xl mx-auto text-center pb-6 md:pb-8">
       <h3 class="mb-4 md:text-3xl md:leading-normal text-2xl leading-normal font-semibold text-slate-900 dark:text-white">
-        Featured off-plan projects
+        {{ t('home.featured.heading') }}
       </h3>
       <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-        Hand-picked Dubai developments for international investors — live catalogue data on Kardosh Realty.
+        {{ t('home.featured.subheading') }}
       </p>
     </div>
 
@@ -20,7 +20,7 @@
         <button
           type="button"
           class="kardosh-mobile-carousel__nav kardosh-mobile-carousel__nav--prev featured-offplan-carousel__nav--prev"
-          aria-label="Previous featured projects"
+          :aria-label="t('home.featured.prevAria')"
         >
           <ChevronLeft class="size-5" aria-hidden="true" />
         </button>
@@ -49,7 +49,7 @@
         <button
           type="button"
           class="kardosh-mobile-carousel__nav kardosh-mobile-carousel__nav--next featured-offplan-carousel__nav--next"
-          aria-label="Next featured projects"
+          :aria-label="t('home.featured.nextAria')"
         >
           <ChevronRight class="size-5" aria-hidden="true" />
         </button>
@@ -85,6 +85,9 @@ import { useReelly } from '@/composables/useReelly'
 import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { HOME_PROPERTY_CAROUSEL, toSwiperBreakpoints } from '@/config/home-carousels'
+import { useT } from '@/composables/useT'
+
+const t = useT()
 
 import 'swiper/css'
 import 'swiper/css/navigation'

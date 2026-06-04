@@ -9,7 +9,7 @@
             <BrandLogo variant="full" size="footer" invert-on-dark />
           </RouterLink>
           <p class="kardosh-hover-footer__tagline text-sm leading-relaxed text-white">
-            {{ site.tagline }}
+            {{ t('footer.tagline') }}
           </p>
         </div>
 
@@ -67,7 +67,7 @@
               aria-controls="footer-panel-contact"
               @click="toggleSection('contact')"
             >
-              <span class="text-white text-lg font-semibold">Contact us</span>
+              <span class="text-white text-lg font-semibold">{{ t('footer.contactUs') }}</span>
               <ChevronDown
                 class="kardosh-footer-accordion__chevron size-5 shrink-0 text-white"
                 :class="{ 'kardosh-footer-accordion__chevron--open': isOpen('contact') }"
@@ -75,7 +75,7 @@
               />
             </button>
             <h4 class="kardosh-footer-accordion__title hidden md:block text-white text-lg font-semibold mb-5">
-              Contact us
+              {{ t('footer.contactUs') }}
             </h4>
             <div
               id="footer-panel-contact"
@@ -123,13 +123,13 @@
         <p class="text-center md:text-end text-white">
           <span class="block sm:inline">{{ reraLabel }}</span>
           <span class="hidden sm:inline mx-2" aria-hidden="true">·</span>
-          <span class="block sm:inline">© {{ year }} {{ site.companyName }}.</span>
+          <span class="block sm:inline">{{ copyrightLine }}</span>
           <a
             href="https://logixcontact.com/"
             target="_blank"
             rel="noopener noreferrer"
             class="text-white hover:text-[#9ecbf0] transition-colors"
-          >Developed by Logix Contact</a>
+          >{{ t('footer.developedBy') }}</a>
         </p>
       </div>
     </div>
@@ -141,12 +141,18 @@ import { reactive, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ChevronDown, Mail, MapPin, MessageCircle, Phone, Shield } from 'lucide-vue-next'
 import { site, reraLabel, whatsappHref, socialLinks } from '@/composables/useSiteSettings'
+import { useT } from '@/composables/useT'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
 import FooterLanguageSwitcher from '@/component/kardosh/FooterLanguageSwitcher.vue'
 import FooterBackgroundGradient from '@/component/ui/FooterBackgroundGradient.vue'
 import { LEGAL_FOOTER_LINKS } from '@/config/legal-content'
 
+const t = useT()
 const year = new Date().getFullYear()
+
+const copyrightLine = computed(() =>
+  t('footer.copyright', { year, company: site.companyName })
+)
 
 const openSections = reactive({
   explore: false,
@@ -163,33 +169,46 @@ function toggleSection(id) {
   openSections[id] = !openSections[id]
 }
 
-const footerLinks = [
+const LEGAL_LINK_KEYS = {
+  '/terms': 'terms',
+  '/privacy': 'privacy',
+  '/cookie-policy': 'cookie',
+  '/finance-policy': 'finance',
+}
+
+const footerLinks = computed(() => [
   {
     id: 'explore',
-    title: 'Explore',
+    title: t('footer.explore'),
     links: [
-      { label: 'Off-plan', to: '/off-plan' },
-      { label: 'Communities', to: '/communities' },
-      { label: 'Developers', to: '/developers' },
-      { label: 'Why Dubai', to: '/why-dubai' },
-      { label: 'About us', to: '/aboutus' },
+      { label: t('footer.links.offPlan'), to: '/off-plan' },
+      { label: t('footer.links.communities'), to: '/communities' },
+      { label: t('footer.links.developers'), to: '/developers' },
+      { label: t('footer.links.whyDubai'), to: '/why-dubai' },
+      { label: t('footer.links.aboutUs'), to: '/aboutus' },
     ],
   },
   {
     id: 'helpful',
-    title: 'Helpful links',
+    title: t('footer.helpful'),
     links: [
-      { label: 'Blog', to: '/blogs' },
-      { label: 'Contact', to: '/contact', pulse: true },
-      { label: 'Map view', to: '/grid-map' },
+      { label: t('footer.links.blog'), to: '/blogs' },
+      { label: t('footer.links.contact'), to: '/contact', pulse: true },
+      { label: t('footer.links.mapView'), to: '/grid-map' },
     ],
   },
   {
     id: 'legal',
-    title: 'Legal',
-    links: LEGAL_FOOTER_LINKS.map(({ label, to }) => ({ label, to })),
+    title: t('footer.legal'),
+    links: LEGAL_FOOTER_LINKS.map(({ to }) => {
+      const key = LEGAL_LINK_KEYS[to]
+      return {
+        label: key ? t(`footer.legalLinks.${key}`) : to,
+        to,
+      }
+    }),
   },
-]
+])
 
 const contactInfo = computed(() => [
   {
@@ -214,7 +233,7 @@ const contactInfo = computed(() => [
   },
   {
     icon: MessageCircle,
-    text: 'WhatsApp',
+    text: t('footer.whatsapp'),
     href: whatsappHref.value,
     external: true,
   },

@@ -10,10 +10,10 @@
           id="most-sold-off-plan-heading"
           class="text-3xl md:text-4xl lg:text-[2.5rem] font-semibold text-slate-900 dark:text-white leading-tight"
         >
-          Best off plan projects in Dubai
+          {{ t('home.mostSold.heading') }}
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Top-performing Dubai off plan projects from our live catalogue — new launch and upcoming developments ranked by demand and availability.
+          {{ t('home.mostSold.subheading') }}
         </p>
       </div>
 
@@ -32,14 +32,14 @@
         v-else-if="!displayed.length"
         class="text-center text-slate-500 dark:text-slate-400 mt-10 py-12 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
       >
-        Off-plan highlights will appear here once the catalogue loads.
+        {{ t('home.mostSold.empty') }}
       </p>
 
       <div v-else class="investor-favourites-carousel">
         <button
           type="button"
           class="investor-favourites-carousel__nav investor-favourites-carousel__nav--prev"
-          aria-label="Previous properties"
+          :aria-label="t('home.mostSold.prevAria')"
         >
           <ChevronLeft class="size-5" aria-hidden="true" />
         </button>
@@ -71,7 +71,7 @@
         <button
           type="button"
           class="investor-favourites-carousel__nav investor-favourites-carousel__nav--next"
-          aria-label="Next properties"
+          :aria-label="t('home.mostSold.nextAria')"
         >
           <ChevronRight class="size-5" aria-hidden="true" />
         </button>
@@ -96,6 +96,9 @@ import { useReelly } from '@/composables/useReelly'
 import PropertyListingCard from '@/component/kardosh/PropertyListingCard.vue'
 import PropertyCardSkeleton from '@/component/kardosh/skeleton/PropertyCardSkeleton.vue'
 import { demandBadge, pickMostSoldOffPlan } from '@/utils/offPlanRanking'
+import { useT } from '@/composables/useT'
+
+const t = useT()
 
 import 'swiper/css'
 import 'swiper/css/navigation'

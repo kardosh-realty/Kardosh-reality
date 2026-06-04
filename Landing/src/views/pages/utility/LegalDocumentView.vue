@@ -5,7 +5,7 @@
     v-if="page"
     :title="page.title"
     :subtitle="page.description"
-    eyebrow="Legal"
+    :eyebrow="t('legal.eyebrow')"
     :image="heroImage"
     compact
   />
@@ -16,7 +16,7 @@
         <article class="md:w-3/4 legal-document prose-policy">
           <header class="legal-document__meta">
             <p class="text-sm text-slate-500 dark:text-slate-400">
-              Last updated: {{ page.lastUpdated }}
+              {{ t('legal.lastUpdated', { date: page.lastUpdated }) }}
             </p>
           </header>
 
@@ -45,24 +45,24 @@
           </div>
 
           <section class="legal-document__contact" aria-labelledby="legal-contact-heading">
-            <h2 id="legal-contact-heading" class="legal-document__heading">Contact us</h2>
+            <h2 id="legal-contact-heading" class="legal-document__heading">{{ t('legal.contactHeading') }}</h2>
             <p class="legal-document__paragraph">
-              If you have questions regarding this {{ page.title.toLowerCase() }}, please contact:
+              {{ t('legal.contactBody', { title: page.title.toLowerCase() }) }}
             </p>
             <ul class="legal-document__contact-list">
               <li>
                 <strong>{{ site.companyName }}</strong>
               </li>
               <li>
-                <span class="legal-document__contact-label">Email</span>
+                <span class="legal-document__contact-label">{{ t('legal.contactLabels.email') }}</span>
                 <a :href="`mailto:${site.email}`" class="legal-document__contact-link">{{ site.email }}</a>
               </li>
               <li>
-                <span class="legal-document__contact-label">Phone</span>
+                <span class="legal-document__contact-label">{{ t('legal.contactLabels.phone') }}</span>
                 <a :href="phoneHref" class="legal-document__contact-link">{{ site.phone }}</a>
               </li>
               <li>
-                <span class="legal-document__contact-label">Address</span>
+                <span class="legal-document__contact-label">{{ t('legal.contactLabels.address') }}</span>
                 <span>{{ site.address }}</span>
               </li>
             </ul>
@@ -74,7 +74,7 @@
               class="btn bg-primary hover:bg-primary-dark text-white rounded-lg"
               @click="printPage"
             >
-              Print
+              {{ t('legal.print') }}
             </button>
           </div>
         </article>
@@ -95,6 +95,9 @@ import PageHero from '@/component/kardosh/PageHero.vue'
 import { site } from '@/composables/useSiteSettings'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { getLegalPage } from '@/config/legal-content'
+import { useT } from '@/composables/useT'
+
+const t = useT()
 
 const props = defineProps({
   legalKey: {

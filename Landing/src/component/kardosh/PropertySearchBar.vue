@@ -40,8 +40,8 @@
           ]"
         >
           <div v-if="isHero" class="hero-search-head">
-            <span class="hero-search-mode">Off-plan</span>
-            <span class="hero-search-head__hint">New projects across UAE</span>
+            <span class="hero-search-mode">{{ t('search.hero.mode') }}</span>
+            <span class="hero-search-head__hint">{{ t('search.hero.hint') }}</span>
           </div>
 
           <div
@@ -49,54 +49,54 @@
             :class="{ 'hero-search-grid--listing': isListing }"
           >
             <div class="hero-search-field-cell hero-search-field-cell--location">
-              <label :class="fieldLabelClass">Location or project</label>
+              <label :class="fieldLabelClass">{{ t('search.labels.location') }}</label>
               <div class="hero-search-control hero-search-field-wrap">
                 <Search class="hero-search-field__icon" :class="fieldIconClass" :size="18" aria-hidden="true" />
                 <input
                   v-model="keyword"
                   type="search"
                   :class="fieldInputClass"
-                  :placeholder="SEARCH_PLACEHOLDER"
+                  :placeholder="searchPlaceholder"
                 />
               </div>
             </div>
 
             <div class="hero-search-field-cell">
-              <label :class="fieldLabelClass">Developer</label>
+              <label :class="fieldLabelClass">{{ t('search.labels.developer') }}</label>
               <div class="hero-search-control">
                 <v-select
                   v-model="developer"
                   :class="fieldVselectClass"
-                  :options="DEVELOPER_FILTER_OPTIONS"
+                  :options="developerOptions"
                   :reduce="(item) => item.value"
                   label="label"
                   append-to-body
                   :calculate-position="compactDropdownPosition"
-                  :placeholder="FILTER_PLACEHOLDERS.developer"
+                  :placeholder="filterPlaceholders.developer"
                   :clearable="true"
                 />
               </div>
             </div>
 
             <div class="hero-search-field-cell">
-              <label :class="fieldLabelClass">Bedrooms</label>
+              <label :class="fieldLabelClass">{{ t('search.labels.bedrooms') }}</label>
               <div class="hero-search-control">
                 <v-select
                   v-model="bedrooms"
                   :class="fieldVselectClass"
-                  :options="BEDROOM_OPTIONS"
+                  :options="bedroomOptions"
                   :reduce="(item) => item.value"
                   label="label"
                   append-to-body
                   :calculate-position="compactDropdownPosition"
-                  :placeholder="FILTER_PLACEHOLDERS.bedrooms"
+                  :placeholder="filterPlaceholders.bedrooms"
                   :clearable="true"
                 />
               </div>
             </div>
 
             <div class="hero-search-field-cell">
-              <label :class="fieldLabelClass">Property type</label>
+              <label :class="fieldLabelClass">{{ t('search.labels.propertyType') }}</label>
               <div class="hero-search-control">
                 <v-select
                   v-model="propertyType"
@@ -106,14 +106,14 @@
                   label="label"
                   append-to-body
                   :calculate-position="compactDropdownPosition"
-                  :placeholder="FILTER_PLACEHOLDERS.propertyType"
+                  :placeholder="filterPlaceholders.propertyType"
                   :clearable="true"
                 />
               </div>
             </div>
 
             <div class="hero-search-field-cell">
-              <label :class="fieldLabelClass">Budget</label>
+              <label :class="fieldLabelClass">{{ t('search.labels.budget') }}</label>
               <div class="hero-search-control">
                 <v-select
                   v-model="budgetRange"
@@ -123,7 +123,7 @@
                   label="label"
                   append-to-body
                   :calculate-position="compactDropdownPosition"
-                  :placeholder="FILTER_PLACEHOLDERS.budget"
+                  :placeholder="filterPlaceholders.budget"
                   :clearable="true"
                 />
               </div>
@@ -131,8 +131,8 @@
 
             <div v-if="!isListing" class="hero-search-actions">
               <button type="submit" :class="submitButtonClass">
-                <span class="hero-search-submit__long">Search properties</span>
-                <span class="hero-search-submit__short">Search</span>
+                <span class="hero-search-submit__long">{{ t('common.searchProperties') }}</span>
+                <span class="hero-search-submit__short">{{ t('common.searchShort') }}</span>
               </button>
             </div>
           </div>
@@ -149,21 +149,28 @@ import { useRouter, useRoute } from 'vue-router'
 import { Search } from 'lucide-vue-next'
 import vSelect from 'vue-select'
 import {
-  SEARCH_PLACEHOLDER,
   BUDGET_RANGE_OPTIONS,
   RENT_BUDGET_RANGE_OPTIONS,
   parseBudgetRange,
   budgetRangeFromQuery,
 } from '@/config/uae'
-import { DEVELOPER_FILTER_OPTIONS, BEDROOM_OPTIONS } from '@/config/marketing'
+import { DEVELOPER_FILTER_OPTIONS, BEDROOM_OPTIONS as BEDROOM_OPTIONS_CONFIG } from '@/config/marketing'
+import { stripLocaleFromPath } from '@/config/i18n'
+import { useLocalizedPath } from '@/composables/useLocalizedPath'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
 
-/** Shown when nothing is selected — not “Any …” as fake values */
-const FILTER_PLACEHOLDERS = {
-  developer: 'Developer',
-  bedrooms: 'Bedrooms',
-  propertyType: 'Property type',
-  budget: 'Budget',
-}
+const t = useT()
+const messages = useMessages()
+
+const searchPlaceholder = computed(() => t('search.placeholders.search'))
+
+const filterPlaceholders = computed(() => ({
+  developer: t('search.placeholders.developer'),
+  bedrooms: t('search.placeholders.bedrooms'),
+  propertyType: t('search.placeholders.propertyType'),
+  budget: t('search.placeholders.budget'),
+}))
 
 const props = defineProps({
   showTabs: { type: Boolean, default: true },
@@ -209,18 +216,19 @@ const submitButtonClass = computed(() =>
 
 const router = useRouter()
 const route = useRoute()
+const { localizedPath } = useLocalizedPath()
 
-const tabs = [
-  { id: 'off-plan', label: 'Buy / Off-Plan', path: '/off-plan' },
-  { id: 'rent', label: 'Rent', path: '/rent' },
-  { id: 'sell', label: 'Sell', path: '/sell' },
-]
+const tabs = computed(() => [
+  { id: 'off-plan', label: t('search.tabs.buyOffPlan'), path: '/off-plan' },
+  { id: 'rent', label: t('search.tabs.rent'), path: '/rent' },
+  { id: 'sell', label: t('search.tabs.sell'), path: '/sell' },
+])
 
 const displayTabs = computed(() => {
   if (isHero.value) {
-    return [{ id: 'off-plan', label: 'Off-plan', path: '/off-plan' }]
+    return [{ id: 'off-plan', label: t('search.tabs.offPlan'), path: '/off-plan' }]
   }
-  return tabs
+  return tabs.value
 })
 
 const mode = ref(props.initialMode)
@@ -230,17 +238,40 @@ const developer = ref(null)
 const bedrooms = ref(null)
 const budgetRange = ref(null)
 
-const typeOptions = [
-  { value: 'apartment', label: 'Apartment' },
-  { value: 'villa', label: 'Villa' },
-  { value: 'townhouse', label: 'Townhouse' },
-  { value: 'penthouse', label: 'Penthouse' },
-  { value: 'office', label: 'Commercial' },
-]
+const typeOptions = computed(() => {
+  const types = messages.value.search?.propertyTypes
+  if (Array.isArray(types)) return types
+  if (types && typeof types === 'object') {
+    return Object.entries(types).map(([value, label]) => ({ value, label }))
+  }
+  return [
+    { value: 'apartment', label: 'Apartment' },
+    { value: 'villa', label: 'Villa' },
+    { value: 'townhouse', label: 'Townhouse' },
+    { value: 'penthouse', label: 'Penthouse' },
+    { value: 'office', label: 'Commercial' },
+  ]
+})
 
-const currentBudgetOptions = computed(() =>
-  isHero.value || mode.value !== 'rent' ? BUDGET_RANGE_OPTIONS : RENT_BUDGET_RANGE_OPTIONS
-)
+const bedroomOptions = computed(() => {
+  const opts = messages.value.search?.bedroomOptions
+  return Array.isArray(opts) && opts.length ? opts : BEDROOM_OPTIONS_CONFIG
+})
+
+const developerOptions = computed(() => {
+  const opts = messages.value.search?.developerOptions
+  return Array.isArray(opts) && opts.length ? opts : DEVELOPER_FILTER_OPTIONS
+})
+
+const currentBudgetOptions = computed(() => {
+  const ranges = messages.value.search?.budgetRanges
+  if (ranges) {
+    return mode.value === 'rent' && !isHero.value
+      ? ranges.rent || RENT_BUDGET_RANGE_OPTIONS
+      : ranges.offPlan || BUDGET_RANGE_OPTIONS
+  }
+  return isHero.value || mode.value !== 'rent' ? BUDGET_RANGE_OPTIONS : RENT_BUDGET_RANGE_OPTIONS
+})
 
 let syncingFromRoute = false
 let keywordDebounceId = null
@@ -254,7 +285,7 @@ function readQuery() {
   bedrooms.value = q.bedrooms || null
   const fromQuery = budgetRangeFromQuery(q.min, q.max)
   budgetRange.value = fromQuery || null
-  if (!isHero.value && q.mode && tabs.some((t) => t.id === q.mode)) {
+  if (!isHero.value && q.mode && tabs.value.some((tab) => tab.id === q.mode)) {
     mode.value = q.mode.toString()
   }
   nextTick(() => {
@@ -271,7 +302,7 @@ watch(isHero, (hero) => {
 function buildSearchTarget() {
   const tab = isHero.value
     ? displayTabs.value[0]
-    : tabs.find((t) => t.id === mode.value) || tabs[0]
+    : tabs.value.find((tab) => tab.id === mode.value) || tabs.value[0]
   const query = {}
   if (keyword.value?.trim()) query.q = keyword.value.trim()
   if (propertyType.value) query.type = propertyType.value
@@ -301,9 +332,9 @@ function submit() {
   if (syncingFromRoute) return
 
   const { path, query } = buildSearchTarget()
-  if (route.path === path && queryMatchesRoute(query)) return
+  if (stripLocaleFromPath(route.path) === path && queryMatchesRoute(query)) return
 
-  router.push({ path, query })
+  router.push({ path: localizedPath(path), query })
 }
 
 function scheduleAutoSearch() {

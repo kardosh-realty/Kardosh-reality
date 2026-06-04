@@ -51,6 +51,7 @@
 
         <ContactTextSwapButton
           to="/contact"
+          :label="t('header.contact')"
           class="kardosh-header__enquire"
           @click="closeMenu"
         />
@@ -60,7 +61,7 @@
           class="kardosh-header__menu-btn"
           :aria-expanded="open"
           aria-controls="kardosh-mobile-nav"
-          aria-label="Toggle menu"
+          :aria-label="t('header.toggleMenu')"
           @click="open = !open"
         >
           <MenuToggleIcon :open="open" class="kardosh-header__menu-icon" :duration="300" />
@@ -76,19 +77,19 @@
           class="kardosh-header__mobile"
           role="dialog"
           aria-modal="true"
-          aria-label="Main menu"
+          :aria-label="t('header.mainMenu')"
         >
           <button
             type="button"
             class="kardosh-header__mobile-backdrop"
-            aria-label="Close menu"
+            :aria-label="t('header.closeMenu')"
             tabindex="-1"
             @click="closeMenu"
           />
           <aside class="kardosh-header__mobile-panel">
             <div class="kardosh-header__mobile-scroll">
-              <p class="kardosh-header__mobile-label">Explore</p>
-              <nav class="kardosh-header__mobile-nav" aria-label="Site">
+              <p class="kardosh-header__mobile-label">{{ t('header.exploreLabel') }}</p>
+              <nav class="kardosh-header__mobile-nav" :aria-label="t('header.mainMenu')">
                 <RouterLink
                   v-for="item in navItems"
                   :key="item.path"
@@ -106,7 +107,7 @@
               <button
                 type="button"
                 class="kardosh-header__mobile-theme"
-                :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+                :aria-label="isDark ? t('header.lightMode') : t('header.darkMode')"
                 @click="toggleTheme"
               >
                 <span class="kardosh-header__mobile-theme-icon" aria-hidden="true">
@@ -115,15 +116,16 @@
                 </span>
                 <span class="kardosh-header__mobile-theme-copy">
                   <span class="kardosh-header__mobile-theme-title">
-                    {{ isDark ? 'Light mode' : 'Dark mode' }}
+                    {{ isDark ? t('header.lightMode') : t('header.darkMode') }}
                   </span>
-                  <span class="kardosh-header__mobile-theme-hint">Tap to switch appearance</span>
+                  <span class="kardosh-header__mobile-theme-hint">{{ t('header.themeHint') }}</span>
                 </span>
                 <ChevronRight class="kardosh-header__mobile-theme-chevron size-5 shrink-0" aria-hidden="true" />
               </button>
 
               <ContactTextSwapButton
                 to="/contact"
+                :label="t('header.contact')"
                 block
                 class="kardosh-header__mobile-contact"
                 @click="closeMenu"
@@ -147,21 +149,25 @@ import HeaderThemeButton from '@/component/kardosh/HeaderThemeButton.vue'
 import MenuToggleIcon from '@/component/ui/MenuToggleIcon.vue'
 import ContactTextSwapButton from '@/component/ui/ContactTextSwapButton.vue'
 import { ChevronRight, Moon, Sun } from 'lucide-vue-next'
+import { stripLocaleFromPath } from '@/config/i18n'
+import { useT } from '@/composables/useT'
 
 const props = defineProps({
   /** Transparent bar over dark hero (legacy `navbar-white`) */
   heroLight: { type: Boolean, default: false },
 })
 
-const navItems = [
-  { path: '/', label: 'Home', exact: true },
-  { path: '/aboutus', label: 'About' },
-  { path: '/grid-map', label: 'Map' },
-  { path: '/off-plan', label: 'Off-Plan' },
-  { path: '/communities', label: 'Communities' },
-  { path: '/developers', label: 'Developers' },
-  { path: '/why-dubai', label: 'Why Dubai' },
-]
+const t = useT()
+
+const navItems = computed(() => [
+  { path: '/', label: t('nav.home'), exact: true },
+  { path: '/aboutus', label: t('nav.about') },
+  { path: '/grid-map', label: t('nav.map') },
+  { path: '/off-plan', label: t('nav.offPlan') },
+  { path: '/communities', label: t('nav.communities') },
+  { path: '/developers', label: t('nav.developers') },
+  { path: '/why-dubai', label: t('nav.whyDubai') },
+])
 
 const open = ref(false)
 const scrolled = useScroll(10)
@@ -181,7 +187,7 @@ const useLightLogo = computed(
 )
 
 function isActive(item) {
-  const path = route.path
+  const path = stripLocaleFromPath(route.path)
   if (item.exact) return path === '/'
   if (item.path === '/developers') return path.startsWith('/developer')
   if (item.path === '/off-plan') {

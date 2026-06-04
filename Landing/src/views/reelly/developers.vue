@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Explore Dubai's Leading Developers"
-    subtitle="Browse projects from Emaar, DAMAC, Sobha, Binghatti, Nakheel, Meraas, and more."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.developers"
   />
 
@@ -29,17 +29,16 @@
           id="developers-grid-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white leading-tight"
         >
-          Compare UAE developer pipelines
+          {{ directoryCopy.heading }}
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          From Emaar projects in Dubai to DAMAC, Sobha, Binghatti, Meraas, and Nakheel pipelines — each profile
-          shows live project counts and regions. Open a developer to browse their full off plan catalogue.
+          {{ directoryCopy.lead }}
         </p>
       </div>
 
       <div class="developers-search-panel listings-search-glass">
         <label class="developers-search">
-          <span class="sr-only">Search developers</span>
+          <span class="sr-only">{{ directoryCopy.searchAria }}</span>
           <Search
             class="developers-search__icon absolute start-3 top-1/2 -translate-y-1/2 size-4 pointer-events-none"
             aria-hidden="true"
@@ -47,7 +46,7 @@
           <input
             v-model="searchQuery"
             type="search"
-            placeholder="Search by developer name…"
+            :placeholder="directoryCopy.searchPlaceholder"
             class="developers-search__input"
             autocomplete="off"
           />
@@ -59,7 +58,7 @@
         class="text-center text-amber-700 dark:text-amber-200 py-8 mt-10 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40"
         role="alert"
       >
-        {{ error }} — check your connection and that <code class="text-sm">REELLY_API_KEY</code> is set, then refresh.
+        {{ error }} — {{ directoryApiError }}
       </p>
 
       <DeveloperGridSkeleton
@@ -71,7 +70,7 @@
         v-else-if="!filteredDevelopers.length"
         class="text-center text-slate-400 py-12 mt-10 rounded-xl border border-dashed border-slate-200 dark:border-slate-700"
       >
-        {{ searchQuery ? 'No developers match your search.' : 'No developers found in the catalogue.' }}
+        {{ searchQuery ? directoryCopy.noMatch : directoryCopy.empty }}
       </p>
 
       <div
@@ -98,10 +97,10 @@
           id="featured-developers-heading"
           class="developers-leaderboard__title"
         >
-          Largest UAE pipelines in our catalogue
+          {{ leaderboardCopy.heading }}
         </h2>
         <p class="developers-leaderboard__lead">
-          Ranked by the number of active off-plan projects currently listed for each developer.
+          {{ leaderboardCopy.lead }}
         </p>
       </div>
 
@@ -135,10 +134,10 @@
             </div>
             <h3 class="developers-leaderboard-card__name">{{ dev.name }}</h3>
             <p class="developers-leaderboard-card__meta">
-              {{ dev.projectCount }} active project{{ dev.projectCount === 1 ? '' : 's' }}
+              {{ activeProjectsLabel(dev.projectCount) }}
             </p>
             <span class="developers-leaderboard-card__cta">
-              View profile
+              {{ leaderboardCopy.viewProfile }}
               <ArrowRight class="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </span>
           </RouterLink>
@@ -151,16 +150,15 @@
     <div class="container-fluid">
       <div class="grid lg:grid-cols-12 gap-10 items-center">
         <div class="lg:col-span-5">
-          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Why developer-first</p>
+          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ whyCopy.eyebrow }}</p>
           <h2
             id="why-developers-heading"
             class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
           >
-            Trust the builder before you reserve a unit
+            {{ whyCopy.heading }}
           </h2>
           <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-            Developer profiles consolidate biography, regional focus, sales offices, and every active UAE project
-            in one place — so you compare track records alongside payment plans and handover dates.
+            {{ whyCopy.lead }}
           </p>
         </div>
         <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
@@ -202,22 +200,22 @@
         />
         <BlurVignetteArticle />
         <div class="developers-cta__content relative z-10 flex min-h-[20rem] md:min-h-[22rem] flex-col items-center justify-center px-8 py-10 text-center text-white md:px-12 md:py-14">
-          <h2 class="text-2xl font-semibold md:text-3xl">Browse all UAE off-plan</h2>
+          <h2 class="text-2xl font-semibold md:text-3xl">{{ developersCta.heading }}</h2>
           <p class="mt-3 max-w-2xl leading-relaxed text-white/85">
-            Filter by price, area, or community — or contact our Dubai team for a shortlist from your preferred developers.
+            {{ developersCtaBody }}
           </p>
           <div class="kardosh-btn-row kardosh-btn-row--center mt-8">
             <RouterLink
               to="/off-plan"
               class="developers-cta__btn-primary btn inline-flex items-center justify-center rounded-lg bg-white px-8 font-semibold hover:bg-slate-100"
             >
-              View off-plan catalogue
+              {{ developersCta.viewCatalogue }}
             </RouterLink>
             <RouterLink
               to="/contact"
               class="btn inline-flex items-center justify-center rounded-lg border border-white/40 px-8 text-white hover:bg-white/10"
             >
-              Contact advisory
+              {{ developersCta.contactAdvisory }}
             </RouterLink>
           </div>
         </div>
@@ -244,7 +242,13 @@ import DeveloperGridSkeleton from '@/component/kardosh/skeleton/DeveloperGridSke
 import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import { useReelly } from '@/composables/useReelly'
 import { developerProfileRoute } from '@/utils/mapDeveloper'
+import { usePageHero } from '@/composables/usePageHero'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
 
+const t = useT()
+const messages = useMessages()
+const hero = usePageHero('developers')
 const { uaeDevelopers, loading, error, loadProjects, loadDeveloperLogos } = useReelly()
 const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.developers))
 const searchQuery = ref('')
@@ -257,40 +261,88 @@ const filteredDevelopers = computed(() => {
 
 const featuredDevelopers = computed(() => uaeDevelopers.value.slice(0, 4))
 
+const devMsg = computed(() => messages.value.developers || {})
+
+const directoryCopy = computed(() => {
+  const d = devMsg.value.grid || devMsg.value.page?.directory || {}
+  return {
+    heading: d.heading || '',
+    lead: d.subheading || d.lead || '',
+    searchPlaceholder: d.searchPlaceholder || '',
+    searchAria: d.searchAria || '',
+    noMatch: d.noMatch || '',
+    empty: d.empty || '',
+  }
+})
+
+const directoryApiError = computed(() => t('developers.page.directory.apiError'))
+
+const statLabels = computed(() => devMsg.value.pageStats || devMsg.value.page?.stats || {})
+
 const pageStats = computed(() => [
-  { value: String(uaeDevelopers.value.length || '—'), label: 'Developers in catalogue' },
+  {
+    value: String(uaeDevelopers.value.length || '—'),
+    label: statLabels.value.developersInCatalogue || statLabels.value.developers || '',
+  },
   {
     value: String(
       uaeDevelopers.value.reduce((n, d) => n + (d.projectCount || 0), 0) || '—'
     ),
-    label: 'Active UAE projects',
+    label: statLabels.value.activeProjects || statLabels.value.projects || '',
   },
-  { value: '7', label: 'Emirates covered' },
-  { value: 'AED', label: 'Live starting prices' },
+  { value: '7', label: statLabels.value.emiratesCovered || statLabels.value.emirates || '' },
+  { value: 'AED', label: statLabels.value.liveStartingPrices || statLabels.value.pricing || '' },
 ])
 
-const valuePoints = [
-  {
-    icon: Building2,
-    title: 'Full project roster',
-    text: 'See every active UAE listing for a developer without jumping between brochure pages.',
-  },
-  {
-    icon: Handshake,
-    title: 'Sales contacts',
-    text: 'Where available, reach licensed sales executives with WhatsApp and office hours.',
-  },
-  {
-    icon: MapPin,
-    title: 'Regional footprint',
-    text: 'Quickly spot whether a developer focuses on Dubai, Abu Dhabi, Ras Al Khaimah, or multiple emirates.',
-  },
-  {
-    icon: Shield,
-    title: 'Licensed advisory',
-    text: 'Kardosh Realty helps you compare developers, escrow terms, and payment plans before you reserve.',
-  },
-]
+const leaderboardCopy = computed(() => {
+  const l = devMsg.value.featured || devMsg.value.page?.leaderboard || {}
+  return {
+    heading: l.heading || '',
+    lead: l.subheading || l.lead || '',
+    viewProfile: l.viewProfile || t('common.view'),
+  }
+})
+
+function activeProjectsLabel(count) {
+  const n = Number(count) || 0
+  const pageLb = devMsg.value.page?.leaderboard
+  if (pageLb?.activeProjects) {
+    return n === 1
+      ? t('developers.page.leaderboard.activeProjects', { count: n })
+      : t('developers.page.leaderboard.activeProjectsPlural', { count: n })
+  }
+  const key = n === 1 ? 'activeProject' : 'activeProjects'
+  const fb = devMsg.value.featured?.[key]
+  if (fb) return fb.replace('{count}', String(n))
+  return `${n} active project${n === 1 ? '' : 's'}`
+}
+
+const developersCta = computed(() => {
+  const c = devMsg.value.cta || devMsg.value.page?.cta || {}
+  return {
+    heading: c.heading || '',
+    viewCatalogue: c.viewCatalogue || c.viewOffPlan || t('common.viewAllOffPlan'),
+    contactAdvisory: c.contactAdvisory || '',
+  }
+})
+
+const developersCtaBody = computed(() => devMsg.value.cta?.body || devMsg.value.cta?.lead || '')
+
+const DEV_WHY_ICONS = [Building2, Handshake, MapPin, Shield]
+
+const whyCopy = computed(() => {
+  const w = devMsg.value.whyProfiles || devMsg.value.page?.whySection || {}
+  return {
+    eyebrow: w.eyebrow || '',
+    heading: w.heading || '',
+    lead: w.subheading || w.lead || '',
+  }
+})
+
+const valuePoints = computed(() => {
+  const list = devMsg.value.whyProfiles?.valuePoints || devMsg.value.page?.whySection?.points || []
+  return list.map((item, i) => ({ ...item, icon: DEV_WHY_ICONS[i] || Building2 }))
+})
 
 onMounted(async () => {
   await loadProjects()

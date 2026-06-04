@@ -1,16 +1,21 @@
 import { mapReellyProject } from '@/services/reelly/mapProject'
+import { localizeCatalogItem } from '@/services/reelly/localizeCatalog'
 import { developerDetailPath } from '@/utils/seoRoutes'
 
-const ROLE_LABELS = {
+import { getMessages } from '@/locales'
+import { getLocaleId } from '@/composables/useLanguage'
+
+const ROLE_LABELS_EN = {
   sales_executive: 'Sales executive',
   sales_manager: 'Sales manager',
   broker: 'Broker',
   agent: 'Agent',
 }
 
-export function formatContactRole(role) {
+export function formatContactRole(role, locale = getLocaleId()) {
   if (!role) return null
-  return ROLE_LABELS[role] || role.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const dict = getMessages(locale).reelly?.contactRoles || ROLE_LABELS_EN
+  return dict[role] || ROLE_LABELS_EN[role] || role.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 function excerpt(text, max = 160) {
@@ -29,13 +34,13 @@ function regionsFromProjects(projects = []) {
   return [...regions]
 }
 
-function mapOfficeContact(c) {
+function mapOfficeContact(c, locale) {
   return {
     id: c.id,
     name: c.display_name || c.name,
     phone: c.phone,
     email: c.email,
-    role: formatContactRole(c.role),
+    role: formatContactRole(c.role, locale),
     languages: c.languages || [],
     contactType: c.contact_type,
     whatsapp: c.whatsapp,
@@ -43,8 +48,8 @@ function mapOfficeContact(c) {
   }
 }
 
-function mapOffice(o) {
-  const contacts = (o.office_contacts || []).map(mapOfficeContact)
+function mapOffice(o, locale) {
+  const contacts = (o.office_contacts || []).map((c) => mapOfficeContact(c, locale))
   return {
     id: o.id,
     name: o.name,
@@ -63,11 +68,11 @@ function mapOffice(o) {
 }
 
 /** Normalize Reelly developer detail payload */
-export function mapDeveloper(raw) {
+export function mapDeveloper(raw, locale = getLocaleId()) {
   if (!raw) return null
 
   const projects = raw.projects || []
-  const offices = (raw.offices || []).map(mapOffice)
+  const offices = (raw.offices || []).map((o) => mapOffice(o, locale))
   const contactCount = offices.reduce((n, o) => n + o.contacts.length, 0)
 
   return {
@@ -84,10 +89,13 @@ export function mapDeveloper(raw) {
     officeCount: offices.length,
     contactCount,
     projects: projects.map((p) =>
-      mapReellyProject({
-        ...p,
-        developer: raw.name,
-      })
+      localizeCatalogItem(
+        mapReellyProject({
+          ...p,
+          developer: raw.name,
+        }),
+        locale
+      )
     ),
   }
 }

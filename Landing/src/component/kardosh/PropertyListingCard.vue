@@ -20,11 +20,11 @@
       <span
         v-if="item.listingType === 'rent'"
         class="kardosh-property-card__type kardosh-property-card__type--rent"
-      >Rent</span>
+      >{{ t('listingCard.rent') }}</span>
       <span
-        v-if="badge"
+        v-if="badgeLabel"
         class="kardosh-property-card__badge"
-      >{{ badge }}</span>
+      >{{ badgeLabel }}</span>
     </div>
 
     <div class="kardosh-property-card__body">
@@ -79,9 +79,9 @@
         <RouterLink
           :to="detailTo"
           class="kardosh-property-card__cta"
-          :aria-label="`Visit ${item.name}`"
+          :aria-label="t('listingCard.visitAria', { name: item.name })"
         >
-          <span class="kardosh-property-card__cta-text">Visit</span>
+          <span class="kardosh-property-card__cta-text">{{ t('listingCard.visit') }}</span>
           <span class="kardosh-property-card__cta-icon" aria-hidden="true">
             <ArrowRight class="size-5" />
           </span>
@@ -109,13 +109,13 @@
       >
         <span
           class="text-xs uppercase tracking-wide bg-slate-800 text-white dark:bg-slate-700 px-2 py-1 rounded font-medium"
-        >Rent</span>
+        >{{ t('listingCard.rent') }}</span>
       </div>
       <span
-        v-if="badge"
+        v-if="badgeLabel"
         class="absolute top-4 end-4 text-[10px] uppercase tracking-wide bg-white/95 dark:bg-slate-900/95 text-primary border border-primary/20 px-2 py-1 rounded font-semibold shadow-sm"
       >
-        {{ badge }}
+        {{ badgeLabel }}
       </span>
     </div>
 
@@ -175,11 +175,20 @@ import ListingPrice from '@/component/listing-price.vue'
 import ProtectedPropertyImage from '@/component/kardosh/ProtectedPropertyImage.vue'
 import { ArrowRight, Maximize } from 'lucide-vue-next'
 import { projectDetailPath } from '@/utils/seoRoutes'
+import { useT } from '@/composables/useT'
+
+const t = useT()
+
+const BADGE_I18N = {
+  highDemand: 'common.highDemand',
+  sellingFast: 'common.sellingFast',
+  popular: 'common.popular',
+}
 
 const props = defineProps({
   item: { type: Object, required: true },
   maxAmenities: { type: Number, default: 2 },
-  /** e.g. Popular, High demand — shown top-right on the image */
+  /** Badge id (`highDemand`) or legacy English label */
   badge: { type: String, default: '' },
   /** default | luxury (home page grids) */
   variant: { type: String, default: 'default' },
@@ -196,6 +205,18 @@ const extraAmenityCount = computed(() => {
   return Math.max(0, total - props.maxAmenities)
 })
 
+const badgeLabel = computed(() => {
+  if (!props.badge) return ''
+  const key = BADGE_I18N[props.badge]
+  if (key) return t(key)
+  const legacy = {
+    'High demand': 'common.highDemand',
+    'Selling fast': 'common.sellingFast',
+    Popular: 'common.popular',
+  }
+  return legacy[props.badge] ? t(legacy[props.badge]) : props.badge
+})
+
 const luxuryPrice = computed(() => {
   const full = formatStartingPrice(props.item)
   if (full.startsWith('From ')) return full.slice(5)
@@ -203,8 +224,8 @@ const luxuryPrice = computed(() => {
 })
 
 const priceEyebrow = computed(() => {
-  if (props.item.listingType === 'rent') return 'Annual rent'
+  if (props.item.listingType === 'rent') return t('listingCard.annualRent')
   const full = formatStartingPrice(props.item)
-  return full.startsWith('From ') ? 'Starting from' : 'Price'
+  return full.startsWith('From ') ? t('listingCard.startingFrom') : t('listingCard.price')
 })
 </script>

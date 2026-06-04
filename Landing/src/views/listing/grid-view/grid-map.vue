@@ -3,8 +3,8 @@
 
   <div class="map-page-view">
   <PageHero
-    title="Explore Dubai Off-Plan Projects on the Map"
-    subtitle="Compare locations, communities, and off-plan opportunities across Dubai."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.map"
     :compact="isMobile"
     :hide-shape="isMobile"
@@ -14,9 +14,8 @@
     <div class="container-fluid map-page__container">
       <div class="map-page__tools listings-search-glass">
         <p class="map-page__count">
-          <span class="font-semibold text-slate-900 dark:text-white">{{ filteredMarkers.length }}</span>
-          project{{ filteredMarkers.length === 1 ? '' : 's' }}{{ isMobile ? '' : ' on the map' }}
-          <span v-if="searchQuery" class="text-slate-500"> · matching “{{ searchQuery }}”</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ mapCountLabel }}</span>{{ isMobile ? '' : t('map.onMap') }}
+          <span v-if="searchQuery" class="text-slate-500">{{ t('map.matching', { query: searchQuery }) }}</span>
         </p>
         <div class="map-page__tools-actions">
           <label class="map-page__search">
@@ -25,7 +24,7 @@
               v-model="searchQuery"
               type="search"
               class="map-page__search-input"
-              placeholder="Search by name or area…"
+              :placeholder="t('map.searchPlaceholder')"
               autocomplete="off"
             />
           </label>
@@ -34,20 +33,20 @@
             class="map-page__list-btn btn bg-primary hover:bg-primary-dark border-primary text-white rounded-lg h-11 px-5 text-sm font-semibold whitespace-nowrap inline-flex items-center justify-center"
           >
             <List class="map-page__list-btn-icon size-4 shrink-0" aria-hidden="true" />
-            <span class="map-page__list-btn-label">List view</span>
+            <span class="map-page__list-btn-label">{{ t('map.listView') }}</span>
           </RouterLink>
         </div>
       </div>
 
       <div class="map-page__layout">
         <aside class="map-page__sidebar">
-          <p class="map-page__sidebar-head">Projects</p>
+          <p class="map-page__sidebar-head">{{ t('map.projects') }}</p>
           <div class="map-page__list" role="list">
-            <div v-if="markersLoading" class="space-y-2" role="status" aria-label="Loading listings">
+            <div v-if="markersLoading" class="space-y-2" role="status" :aria-label="t('map.loadingListings')">
               <PropertyListItemSkeleton v-for="n in 6" :key="n" />
             </div>
             <p v-else-if="!filteredMarkers.length" class="text-slate-400 text-sm px-2 py-4">
-              {{ searchQuery ? 'No projects match your search.' : 'No map markers available.' }}
+              {{ searchQuery ? t('map.noMatch') : t('map.noMarkers') }}
             </p>
             <template v-else>
               <component
@@ -118,7 +117,7 @@
           <div class="map-page__dock-body">
             <p class="map-page__dock-title">{{ markerTitle(selectedMarker) }}</p>
             <p v-if="selectedMarker.developer" class="map-page__dock-meta">
-              by {{ selectedMarker.developer }}
+              {{ t('map.byDeveloper', { developer: selectedMarker.developer }) }}
             </p>
             <p class="map-page__dock-meta">
               {{ dockSummary(selectedMarker) }}
@@ -128,7 +127,7 @@
             :to="projectDetailPath(selectedMarker)"
             class="map-page__dock-cta"
           >
-            View
+            {{ t('map.view') }}
           </RouterLink>
         </div>
       </div>
@@ -157,7 +156,11 @@ import { useReelly } from '@/composables/useReelly'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { projectDetailPath } from '@/utils/seoRoutes'
 import ProtectedPropertyImage from '@/component/kardosh/ProtectedPropertyImage.vue'
+import { usePageHero } from '@/composables/usePageHero'
+import { useT } from '@/composables/useT'
 
+const t = useT()
+const hero = usePageHero('map')
 const isMobile = useMediaQuery('(max-width: 767px)')
 
 const { markers, markersLoading, loadMarkers } = useReelly()
@@ -181,6 +184,13 @@ const filteredMarkers = computed(() => {
       .toLowerCase()
     return hay.includes(q)
   })
+})
+
+const mapCountLabel = computed(() => {
+  const n = filteredMarkers.value.length
+  return n === 1
+    ? t('map.projectCount', { count: n })
+    : t('map.projectCountPlural', { count: n })
 })
 
 const selectedMarker = computed(() => {
@@ -217,11 +227,17 @@ function selectMarker(id) {
 }
 
 function markerTitle(m) {
-  return m.title || m.name || 'Project'
+  return m.title || m.name || t('map.defaultProject')
 }
 
 function markerLocation(m) {
-  return m.locationLine || m.location?.district || m.location?.region || m.location?.city || 'UAE'
+  return (
+    m.locationLine ||
+    m.location?.district ||
+    m.location?.region ||
+    m.location?.city ||
+    t('map.defaultLocation')
+  )
 }
 
 function markerPrice(m) {
@@ -238,7 +254,7 @@ function dockSummary(m) {
   if (m.bedroomsLabel) parts.push(m.bedroomsLabel)
   const price = markerPrice(m)
   if (price) parts.push(price)
-  if (m.paymentPlanBadge) parts.push(`Plan ${m.paymentPlanBadge}`)
+  if (m.paymentPlanBadge) parts.push(t('map.planBadge', { badge: m.paymentPlanBadge }))
   return parts.join(' · ') || markerLocation(m)
 }
 

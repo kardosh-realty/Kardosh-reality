@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   fetchProjects,
   fetchProjectById,
@@ -9,13 +9,25 @@ import {
   fetchDeveloperLogos,
 } from '@/services/reelly/client'
 import { mapReellyProject, mapReellyMarker } from '@/services/reelly/mapProject'
-import { enrichProjectsWithAmenities } from '@/services/reelly/enrichAmenities'
+import { enrichProjectsWithAmenities, clearAmenitiesDetailCache } from '@/services/reelly/enrichAmenities'
 import { enrichLiveUnitsWithPlans } from '@/services/reelly/media'
 import { properties as localProperties } from '@/component/data/data'
-import { formatAed, formatAedInMillions, formatArea } from '@/config/uae'
+import { formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
 import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
 import { normalizeRouteSlug, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
+import { getLocaleId } from '@/composables/useLanguage'
+import {
+  reellyLogosCacheKey,
+  reellyProjectDetailCacheKey,
+  reellyProjectsCacheKey,
+  reellyQueryParams,
+} from '@/services/reelly/locale'
+import { getMessages } from '@/locales'
+import {
+  localizeCatalogItem,
+  localizeLocalListing,
+} from '@/services/reelly/localizeCatalog'
 
 const projects = ref([])
 const markers = ref([])
@@ -27,9 +39,9 @@ const error = ref(null)
 let projectsPromise = null
 let markersPromise = null
 let logosPromise = null
+let loadedLocale = null
+let localeWatcherInstalled = false
 
-const PROJECTS_CACHE_KEY = 'kardosh-reelly-projects-v1'
-const LOGOS_CACHE_KEY = 'kardosh-reelly-developer-logos-v1'
 const CACHE_TTL_MS = 1000 * 60 * 60 * 12
 
 function readCache(key, { arrayOnly = true } = {}) {
@@ -54,32 +66,81 @@ function writeCache(key, data) {
   }
 }
 
-/** Drop projects the dashboard has hidden (by project, developer, or community). */
 function applyVisibility(list) {
   return list.filter((p) => !isProjectHiddenCascade(p))
 }
 
+function mapAndLocalizeProject(raw, options = {}) {
+  return localizeCatalogItem(mapReellyProject(raw, options), getLocaleId())
+}
+
+function mapAndLocalizeMarker(raw) {
+  return localizeCatalogItem(mapReellyMarker(raw), getLocaleId())
+}
+
+function resetReellyPromises() {
+  projectsPromise = null
+  markersPromise = null
+  logosPromise = null
+}
+
+const projectDetailMemory = new Map()
+
+export function invalidateReellyCatalog() {
+  resetReellyPromises()
+  projectDetailMemory.clear()
+  clearAmenitiesDetailCache()
+  projects.value = []
+  markers.value = []
+  loadedLocale = null
+}
+
+function installLocaleWatcher() {
+  if (localeWatcherInstalled || typeof window === 'undefined') return
+  localeWatcherInstalled = true
+  watch(
+    () => getLocaleId(),
+    (next, prev) => {
+      if (next === prev) return
+      invalidateReellyCatalog()
+      void loadProjects(true)
+      void loadMarkers(true)
+    }
+  )
+}
+
 export async function loadProjects(force = false) {
-  if (projects.value.length && !force) return projects.value
-  if (projectsPromise && !force) return projectsPromise
+  installLocaleWatcher()
+  const locale = getLocaleId()
+
+  if (projects.value.length && loadedLocale === locale && !force) return projects.value
+  if (projectsPromise && !force && loadedLocale === locale) return projectsPromise
 
   await loadVisibility()
 
-  const cached = !force ? readCache(PROJECTS_CACHE_KEY) : null
+  const cacheKey = reellyProjectsCacheKey(locale)
+  const cached = !force ? readCache(cacheKey) : null
   if (cached?.length) {
     projects.value = applyVisibility(cached)
+    loadedLocale = locale
     return projects.value
+  }
+
+  if (force || loadedLocale !== locale) {
+    resetReellyPromises()
+    projects.value = []
   }
 
   loading.value = true
   error.value = null
 
-  projectsPromise = fetchProjects({ limit: '50', offset: '0' })
+  projectsPromise = fetchProjects({ limit: '50', offset: '0', ...reellyQueryParams(locale) })
     .then(async ({ results }) => {
-      const mapped = results.map((p) => mapReellyProject(p))
-      if (mapped.length) writeCache(PROJECTS_CACHE_KEY, mapped)
+      const mapped = results.map((p) => mapAndLocalizeProject(p))
+      if (mapped.length) writeCache(cacheKey, mapped)
       projects.value = applyVisibility(mapped)
-      void enrichProjectsWithAmenities(projects.value)
+      loadedLocale = locale
+      void enrichProjectsWithAmenities(projects.value, { locale })
       return projects.value
     })
     .catch((e) => {
@@ -95,19 +156,23 @@ export async function loadProjects(force = false) {
 }
 
 export async function loadMarkers(force = false) {
-  if (markers.value.length && !force) return markers.value
-  if (markersPromise && !force) return markersPromise
+  installLocaleWatcher()
+  const locale = getLocaleId()
+
+  if (markers.value.length && loadedLocale === locale && !force) return markers.value
+  if (markersPromise && !force && loadedLocale === locale) return markersPromise
 
   markersLoading.value = true
+  const query = reellyQueryParams(locale)
   markersPromise = Promise.all([
-    fetchProjectMarkers({ limit: '50' }),
-    fetchProjects({ limit: '50', offset: '0' }).catch(() => ({ results: [] })),
+    fetchProjectMarkers({ limit: '50', ...query }),
+    fetchProjects({ limit: '50', offset: '0', ...query }).catch(() => ({ results: [] })),
   ])
     .then(([{ results: markerRows }, { results: projectRows }]) => {
       const byId = new Map(projectRows.map((p) => [p.id, p]))
       const merged = markerRows.map((row) => {
         const full = byId.get(row.id)
-        return mapReellyMarker(
+        return mapAndLocalizeMarker(
           full
             ? { ...full, location: row.location || full.location, id: row.id }
             : row
@@ -128,10 +193,12 @@ export async function loadMarkers(force = false) {
 }
 
 export async function loadDeveloperLogos(force = false) {
+  const locale = getLocaleId()
   if (developerLogos.value.length && !force) return developerLogos.value
   if (logosPromise && !force) return logosPromise
 
-  const cached = !force ? readCache(LOGOS_CACHE_KEY) : null
+  const cacheKey = reellyLogosCacheKey(locale)
+  const cached = !force ? readCache(cacheKey) : null
   if (cached?.length) {
     developerLogos.value = cached
     return cached
@@ -140,46 +207,47 @@ export async function loadDeveloperLogos(force = false) {
   logosPromise = fetchDeveloperLogos()
     .then(({ results }) => {
       developerLogos.value = results
-      if (results.length) writeCache(LOGOS_CACHE_KEY, results)
+      if (results.length) writeCache(cacheKey, results)
       return results
     })
-    .catch(() => {
-      /* Grid still works from project stats; logos enrich when available */
-      return developerLogos.value
-    })
+    .catch(() => developerLogos.value)
 
   return logosPromise
 }
 
-const projectDetailMemory = new Map()
-const PROJECT_DETAIL_CACHE_PREFIX = 'kardosh-reelly-project-'
-
 export async function fetchFullProject(id) {
+  const locale = getLocaleId()
   const numericId = Number(id)
-  if (projectDetailMemory.has(numericId)) {
-    return projectDetailMemory.get(numericId)
+  const memoryKey = `${locale}:${numericId}`
+  if (projectDetailMemory.has(memoryKey)) {
+    return projectDetailMemory.get(memoryKey)
   }
 
-  const cached = readCache(`${PROJECT_DETAIL_CACHE_PREFIX}${numericId}`, { arrayOnly: false })
+  const cacheKey = reellyProjectDetailCacheKey(numericId, locale)
+  const cached = readCache(cacheKey, { arrayOnly: false })
   if (cached) {
-    projectDetailMemory.set(numericId, cached)
+    projectDetailMemory.set(memoryKey, cached)
     return cached
   }
 
-  const raw = await fetchProjectById(numericId, {
-    language: 'en-us',
-    preferred_currency: 'AED',
-    preferred_area_unit: 'm2',
-  })
-  const mapped = mapReellyProject(raw, { full: true })
-  projectDetailMemory.set(numericId, mapped)
-  writeCache(`${PROJECT_DETAIL_CACHE_PREFIX}${numericId}`, mapped)
+  const raw = await fetchProjectById(numericId, reellyQueryParams(locale))
+  const mapped = mapAndLocalizeProject(raw, { full: true })
+  projectDetailMemory.set(memoryKey, mapped)
+  writeCache(cacheKey, mapped)
   return mapped
 }
 
 export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = []) {
+  const locale = getLocaleId()
+  const restrictedMessage =
+    getMessages(locale).reelly?.unitInventoryRestricted ||
+    'Live unit inventory is not available for this project. Typical units and brochures are still available below.'
+
   try {
-    const { results, count } = await fetchProjectUnits(projectId, { limit: '50' })
+    const { results, count } = await fetchProjectUnits(projectId, {
+      limit: '50',
+      ...reellyQueryParams(locale),
+    })
     const units = enrichLiveUnitsWithPlans(results, typicalUnitsWithPlans)
     return { units, count, restricted: false }
   } catch (e) {
@@ -188,8 +256,7 @@ export async function fetchProjectUnitsSafe(projectId, typicalUnitsWithPlans = [
         units: [],
         count: 0,
         restricted: true,
-        message:
-          'Live unit inventory is not available for this project. Typical units and brochures are still available below.',
+        message: restrictedMessage,
       }
     }
     if (e.status === 408 || e.status === 502 || e.status === 504) {
@@ -206,7 +273,6 @@ export async function resolveDeveloperIdBySlug(param) {
   if (/^\d+$/.test(raw)) return Number(raw)
 
   const want = slugify(raw)
-  // Legacy URLs like /developer/12-damac — use name segment after id-
   const legacy = raw.match(/^\d+-(.+)$/)
   const wantLegacy = legacy ? slugify(legacy[1]) : null
 
@@ -245,13 +311,16 @@ export async function fetchDeveloperDetail(param) {
   const raw = normalizeRouteSlug(param)
   if (!raw) throw new Error('Developer not found')
 
+  const locale = getLocaleId()
+  const query = reellyQueryParams(locale)
+
   if (/^\d+$/.test(raw)) {
-    return mapDeveloper(await fetchDeveloperById(Number(raw)))
+    return mapDeveloper(await fetchDeveloperById(Number(raw), query), locale)
   }
 
   const id = await resolveDeveloperIdBySlug(raw)
   if (!id) throw new Error('Developer not found')
-  return mapDeveloper(await fetchDeveloperById(id))
+  return mapDeveloper(await fetchDeveloperById(id, query), locale)
 }
 
 export function findDeveloperIdByName(name) {
@@ -277,17 +346,17 @@ function locationKey(location) {
     .toLowerCase()
 }
 
-/** Listings for property detail: same developer first, then same area, then other off-plan. */
 export async function getRelatedListings({ currentId, developer, location, limit = 4 } = {}) {
   await loadProjects()
 
   const excludeId = Number(currentId)
   const devNorm = normalizeDeveloper(developer)
   const areaKey = locationKey(location)
+  const locale = getLocaleId()
 
   const pool = [
     ...projects.value,
-    ...localProperties.filter((p) => p.listingType !== 'rent').map(mapLocal),
+    ...localProperties.filter((p) => p.listingType !== 'rent').map((p) => localizeLocalListing(p, locale)),
   ].filter((p) => p.id !== excludeId)
 
   const seen = new Set()
@@ -324,23 +393,18 @@ export async function getRelatedListings({ currentId, developer, location, limit
 }
 
 function mapLocal(p) {
+  const locale = getLocaleId()
   return {
-    ...p,
+    ...localizeLocalListing(p, locale),
     source: 'local',
     listingType: p.listingType || 'rent',
-    priceLabel:
-      p.listingType === 'rent'
-        ? `${formatAed(p.price)}/year`
-        : (() => {
-            const compact = formatAedInMillions(p.price)
-            return compact ? `From ${compact}` : 'Price on request'
-          })(),
     areaLabel: formatArea(p.square),
-    title: p.name,
   }
 }
 
 export function useReelly() {
+  installLocaleWatcher()
+
   const rentListings = computed(() =>
     localProperties.filter((p) => p.listingType === 'rent').map(mapLocal)
   )
@@ -352,10 +416,6 @@ export function useReelly() {
 
   const developerStatsByName = computed(() => buildDeveloperStats(projects.value))
 
-  /**
-   * Developers with active UAE projects.
-   * Built from project stats first so the grid works even if /developers/logos is slow or fails.
-   */
   const developerIdByName = computed(() => {
     const map = new Map()
     for (const m of markers.value) {
@@ -403,10 +463,10 @@ export function useReelly() {
   }
 }
 
-// Back-compat for existing imports
 export { loadProjects as loadReellyProjects }
 
 export async function getListingById(param) {
+  const locale = getLocaleId()
   const raw = String(param || '').trim()
   if (!raw) return null
 
@@ -417,8 +477,9 @@ export async function getListingById(param) {
     try {
       return await fetchFullProject(numericId)
     } catch {
+      const cacheKey = reellyProjectsCacheKey(locale)
       if (!projects.value.length) {
-        const cachedList = readCache(PROJECTS_CACHE_KEY)
+        const cachedList = readCache(cacheKey)
         if (cachedList?.length) projects.value = cachedList
       }
       if (!projects.value.length) await loadProjects()
@@ -426,15 +487,11 @@ export async function getListingById(param) {
     }
   }
 
-  const detailParams = {
-    language: 'en-us',
-    preferred_currency: 'AED',
-    preferred_area_unit: 'm2',
-  }
+  const detailParams = reellyQueryParams(locale)
 
   try {
     const data = await fetchProjectBySlug(raw, detailParams)
-    return mapReellyProject(data, { full: true })
+    return mapAndLocalizeProject(data, { full: true })
   } catch {
     /* try slug-id suffix or catalogue */
   }
@@ -448,8 +505,9 @@ export async function getListingById(param) {
     }
   }
 
+  const cacheKey = reellyProjectsCacheKey(locale)
   if (!projects.value.length) {
-    const cachedList = readCache(PROJECTS_CACHE_KEY)
+    const cachedList = readCache(cacheKey)
     if (cachedList?.length) projects.value = cachedList
   }
   if (!projects.value.length) await loadProjects()

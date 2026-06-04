@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Why Invest in Dubai?"
-    subtitle="From lifestyle and connectivity to capital growth and investor-friendly regulations, Dubai offers a unique environment for building long-term wealth through real estate."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.whyDubai"
   />
 
@@ -13,7 +13,7 @@
       <ul
         class="why-dubai-stats listings-search-glass kardosh-profile-stats kardosh-profile-stats--cols-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 list-none m-0"
       >
-        <li v-for="stat in WHY_DUBAI_STATS" :key="stat.label" class="text-center px-2">
+        <li v-for="stat in whyDubaiStats" :key="stat.label" class="text-center px-2">
           <p class="kardosh-profile-stats__value text-2xl md:text-3xl font-semibold tabular-nums">
             {{ stat.value }}
           </p>
@@ -47,7 +47,7 @@
             />
             <div class="absolute bottom-0 inset-x-0 p-6 md:p-8">
               <p class="text-white/90 text-sm md:text-base leading-relaxed max-w-xl">
-                {{ WHY_DUBAI_INTRO.body }}
+                {{ whyDubaiIntro.body }}
               </p>
             </div>
           </div>
@@ -62,11 +62,11 @@
               id="why-dubai-intro-heading"
               class="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
             >
-              {{ WHY_DUBAI_INTRO.title }}
+              {{ whyDubaiIntro.title }}
             </h2>
             <ul class="mt-6 space-y-3 flex-1 list-none p-0" role="list">
               <li
-                v-for="point in INTRO_POINTS"
+                v-for="point in introPoints"
                 :key="point"
                 class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300"
               >
@@ -107,7 +107,7 @@
 
       <div class="why-dubai-advantages__grid mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
         <article
-          v-for="(item, i) in INVESTMENT_ADVANTAGES"
+          v-for="(item, i) in investmentAdvantages"
           :key="item.title"
           class="why-dubai-advantage-card group rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 transition hover:border-slate-300 dark:hover:border-slate-500 hover:shadow-md"
         >
@@ -138,7 +138,7 @@
 
       <ol class="why-dubai-journey__grid mt-12 list-none p-0 m-0">
         <li
-          v-for="step in BUYER_JOURNEY_STEPS"
+          v-for="step in buyerJourneySteps"
           :key="step.step"
           class="why-dubai-journey-card listings-search-glass group"
         >
@@ -173,7 +173,7 @@
         </div>
         <div class="lg:col-span-7 grid sm:grid-cols-1 gap-4">
           <article
-            v-for="item in GOLDEN_VISA_HIGHLIGHTS"
+            v-for="item in goldenVisaHighlights"
             :key="item.title"
             class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 md:p-6 flex gap-4"
           >
@@ -206,7 +206,7 @@
 
       <div class="mt-10 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         <article
-          v-for="col in [OFF_PLAN_VS_READY.offPlan, OFF_PLAN_VS_READY.ready]"
+          v-for="col in [offPlanVsReady.offPlan, offPlanVsReady.ready]"
           :key="col.title"
           class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 md:p-8"
         >
@@ -246,7 +246,7 @@
       </div>
       <div class="why-dubai-rera__grid mt-10">
         <article
-          v-for="item in RERA_SAFEGUARDS"
+          v-for="item in reraSafeguards"
           :key="item.title"
           class="why-dubai-rera-card listings-search-glass group"
         >
@@ -282,7 +282,7 @@
 
       <div class="why-dubai-districts__grid mt-10">
         <article
-          v-for="d in TOP_INVESTMENT_DISTRICTS"
+          v-for="d in topDistricts"
           :key="d.slug"
           class="why-dubai-district-card community-card--luxury kardosh-property-card--luxury listings-search-glass group flex flex-col"
         >
@@ -334,7 +334,7 @@
 
       <div class="max-w-3xl mx-auto space-y-3">
         <details
-          v-for="item in WHY_DUBAI_FAQ"
+          v-for="item in whyDubaiFaq"
           :key="item.id"
           class="group rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden"
         >
@@ -413,23 +413,64 @@ import Switcher from '@/component/switcher.vue'
 import PageHero from '@/component/kardosh/PageHero.vue'
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
 import { PAGE_HERO_IMAGES, SECTION_IMAGES, WHY_INVEST_SIZES, WHY_INVEST_SRCSET } from '@/config/dubai-images'
+import { computed } from 'vue'
+import { usePageHero } from '@/composables/usePageHero'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
 import {
-  WHY_DUBAI_STATS,
-  WHY_DUBAI_INTRO,
   INVESTMENT_ADVANTAGES,
   BUYER_JOURNEY_STEPS,
   GOLDEN_VISA_HIGHLIGHTS,
   OFF_PLAN_VS_READY,
   RERA_SAFEGUARDS,
   TOP_INVESTMENT_DISTRICTS,
-  WHY_DUBAI_FAQ,
 } from '@/config/why-dubai'
 
-const INTRO_POINTS = [
-  'Freehold ownership for foreigners in designated zones',
-  'Live off-plan catalogue with AED pricing on Kardosh Realty',
-  'Licensed brokerage and developer-backed payment plans',
-]
+const t = useT()
+const messages = useMessages()
+const hero = usePageHero('whyDubai')
+const whyDubai = computed(() => messages.value.whyDubai || {})
+
+const whyDubaiStats = computed(() => whyDubai.value.stats || [])
+const whyDubaiIntro = computed(() => whyDubai.value.intro || {})
+const introPoints = computed(() => whyDubaiIntro.value.points || [])
+
+const investmentAdvantages = computed(() => {
+  const a = whyDubai.value.advantages
+  if (Array.isArray(a)) return a
+  return a?.items || INVESTMENT_ADVANTAGES
+})
+
+const buyerJourneySteps = computed(() => {
+  const j = whyDubai.value.buyerJourney
+  if (Array.isArray(j)) return j
+  return j?.steps || BUYER_JOURNEY_STEPS
+})
+
+const goldenVisaHighlights = computed(() => {
+  const g = whyDubai.value.goldenVisa
+  if (Array.isArray(g)) return g
+  return g?.items || GOLDEN_VISA_HIGHLIGHTS
+})
+
+const offPlanVsReady = computed(() => whyDubai.value.offPlanVsReady || OFF_PLAN_VS_READY)
+const reraSafeguards = computed(() => {
+  const r = whyDubai.value.rera
+  if (Array.isArray(r)) return r
+  return r?.items || RERA_SAFEGUARDS
+})
+
+const topDistricts = computed(() => {
+  const d = whyDubai.value.districts
+  if (Array.isArray(d)) return d
+  return d?.items || TOP_INVESTMENT_DISTRICTS
+})
+
+const whyDubaiFaq = computed(() => {
+  const f = whyDubai.value.faq
+  if (Array.isArray(f)) return f
+  return f?.items || []
+})
 
 const ADVANTAGE_ICONS = [Percent, TrendingUp, Award, CalendarClock, ShieldCheck, Globe2]
 </script>

@@ -5,7 +5,7 @@ import { BRAND } from './brand'
 export const CONTACT_PAGE_STATS = [
   { value: '24h', label: 'Typical response time' },
   { value: 'Business Bay', label: 'Dubai headquarters' },
-  { value: 'EN · AR · PT', label: 'Advisory languages' },
+  { value: 'EN · PT', label: 'Advisory languages' },
   { value: BRAND.reraLicense, label: 'RERA license no.' },
 ]
 

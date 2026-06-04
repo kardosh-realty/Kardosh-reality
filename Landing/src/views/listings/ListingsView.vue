@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    :title="heroTitle"
-    :subtitle="heroSubtitle"
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="listingsHeroImage"
   />
 
@@ -23,7 +23,7 @@
         v-else-if="filtered.length === 0"
         class="text-center text-slate-500 dark:text-slate-400 py-12"
       >
-        No properties match your search. Try different filters.
+        {{ t('search.noResults') }}
       </p>
 
       <Pagination
@@ -52,6 +52,8 @@ import Pagination from '@/component/pagination.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { useReelly } from '@/composables/useReelly'
+import { usePageHero } from '@/composables/usePageHero'
+import { useT } from '@/composables/useT'
 import { projectMatchesBedroomFilter } from '@/services/reelly/mapProject'
 
 const props = defineProps({
@@ -59,20 +61,14 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const t = useT()
 const { projects, rentListings, loading, error, loadProjects } = useReelly()
 
 const listingsHeroImage = computed(() =>
   props.mode === 'rent' ? PAGE_HERO_IMAGES.rent : PAGE_HERO_IMAGES.offPlan
 )
 
-const heroTitle = computed(() =>
-  props.mode === 'rent' ? 'Properties for rent' : 'Dubai Off-Plan Projects'
-)
-const heroSubtitle = computed(() =>
-  props.mode === 'rent'
-    ? 'Annual rent listings across the UAE on Kardosh Realty.'
-    : 'Explore off-plan projects in Dubai from leading developers across the UAE.'
-)
+const hero = usePageHero(computed(() => (props.mode === 'rent' ? 'rent' : 'offPlan')))
 
 const sourceList = computed(() =>
   props.mode === 'rent' ? rentListings.value : projects.value

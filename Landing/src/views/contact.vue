@@ -2,8 +2,8 @@
   <Navbar nav-class="navbar-white" />
 
   <PageHero
-    title="Contact Kardosh Realty"
-    subtitle="Speak with our Dubai team about off-plan, ready homes, rentals, and investor advisory across the UAE."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.contact"
   />
 
@@ -13,7 +13,7 @@
       <ul
         class="kardosh-profile-stats kardosh-profile-stats--cols-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 list-none p-0 m-0 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-md px-4 py-6 md:px-8"
       >
-        <li v-for="stat in CONTACT_PAGE_STATS" :key="stat.label" class="text-center px-2">
+        <li v-for="stat in contactStats" :key="stat.label" class="text-center px-2">
           <p class="kardosh-profile-stats__value text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
             {{ stat.value }}
           </p>
@@ -30,17 +30,17 @@
   <section class="lg:py-20 py-14" aria-labelledby="expect-heading">
     <div class="container-fluid">
       <div class="max-w-3xl mx-auto text-center">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">What happens next</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ expectationsIntro.eyebrow }}</p>
         <h2
           id="expect-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3"
         >
-          After you reach out
+          {{ expectationsIntro.heading }}
         </h2>
       </div>
       <div class="mt-10 grid md:grid-cols-3 gap-5 md:gap-6 max-w-5xl mx-auto">
         <article
-          v-for="(item, index) in CONTACT_EXPECTATIONS"
+          v-for="(item, index) in contactExpectations"
           :key="item.title"
           class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 text-center"
         >
@@ -63,17 +63,17 @@
   >
     <div class="container-fluid">
       <div class="max-w-3xl mx-auto text-center mb-10">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">FAQ</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ faqIntro.eyebrow }}</p>
         <h2
           id="contact-faq-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3"
         >
-          Before you enquire
+          {{ faqIntro.heading }}
         </h2>
       </div>
       <div class="max-w-3xl mx-auto space-y-3">
         <details
-          v-for="item in CONTACT_FAQ"
+          v-for="item in contactFaq"
           :key="item.id"
           class="group rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden"
         >
@@ -110,7 +110,7 @@
           :src="decorativeHeroImage.src"
           :srcset="decorativeHeroImage.srcset || undefined"
           :sizes="decorativeHeroImage.sizes || undefined"
-          alt="UAE skyline"
+          :alt="t('contact.page.mapAlt')"
           class="absolute inset-0 z-0 h-full w-full object-cover scale-105 transition-transform duration-700 hover:scale-110"
           loading="lazy"
         />
@@ -122,22 +122,22 @@
         <div
           class="contact-cta__content relative z-10 flex min-h-[20rem] md:min-h-[22rem] flex-col items-center justify-center px-8 py-10 text-center text-white md:px-12 md:py-14"
         >
-          <h2 class="text-2xl font-semibold md:text-3xl">Explore while you wait</h2>
+          <h2 class="text-2xl font-semibold md:text-3xl">{{ contactCta.heading }}</h2>
           <p class="mt-3 max-w-2xl leading-relaxed text-white/85">
-            Browse live off-plan stock, UAE communities, or our Why Dubai investor guide.
+            {{ contactCtaBody }}
           </p>
           <div class="kardosh-btn-row kardosh-btn-row--center mt-8">
             <RouterLink
               to="/off-plan"
               class="contact-cta__btn-primary btn inline-flex items-center justify-center rounded-lg bg-white px-8 font-semibold hover:bg-slate-100"
             >
-              View off-plan
+              {{ contactCta.viewOffPlan }}
             </RouterLink>
             <RouterLink
               to="/why-dubai"
               class="btn inline-flex items-center justify-center rounded-lg border border-white/40 px-8 text-white hover:bg-white/10"
             >
-              Why Dubai
+              {{ contactCta.whyDubai }}
             </RouterLink>
           </div>
         </div>
@@ -161,11 +161,62 @@ import BlurVignette from '@/component/ui/BlurVignette.vue'
 import BlurVignetteArticle from '@/component/ui/BlurVignetteArticle.vue'
 import HomeGetInTouch from '@/component/kardosh/home/HomeGetInTouch.vue'
 import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
-import {
-  CONTACT_PAGE_STATS,
-  CONTACT_EXPECTATIONS,
-  CONTACT_FAQ,
-} from '@/config/contact-page'
+import { usePageHero } from '@/composables/usePageHero'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
+import { BRAND } from '@/config/brand'
 
+const t = useT()
+const messages = useMessages()
+const hero = usePageHero('contact')
 const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.contact))
+
+const contact = computed(() => messages.value.contact || {})
+
+const contactStats = computed(() => {
+  const stats = contact.value.stats || []
+  return stats.map((stat) => ({
+    ...stat,
+    value: String(stat.value).replace('{license}', BRAND.reraLicense),
+  }))
+})
+
+const expectationsIntro = computed(() => {
+  const e = contact.value.expectations
+  if (e?.items) {
+    return { eyebrow: e.eyebrow, heading: e.heading }
+  }
+  return contact.value.page?.expectationsSection || { eyebrow: '', heading: '' }
+})
+
+const contactExpectations = computed(() => {
+  const e = contact.value.expectations
+  if (Array.isArray(e)) return e
+  return e?.items || []
+})
+
+const faqIntro = computed(() => {
+  const f = contact.value.faq
+  if (f?.items) {
+    return { eyebrow: f.eyebrow, heading: f.heading }
+  }
+  return contact.value.page?.faqSection || { eyebrow: '', heading: '' }
+})
+
+const contactFaq = computed(() => {
+  const f = contact.value.faq
+  if (Array.isArray(f)) return f
+  return f?.items || []
+})
+
+const contactCta = computed(() => {
+  const c = contact.value.cta || contact.value.page?.cta || {}
+  return {
+    heading: c.heading || '',
+    viewOffPlan: c.viewOffPlan || t('common.viewAllOffPlan'),
+    whyDubai: c.whyDubai || '',
+  }
+})
+
+const contactCtaBody = computed(() => contact.value.cta?.body || contact.value.cta?.lead || '')
 </script>

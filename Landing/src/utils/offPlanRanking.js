@@ -29,11 +29,12 @@ export function offPlanDemandScore(project) {
   return score
 }
 
+/** Badge id for `common.*` / listing card labels — translate in UI. */
 export function demandBadge(project) {
   const s = String(project.saleStatus || '').toLowerCase()
-  if (s.includes('sold')) return 'High demand'
-  if (s.includes('few') || s.includes('limited')) return 'Selling fast'
-  return 'Popular'
+  if (s.includes('sold')) return 'highDemand'
+  if (s.includes('few') || s.includes('limited')) return 'sellingFast'
+  return 'popular'
 }
 
 /**

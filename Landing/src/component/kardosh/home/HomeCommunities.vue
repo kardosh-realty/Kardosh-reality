@@ -5,16 +5,15 @@
   >
     <div class="container-fluid">
       <div class="home-communities__intro max-w-3xl mx-auto text-center">
-        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Communities</p>
+        <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ t('home.communities.eyebrow') }}</p>
         <h2
           id="home-communities-heading"
           class="kardosh-section-heading text-3xl md:text-4xl lg:text-[2.5rem] font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
         >
-          Explore projects by community
+          {{ t('home.communities.heading') }}
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Buyers search by area as much as by developer — compare off-plan stock, payment plans, and lifestyle fit
-          across Dubai’s most searched districts.
+          {{ t('home.communities.subheading') }}
         </p>
       </div>
 
@@ -33,7 +32,7 @@
       </ul>
 
       <div class="home-communities__footer mt-10 lg:mt-12 flex justify-center">
-        <KardoshSlideButton label="View all communities" to="/communities" fluid />
+        <KardoshSlideButton :label="viewAllLabel" to="/communities" fluid />
       </div>
     </div>
   </section>
@@ -44,6 +43,18 @@ import { computed } from 'vue'
 import { findCommunity } from '@/config/communities'
 import CommunityCard from '@/component/kardosh/CommunityCard.vue'
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
+
+const t = useT()
+const messages = useMessages()
+
+const viewAllLabel = computed(
+  () =>
+    messages.value.home?.communities?.viewAllCommunities ||
+    messages.value.home?.communities?.viewAll ||
+    t('common.explore')
+)
 
 /** Homepage featured corridors — matches top area-based search intent */
 const FEATURED_SLUGS = [
@@ -59,31 +70,3 @@ const featuredCommunities = computed(() =>
   FEATURED_SLUGS.map((slug) => findCommunity(slug)).filter(Boolean)
 )
 </script>
-
-<style scoped>
-.home-communities__item {
-  animation: home-communities-enter 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
-  animation-delay: var(--stagger, 0ms);
-}
-
-@keyframes home-communities-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-communities__item {
-    animation: none;
-  }
-}
-
-.home-communities__footer :deep(.kardosh-slide-btn__label) {
-  white-space: nowrap;
-}
-</style>

@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
         '@kardosh/shared': path.resolve(__dirname, '../shared'),
+        'vue-router': path.resolve(__dirname, './src/lib/vue-router.js'),
       },
     },
     server: {

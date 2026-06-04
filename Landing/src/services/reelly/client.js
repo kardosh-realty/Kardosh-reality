@@ -1,15 +1,10 @@
 import { normalizeList } from './normalize'
+import { reellyQueryParams } from './locale'
 
 const BASE = '/api/reelly'
 
-const DEFAULT_QUERY = {
-  language: 'en-us',
-  preferred_currency: 'AED',
-  preferred_area_unit: 'm2',
-}
-
 function buildQuery(params = {}) {
-  const merged = { ...DEFAULT_QUERY, ...params }
+  const merged = { ...reellyQueryParams(), ...params }
   const q = new URLSearchParams()
   Object.entries(merged).forEach(([k, v]) => {
     if (v !== undefined && v !== null && v !== '') q.set(k, String(v))
@@ -97,8 +92,8 @@ export async function fetchDevelopers(params = {}) {
   return normalizeList(data)
 }
 
-export async function fetchDeveloperById(id) {
-  return reellyFetch(`/developers/${id}`)
+export async function fetchDeveloperById(id, params = {}) {
+  return reellyFetch(`/developers/${id}`, params)
 }
 
 export async function fetchDeveloperLogos() {

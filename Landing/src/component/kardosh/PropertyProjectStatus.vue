@@ -4,10 +4,10 @@
     aria-labelledby="project-status-heading"
   >
     <h3 id="project-status-heading">
-      Project availability
+      {{ t('reelly.projectStatus.heading') }}
     </h3>
     <p class="property-detail-status__lead">
-      Live catalogue data on Kardosh Realty. Individual sale or transaction history is not published on project pages.
+      {{ t('reelly.projectStatus.lead') }}
     </p>
 
     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
@@ -18,7 +18,7 @@
     </dl>
 
     <p v-if="unitTypes.length" class="property-detail-status__types">
-      <strong>Unit types:</strong>
+      <strong>{{ t('reelly.projectStatus.unitTypes') }}</strong>
       {{ unitTypes.join(', ') }}
     </p>
   </section>
@@ -26,6 +26,11 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useT } from '@/composables/useT'
+import { localizeStatusValue, localizeUnitType } from '@/services/reelly/localizeCatalog'
+import { getLocaleId } from '@/composables/useLanguage'
+
+const t = useT()
 
 const props = defineProps({
   saleStatus: { type: String, default: '' },
@@ -35,21 +40,30 @@ const props = defineProps({
   availableUnitTypes: { type: Array, default: () => [] },
 })
 
-function formatStatus(value) {
+function formatStatus(value, kind) {
   if (!value) return '—'
-  return String(value).replace(/_/g, ' ')
+  return localizeStatusValue(value, getLocaleId(), kind)
 }
 
 const items = computed(() => {
   const rows = [
-    { label: 'Sale status', value: formatStatus(props.saleStatus) },
-    { label: 'Construction', value: formatStatus(props.constructionStatus) },
-    { label: 'Completion', value: props.completionDate || '—' },
+    {
+      label: t('reelly.projectStatus.saleStatus'),
+      value: formatStatus(props.saleStatus, 'sale'),
+    },
+    {
+      label: t('reelly.projectStatus.construction'),
+      value: formatStatus(props.constructionStatus, 'construction'),
+    },
+    {
+      label: t('reelly.projectStatus.completion'),
+      value: props.completionDate || '—',
+    },
   ]
   if (props.unitsCount != null && props.unitsCount > 0) {
     rows.push({
-      label: 'Units in catalogue',
-      value: `${props.unitsCount} listed`,
+      label: t('reelly.projectStatus.unitsInCatalogue'),
+      value: t('reelly.projectStatus.unitsListed', { count: props.unitsCount }),
     })
   }
   return rows
@@ -57,7 +71,10 @@ const items = computed(() => {
 
 const unitTypes = computed(() =>
   (props.availableUnitTypes || [])
-    .map((t) => (typeof t === 'string' ? t : t?.name || t?.label))
+    .map((entry) => {
+      const raw = typeof entry === 'string' ? entry : entry?.name || entry?.label
+      return raw ? localizeUnitType(raw, getLocaleId()) : null
+    })
     .filter(Boolean)
 )
 </script>

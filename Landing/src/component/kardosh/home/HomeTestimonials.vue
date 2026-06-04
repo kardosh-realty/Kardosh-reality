@@ -13,10 +13,10 @@
           id="testimonials-heading"
           class="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white"
         >
-          What our clients say
+          {{ t('home.testimonials.heading') }}
         </h2>
         <p class="text-center mt-5 text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-          Real experiences from buyers and investors who worked with Kardosh Realty in Dubai.
+          {{ t('home.testimonials.subheading') }}
         </p>
       </div>
 
@@ -40,11 +40,13 @@ import { computed, onMounted, ref } from 'vue'
 import TestimonialsColumn from '@/component/ui/TestimonialsColumn.vue'
 import { splitTestimonialsIntoColumns } from '@/config/testimonials'
 import { testimonials } from '@/composables/useTestimonials'
+import { useT } from '@/composables/useT'
 
 defineProps({
   mt: { type: Boolean, default: true },
 })
 
+const t = useT()
 const headerVisible = ref(false)
 
 const columns = computed(() => splitTestimonialsIntoColumns(testimonials.value))

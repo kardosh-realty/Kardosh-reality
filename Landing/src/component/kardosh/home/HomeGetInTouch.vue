@@ -22,17 +22,16 @@
             id="get-in-touch-heading"
             class="about-kardosh__headline justify-center text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white leading-tight"
           >
-            <span class="about-kardosh__headline-word">Have a question?</span>
+            <span class="about-kardosh__headline-word">{{ formCopy.headingQuestion }}</span>
             <span
               v-if="!pageMode"
               class="about-kardosh__headline-word text-slate-600 dark:text-slate-300"
             >
-              Get in touch.
+              {{ formCopy.headingAction }}
             </span>
           </h2>
           <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed mx-auto">
-            Speak with our Dubai team about off plan projects, buy off plan property, rentals, or selling your home.
-            We typically respond within one business day.
+            {{ formCopy.lead }}
           </p>
         </div>
 
@@ -75,7 +74,7 @@
                 class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
               >
                 <Linkedin class="size-4" aria-hidden="true" />
-                LinkedIn
+                {{ formCopy.linkedIn }}
               </a>
               <a
                 :href="SOCIAL.instagram"
@@ -84,7 +83,7 @@
                 class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
               >
                 <Instagram class="size-4" aria-hidden="true" />
-                Instagram
+                {{ formCopy.instagram }}
               </a>
             </div>
           </div>
@@ -102,14 +101,14 @@
               ]"
             >
               <h3 class="text-xl font-semibold text-slate-900 dark:text-white">
-                {{ pageMode ? 'Send your enquiry' : 'Send a quick enquiry' }}
+                {{ pageMode ? formCopy.formTitleFull : formCopy.formTitleQuick }}
               </h3>
               <p v-if="!pageMode" class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Prefer the full form?
-                <RouterLink to="/contact" class="text-primary hover:underline">Contact page</RouterLink>
+                {{ formCopy.preferFullForm }}
+                <RouterLink to="/contact" class="text-primary hover:underline">{{ formCopy.contactPageLink }}</RouterLink>
               </p>
               <p v-else class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                All fields are optional except name. We store enquiries securely when Supabase is connected.
+                {{ formCopy.fieldsNote }}
               </p>
 
               <form class="mt-6" @submit.prevent="onSubmit">
@@ -120,14 +119,14 @@
                   <span class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 min-w-0">
                     <Building2 class="size-4 shrink-0 text-primary" aria-hidden="true" />
                     <span class="min-w-0">
-                      Enquiry about
+                      {{ formCopy.enquiryAbout }}
                       <span class="font-semibold text-slate-900 dark:text-white">{{ regardingProperty }}</span>
                     </span>
                   </span>
                   <button
                     type="button"
                     class="shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                    aria-label="Clear property"
+                    :aria-label="formCopy.clearProperty"
                     @click="clearRegarding"
                   >
                     <X class="size-4" aria-hidden="true" />
@@ -139,7 +138,7 @@
 
                 <div class="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label :for="`${fieldPrefix}-name`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Name</label>
+                    <label :for="`${fieldPrefix}-name`" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ formCopy.labels.name }}</label>
                     <input
                       :id="`${fieldPrefix}-name`"
                       v-model="form.name"
@@ -147,29 +146,29 @@
                       required
                       autocomplete="name"
                       class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full placeholder:text-slate-400 dark:placeholder:text-slate-400"
-                      placeholder="Your name"
+                      :placeholder="formCopy.placeholders.name"
                     />
                   </div>
                   <div>
-                    <label :for="`${fieldPrefix}-email`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+                    <label :for="`${fieldPrefix}-email`" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ formCopy.labels.email }}</label>
                     <input
                       :id="`${fieldPrefix}-email`"
                       v-model="form.email"
                       type="email"
                       autocomplete="email"
                       class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full placeholder:text-slate-400 dark:placeholder:text-slate-400"
-                      placeholder="you@email.com"
+                      :placeholder="formCopy.placeholders.email"
                     />
                   </div>
                 </div>
 
                 <div class="grid sm:grid-cols-2 gap-4 mt-4">
                   <div>
-                    <label :for="`${fieldPrefix}-phone`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</label>
+                    <label :for="`${fieldPrefix}-phone`" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ formCopy.labels.phone }}</label>
                     <PhoneInput
                       :id="`${fieldPrefix}-phone`"
                       v-model="form.phone"
-                      placeholder="Enter phone number"
+                      :placeholder="formCopy.placeholders.phone"
                       default-country="AE"
                       :invalid="!!phoneError"
                       class="w-full"
@@ -177,27 +176,27 @@
                     <p v-if="phoneError" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ phoneError }}</p>
                   </div>
                   <div>
-                    <label :for="`${fieldPrefix}-type`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Interested in</label>
+                    <label :for="`${fieldPrefix}-type`" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ formCopy.labels.interestedIn }}</label>
                     <select
                       :id="`${fieldPrefix}-type`"
                       v-model="form.listingType"
                       class="kardosh-form-control form-select form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full"
                     >
-                      <option value="sale">Buy / Off-plan</option>
-                      <option value="rent">Rent</option>
-                      <option value="sell">Sell my property</option>
+                      <option value="sale">{{ formCopy.listingTypes.sale }}</option>
+                      <option value="rent">{{ formCopy.listingTypes.rent }}</option>
+                      <option value="sell">{{ formCopy.listingTypes.sell }}</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="mt-4">
-                  <label :for="`${fieldPrefix}-message`" class="text-sm font-medium text-slate-700 dark:text-slate-300">Message</label>
+                  <label :for="`${fieldPrefix}-message`" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ formCopy.labels.message }}</label>
                   <textarea
                     :id="`${fieldPrefix}-message`"
                     v-model="form.message"
                     rows="4"
                     class="kardosh-form-control form-input border border-slate-200! dark:border-slate-600! mt-1.5 w-full textarea placeholder:text-slate-400 dark:placeholder:text-slate-400"
-                    placeholder="Tell us about your budget, community, or timeline…"
+                    :placeholder="formCopy.placeholders.message"
                   />
                 </div>
 
@@ -205,11 +204,7 @@
                   <StatusButton
                     type="submit"
                     :status="submitStatus"
-                    :labels="{
-                      idle: 'Send message',
-                      loading: 'Sending',
-                      success: 'Sent',
-                    }"
+                    :labels="formCopy.submit"
                   />
                   <a
                     :href="enquiryWhatsAppLink"
@@ -218,7 +213,7 @@
                     class="btn btn-secondary inline-flex items-center justify-center gap-2"
                   >
                     <MessageCircle class="size-4" aria-hidden="true" />
-                    WhatsApp
+                    {{ formCopy.whatsapp }}
                   </a>
                 </div>
               </form>
@@ -231,7 +226,7 @@
           class="contact-enquiry__map mt-10 lg:mt-12 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 min-h-[280px] md:min-h-[360px] lg:min-h-[420px]"
         >
           <iframe
-            title="Kardosh Realty office — Business Bay, Dubai"
+            :title="formCopy.mapTitle"
             :src="GOOGLE_MAP_EMBED"
             class="w-full h-full min-h-[280px] md:min-h-[360px] lg:min-h-[420px] border-0"
             loading="lazy"
@@ -255,6 +250,72 @@ import { whatsAppLink, WHATSAPP } from '@/config/marketing'
 import { submitLead } from '@/services/leads'
 import PhoneInput from '@/components/ui/PhoneInput.vue'
 import { validatePhone } from '@/utils/validatePhone'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
+
+const t = useT()
+const messages = useMessages()
+
+const formCopy = computed(() => {
+  const raw = messages.value.form?.getInTouch ?? messages.value.form ?? {}
+  return {
+    headingQuestion: raw.headingQuestion,
+    headingAction: raw.headingAction ?? raw.headingTouch,
+    lead: raw.lead ?? raw.subheading,
+    formTitleQuick: raw.formTitleQuick ?? raw.sendQuickEnquiry,
+    formTitleFull: raw.formTitleFull ?? raw.sendEnquiry,
+    preferFullForm: raw.preferFullForm,
+    contactPageLink: raw.contactPageLink ?? raw.contactPage,
+    fieldsNote: raw.fieldsNote ?? raw.optionalFieldsNote,
+    enquiryAbout: raw.enquiryAbout,
+    clearProperty: raw.clearProperty,
+    labels: raw.labels ?? {
+      name: raw.name,
+      email: raw.email,
+      phone: raw.phone,
+      interestedIn: raw.interestedIn,
+      message: raw.message,
+    },
+    placeholders: raw.placeholders ?? {
+      name: raw.namePlaceholder,
+      email: raw.emailPlaceholder,
+      phone: raw.phonePlaceholder,
+      message: raw.messagePlaceholder,
+    },
+    submit: raw.submit ?? {
+      idle: raw.sendMessage,
+      loading: raw.sending,
+      success: raw.sent,
+    },
+    whatsapp: raw.whatsapp,
+    channels: raw.channels ?? {
+      phone: raw.channels?.phone,
+      email: raw.channels?.email,
+      whatsapp: raw.channels?.whatsapp,
+      whatsappValue: raw.channels?.whatsappValue,
+      office: raw.channels?.office,
+      rera: raw.channels?.rera,
+    },
+    hints: raw.hints ?? {
+      emailReply: raw.channels?.emailHint,
+      whatsappFast: raw.channels?.whatsappHint,
+      reraAgency: raw.channels?.reraHint,
+    },
+    linkedIn: raw.linkedIn ?? raw.linkedin,
+    instagram: raw.instagram,
+    defaultMessage: raw.defaultMessage ?? raw.regardingTemplate,
+    successWithProperty: raw.successWithProperty ?? raw.successRegarding,
+    success: raw.success ?? raw.successDefault,
+    devMode: raw.devMode ?? raw.successDev,
+    error: raw.error ?? raw.errorSend,
+    listingTypes: raw.listingTypes ?? {
+      sale: t('search.listingInterest.sale'),
+      rent: t('search.listingInterest.rent'),
+      sell: t('search.listingInterest.sell'),
+    },
+    mapTitle: raw.mapTitle,
+  }
+})
 
 const props = defineProps({
   mt: { type: Boolean, default: true },
@@ -291,7 +352,11 @@ function applyPropertyFromRoute() {
   regardingProperty.value = title
   regardingId.value = id
   if (title && !form.value.message.trim()) {
-    form.value.message = `I'm interested in ${title}. Please share availability, pricing, and payment plans.`
+    const template =
+      messages.value.form?.getInTouch?.defaultMessage ||
+      messages.value.form?.regardingTemplate ||
+      "I'm interested in {property}. Please share availability, pricing, and payment plans."
+    form.value.message = template.replace('{property}', title)
   }
 }
 
@@ -319,48 +384,52 @@ const enquiryWhatsAppLink = computed(() =>
     : whatsAppLink()
 )
 
-const contactChannels = computed(() => [
-  {
-    label: 'Phone',
-    value: CONTACT.phone,
-    href: CONTACT.phoneTel,
-    hint: CONTACT.hours,
-    icon: Phone,
-    external: true,
-  },
-  {
-    label: 'Email',
-    value: BRAND.email,
-    href: `mailto:${BRAND.email}`,
-    hint: 'We reply within 24 hours',
-    icon: Mail,
-    external: true,
-  },
-  {
-    label: 'WhatsApp',
-    value: 'Chat with our team',
-    href: whatsAppLink(),
-    hint: 'Fastest for international clients',
-    icon: MessageCircle,
-    external: true,
-  },
-  {
-    label: 'Office',
-    value: CONTACT.addressShort,
-    href: props.pageMode ? GOOGLE_MAPS_DIRECTIONS : '/contact',
-    hint: CONTACT.address,
-    icon: MapPin,
-    external: props.pageMode,
-  },
-  {
-    label: 'RERA',
-    value: RERA_LICENSE_LABEL,
-    href: props.pageMode ? undefined : '/contact',
-    hint: 'Dubai Real Estate Regulatory Agency',
-    icon: Shield,
-    external: false,
-  },
-])
+const contactChannels = computed(() => {
+  const ch = formCopy.value.channels || {}
+  const hints = formCopy.value.hints || {}
+  return [
+    {
+      label: ch.phone || 'Phone',
+      value: CONTACT.phone,
+      href: CONTACT.phoneTel,
+      hint: CONTACT.hours,
+      icon: Phone,
+      external: true,
+    },
+    {
+      label: ch.email || 'Email',
+      value: BRAND.email,
+      href: `mailto:${BRAND.email}`,
+      hint: hints.emailReply,
+      icon: Mail,
+      external: true,
+    },
+    {
+      label: ch.whatsapp || 'WhatsApp',
+      value: ch.whatsappValue || 'Chat with our team',
+      href: whatsAppLink(),
+      hint: hints.whatsappFast,
+      icon: MessageCircle,
+      external: true,
+    },
+    {
+      label: ch.office || 'Office',
+      value: CONTACT.addressShort,
+      href: props.pageMode ? GOOGLE_MAPS_DIRECTIONS : '/contact',
+      hint: CONTACT.address,
+      icon: MapPin,
+      external: props.pageMode,
+    },
+    {
+      label: ch.rera || 'RERA',
+      value: RERA_LICENSE_LABEL,
+      href: props.pageMode ? undefined : '/contact',
+      hint: hints.reraAgency,
+      icon: Shield,
+      external: false,
+    },
+  ]
+})
 
 async function onSubmit() {
   formError.value = ''
@@ -387,8 +456,8 @@ async function onSubmit() {
     })
     if (result.stored) {
       formSuccess.value = regardingProperty.value
-        ? `Thank you — Kardosh Realty will contact you about ${regardingProperty.value} shortly.`
-        : 'Thank you — Kardosh Realty will contact you shortly.'
+        ? (formCopy.value.successWithProperty || '').replace('{property}', regardingProperty.value)
+        : formCopy.value.success
       form.value = { name: '', email: '', phone: '', message: '', listingType: 'sale' }
       phoneError.value = ''
       clearRegarding()
@@ -397,7 +466,7 @@ async function onSubmit() {
         submitStatus.value = 'idle'
       }, 2000)
     } else if (result.dev) {
-      formSuccess.value = 'Message received (dev mode). Connect Supabase to store leads.'
+      formSuccess.value = formCopy.value.devMode
       submitStatus.value = 'success'
       window.setTimeout(() => {
         submitStatus.value = 'idle'
@@ -406,7 +475,7 @@ async function onSubmit() {
       submitStatus.value = 'idle'
     }
   } catch (e) {
-    formError.value = e.message || 'Could not send message. Please try again.'
+    formError.value = e.message || formCopy.value.error
     submitStatus.value = 'idle'
   }
 }

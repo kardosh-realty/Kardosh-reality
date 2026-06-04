@@ -1,18 +1,22 @@
 import { computed, ref, readonly } from 'vue'
+import { DEFAULT_LOCALE, localeFromPath, localePath, stripLocaleFromPath } from '@/config/i18n'
 
 const STORAGE_KEY = 'kardosh-locale'
 
-/** ISO-style ids; `dir` is applied to `<html dir="...">` */
+/** Site languages — content translation comes later; URL + html lang switch now. */
 export const LOCALES = [
-  { id: 'en', label: 'English', short: 'EN', dir: 'ltr' },
-  { id: 'ar', label: 'العربية', short: 'AR', dir: 'rtl' },
-  { id: 'pt', label: 'Português', short: 'PT', dir: 'ltr' },
+  { id: 'en', label: 'English', short: 'EN', dir: 'ltr', htmlLang: 'en' },
+  { id: 'pt', label: 'Português', short: 'PT', dir: 'ltr', htmlLang: 'pt' },
 ]
 
-const RTL_IDS = new Set(LOCALES.filter((l) => l.dir === 'rtl').map((l) => l.id))
+const locale = ref(DEFAULT_LOCALE)
+
+export function getLocaleId() {
+  return locale.value
+}
 
 export function isRtlLocale(id) {
-  return RTL_IDS.has(id)
+  return LOCALES.find((l) => l.id === id)?.dir === 'rtl'
 }
 
 export function localeDirection(id) {
@@ -20,36 +24,52 @@ export function localeDirection(id) {
 }
 
 function applyLocale(id) {
+  if (typeof document === 'undefined') return
+  const meta = LOCALES.find((l) => l.id === id) || LOCALES[0]
   const root = document.documentElement
-  const dir = localeDirection(id)
-  root.lang = id
+  const dir = meta.dir
+  root.lang = meta.htmlLang || id
   root.dir = dir
   root.classList.toggle('kardosh-rtl', dir === 'rtl')
 }
 
-export function initLanguage() {
-  if (typeof window === 'undefined') return
-  const stored = localStorage.getItem(STORAGE_KEY) || 'en'
-  const id = LOCALES.some((l) => l.id === stored) ? stored : 'en'
+export function syncLocaleFromRoute(route) {
+  const id = route?.params?.locale === 'pt' ? 'pt' : DEFAULT_LOCALE
+  if (!LOCALES.some((l) => l.id === id)) return
   locale.value = id
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, id)
+  }
   applyLocale(id)
 }
 
-const locale = ref(
-  typeof localStorage !== 'undefined'
-    ? localStorage.getItem(STORAGE_KEY) || 'en'
-    : 'en'
-)
+export function initLanguage(pathname) {
+  if (typeof window === 'undefined') return
+  const fromUrl = localeFromPath(pathname || window.location.pathname)
+  const stored = localStorage.getItem(STORAGE_KEY)
+  const fallback = LOCALES.some((l) => l.id === stored) ? stored : DEFAULT_LOCALE
+  const id = fromUrl || fallback
+  locale.value = id
+  applyLocale(id)
+}
 
 export function useLanguage() {
   const textDirection = computed(() => localeDirection(locale.value))
   const isRtl = computed(() => isRtlLocale(locale.value))
 
-  function setLocale(id) {
+  function setLocale(id, { router, route } = {}) {
     if (!LOCALES.some((l) => l.id === id)) return
     locale.value = id
     localStorage.setItem(STORAGE_KEY, id)
     applyLocale(id)
+
+    if (router && route) {
+      const bare = stripLocaleFromPath(route.fullPath)
+      const next = localePath(bare, id)
+      if (next !== route.fullPath) {
+        router.push(next)
+      }
+    }
   }
 
   return {
@@ -58,5 +78,7 @@ export function useLanguage() {
     setLocale,
     textDirection,
     isRtl,
+    localePath: (path, targetLocale = locale.value) => localePath(path, targetLocale),
+    stripLocaleFromPath,
   }
 }

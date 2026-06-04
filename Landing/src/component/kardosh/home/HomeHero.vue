@@ -7,11 +7,11 @@
         <div class="container">
           <div class="home-hero__copy">
             <p class="home-hero__eyebrow">
-              {{ BRAND.name }} · United Arab Emirates
+              {{ t('home.hero.eyebrow') }}
             </p>
             <h1 class="home-hero__title">
               <span class="home-hero__title-row home-hero__title-row--lead">
-                Discover exceptional
+                {{ t('home.hero.titleLead') }}
               </span>
               <span class="home-hero__title-row home-hero__title-row--accent">
                 <AnimatedTextCycle
@@ -22,12 +22,11 @@
                 />
               </span>
               <span class="home-hero__title-row home-hero__title-row--suffix">
-                across the UAE
+                {{ t('home.hero.titleSuffix') }}
               </span>
             </h1>
             <p class="home-hero__lead">
-              Browse Dubai off plan projects and buy off plan property with confidence —
-              new launch and upcoming projects across the UAE.
+              {{ t('home.hero.lead') }}
             </p>
           </div>
         </div>
@@ -41,10 +40,14 @@
 </template>
 
 <script setup>
-import { BRAND } from '@/config/brand'
 import HeroMedia from '@/component/kardosh/HeroMedia.vue'
 import AnimatedTextCycle from '@/components/ui/AnimatedTextCycle.vue'
 import PropertySearchBar from '@/component/kardosh/PropertySearchBar.vue'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
+import { computed } from 'vue'
 
-const heroRotatingWords = ['properties', 'villas', 'apartments']
+const t = useT()
+const messages = useMessages()
+const heroRotatingWords = computed(() => messages.value.home?.hero?.titleWords || [])
 </script>

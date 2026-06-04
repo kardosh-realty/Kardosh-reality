@@ -10,14 +10,12 @@
       >
         <div class="cookie-consent__inner">
           <div class="cookie-consent__copy">
-            <p id="cookie-consent-title" class="cookie-consent__title">Cookies & privacy</p>
+            <p id="cookie-consent-title" class="cookie-consent__title">{{ t('cookie.title') }}</p>
             <p id="cookie-consent-desc" class="cookie-consent__text">
-              We use essential cookies to run the site and optional analytics cookies to understand
-              how visitors use Kardosh Realty. You can accept all cookies or continue with essential
-              cookies only.
-              <RouterLink to="/cookie-policy" class="cookie-consent__link">Cookie policy</RouterLink>
-              and
-              <RouterLink to="/privacy" class="cookie-consent__link">Privacy policy</RouterLink>
+              {{ t('cookie.body') }}
+              <RouterLink to="/cookie-policy" class="cookie-consent__link">{{ t('cookie.cookiePolicy') }}</RouterLink>
+              {{ andLabel }}
+              <RouterLink to="/privacy" class="cookie-consent__link">{{ t('cookie.privacy') }}</RouterLink>
             </p>
           </div>
           <div class="cookie-consent__actions">
@@ -26,14 +24,14 @@
               class="cookie-consent__btn cookie-consent__btn--primary"
               @click="acceptCookies"
             >
-              Accept all
+              {{ t('common.acceptAll') }}
             </button>
             <button
               type="button"
               class="cookie-consent__btn cookie-consent__btn--ghost"
               @click="declineCookies"
             >
-              Essential only
+              {{ t('common.essentialOnly') }}
             </button>
           </div>
         </div>
@@ -43,8 +41,15 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useCookieConsent } from '@/composables/useCookieConsent'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
 
+const t = useT()
+const messages = useMessages()
 const { showConsentBanner, acceptCookies, declineCookies } = useCookieConsent()
+
+const andLabel = computed(() => messages.value.common?.and ?? 'and')
 </script>

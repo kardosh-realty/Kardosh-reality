@@ -10,13 +10,13 @@
         />
         <div class="absolute inset-0 bg-slate-900/70" />
         <div class="relative z-[1] max-w-2xl mx-auto">
-          <h2 class="text-2xl md:text-3xl font-semibold">Ready to buy off plan property in Dubai?</h2>
+          <h2 class="text-2xl md:text-3xl font-semibold">{{ t('home.cta.heading') }}</h2>
           <p class="text-white/70 mt-3">
-            Speak with Kardosh Realty about the best off plan projects in Dubai — payment plans, new launches, and investor guidance.
+            {{ ctaBody }}
           </p>
           <div class="flex flex-wrap justify-center items-center gap-3 mt-8">
             <KardoshSlideButton
-              label="Request a consultation"
+              :label="t('home.cta.requestConsultation')"
               to="/contact"
               fluid
             />
@@ -26,7 +26,7 @@
               rel="noopener"
               class="btn border border-white/40 hover:bg-white hover:text-slate-900 text-white rounded-lg px-8 inline-flex items-center gap-2"
             >
-              WhatsApp us
+              {{ t('home.cta.whatsappUs') }}
             </a>
           </div>
         </div>
@@ -36,8 +36,18 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
 import ResponsiveCoverImage from '@/component/kardosh/ResponsiveCoverImage.vue'
 import { whatsAppLink } from '@/config/marketing'
 import { SECTION_IMAGES } from '@/config/dubai-images'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
+
+const t = useT()
+const messages = useMessages()
+
+const ctaBody = computed(
+  () => messages.value.home?.cta?.subheading || messages.value.home?.cta?.body || ''
+)
 </script>

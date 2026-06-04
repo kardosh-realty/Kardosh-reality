@@ -1,8 +1,8 @@
 <template>
   <Navbar nav-class="navbar-white" />
   <PageHero
-    title="Explore Dubai Communities"
-    subtitle="Discover off-plan projects across Dubai's most sought-after communities."
+    :title="hero.title"
+    :subtitle="hero.subtitle"
     :image="PAGE_HERO_IMAGES.communities"
   />
 
@@ -12,7 +12,7 @@
       <ul
         class="communities-stats listings-search-glass kardosh-profile-stats kardosh-profile-stats--cols-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 list-none m-0"
       >
-        <li v-for="stat in PAGE_STATS" :key="stat.label" class="text-center px-2">
+        <li v-for="stat in pageStats" :key="stat.label" class="text-center px-2">
           <p class="kardosh-profile-stats__value text-2xl md:text-3xl font-semibold tabular-nums">{{ stat.value }}</p>
           <p class="kardosh-profile-stats__label text-xs md:text-sm mt-1">{{ stat.label }}</p>
         </li>
@@ -28,21 +28,20 @@
           id="communities-grid-heading"
           class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white leading-tight"
         >
-          Find your next UAE address
+          {{ gridCopy.heading }}
         </h2>
         <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-          Filter by emirate and open a community guide to see matching off plan projects — from Business Bay and
-          Downtown to Dubai Hills, Palm Jumeirah, JVC, and Dubai Creek Harbour.
+          {{ gridCopy.lead }}
         </p>
       </div>
 
       <div
         class="communities-filters"
         role="tablist"
-        aria-label="Filter by emirate"
+        :aria-label="gridCopy.filterAria"
       >
         <button
-          v-for="tab in COMMUNITY_EMIRATES"
+          v-for="tab in emirateTabs"
           :key="tab.id"
           type="button"
           role="tab"
@@ -69,7 +68,7 @@
         v-if="!filteredCommunities.length"
         class="text-center text-slate-400 py-12"
       >
-        No communities in this emirate yet.
+        {{ gridCopy.empty }}
       </p>
     </div>
   </section>
@@ -82,16 +81,16 @@
           id="emirates-heading"
           class="communities-emirates__title"
         >
-          One country, multiple investment corridors
+          {{ emiratesCopy.heading }}
         </h2>
         <p class="communities-emirates__lead">
-          Kardosh Realty covers the UAE — not Dubai alone. Each emirate offers distinct price points, lifestyles, and developer pipelines.
+          {{ emiratesCopy.lead }}
         </p>
       </div>
 
       <div class="emirates-overview-grid">
         <article
-          v-for="em in EMIRATE_OVERVIEWS"
+          v-for="em in emirateOverviews"
           :key="em.id"
           class="emirate-overview-card emirate-overview-card--luxury listings-search-glass group flex flex-col"
         >
@@ -110,7 +109,7 @@
             </ul>
             <div class="emirate-overview-card__footer">
               <div>
-                <p class="kardosh-property-card__price-label">Off-plan</p>
+                <p class="kardosh-property-card__price-label">{{ t('common.offPlan') }}</p>
                 <p class="kardosh-property-card__price-value">{{ em.name }}</p>
               </div>
               <button
@@ -119,7 +118,7 @@
                 :aria-label="`View ${em.name} communities`"
                 @click="activeEmirate = em.id; scrollToGrid()"
               >
-                <span class="kardosh-property-card__cta-text">View</span>
+                <span class="kardosh-property-card__cta-text">{{ t('common.view') }}</span>
                 <span class="kardosh-property-card__cta-icon" aria-hidden="true">
                   <ArrowRight class="size-5" />
                 </span>
@@ -136,20 +135,20 @@
     <div class="container-fluid">
       <div class="grid lg:grid-cols-12 gap-10 items-center">
         <div class="lg:col-span-5">
-          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Why area-first search</p>
+          <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ whyCopy.eyebrow }}</p>
           <h2
             id="why-communities-heading"
             class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
           >
-            Invest with local context, not just project names
+            {{ whyCopy.heading }}
           </h2>
           <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-            Community pages group live off-plan stock by lifestyle, commute, and emirate — so you compare like with like before you enquire.
+            {{ whyCopy.lead }}
           </p>
         </div>
         <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
           <div
-            v-for="item in VALUE_POINTS"
+            v-for="item in whyPoints"
             :key="item.title"
             class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 md:p-6 bg-white dark:bg-slate-900"
           >
@@ -186,22 +185,22 @@
         />
         <BlurVignetteArticle />
         <div class="communities-cta__content relative z-10 flex min-h-[20rem] md:min-h-[22rem] flex-col items-center justify-center px-8 py-10 text-center text-white md:px-12 md:py-14">
-          <h2 class="text-2xl font-semibold md:text-3xl">Ready to browse UAE off-plan?</h2>
+          <h2 class="text-2xl font-semibold md:text-3xl">{{ communitiesCta.heading }}</h2>
           <p class="mt-3 max-w-2xl leading-relaxed text-white/85">
-            Search the full catalogue or speak with our Dubai team about a specific emirate or community.
+            {{ communitiesCtaBody }}
           </p>
           <div class="kardosh-btn-row kardosh-btn-row--center mt-8">
             <RouterLink
               to="/off-plan"
               class="communities-cta__btn-primary btn inline-flex items-center justify-center rounded-lg bg-white px-8 font-semibold hover:bg-slate-100"
             >
-              View all off-plan
+              {{ communitiesCta.viewAllOffPlan }}
             </RouterLink>
             <RouterLink
               to="/contact"
               class="btn inline-flex items-center justify-center rounded-lg border border-white/40 px-8 text-white hover:bg-white/10"
             >
-              Contact advisory
+              {{ communitiesCta.contactAdvisory }}
             </RouterLink>
           </div>
         </div>
@@ -232,7 +231,13 @@ import {
 } from '@/config/communities'
 import { PAGE_HERO_IMAGES, pageHeroImage } from '@/config/dubai-images'
 import { loadVisibility, isCommunityHidden } from '@/services/visibility'
+import { usePageHero } from '@/composables/usePageHero'
+import { useMessages } from '@/composables/useMessages'
+import { useT } from '@/composables/useT'
 
+const t = useT()
+const messages = useMessages()
+const hero = usePageHero('communities')
 const route = useRoute()
 const decorativeHeroImage = computed(() => pageHeroImage(PAGE_HERO_IMAGES.communities))
 const activeEmirate = ref('all')
@@ -254,35 +259,88 @@ watch(
   }
 )
 
-const PAGE_STATS = [
-  { value: '7', label: 'Emirates covered' },
-  { value: String(UAE_COMMUNITIES.length), label: 'Featured communities' },
-  { value: '1,500+', label: 'Off-plan projects (UAE)' },
-  { value: 'AED', label: 'Transparent pricing' },
-]
+const communitiesMsg = computed(() => messages.value.communities || {})
 
-const VALUE_POINTS = [
-  {
-    icon: MapPin,
-    title: 'Emirate-level clarity',
-    text: 'See which projects align with Dubai, Abu Dhabi, Sharjah, Ajman, or RAK before you dive into brochures.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Live catalogue',
-    text: 'Community pages pull matching stock from our live catalogue so listings stay current as developers launch.',
-  },
-  {
-    icon: Building2,
-    title: 'Developer diversity',
-    text: 'From Emaar and Aldar to regional specialists — compare pipelines across the UAE in one place.',
-  },
-  {
-    icon: Shield,
-    title: 'Licensed advisory',
-    text: 'Kardosh Realty guides international buyers through AED pricing, payment plans, and reservation steps.',
-  },
-]
+const pageStats = computed(() => {
+  const stats =
+    communitiesMsg.value.pageStats ||
+    communitiesMsg.value.page?.stats ||
+    []
+  return stats.map((stat) => ({
+    ...stat,
+    value: String(stat.value).replace('{count}', String(UAE_COMMUNITIES.length)),
+  }))
+})
+
+const gridCopy = computed(() => {
+  const g = communitiesMsg.value.grid || communitiesMsg.value.page?.grid || {}
+  return {
+    heading: g.heading || '',
+    lead: g.subheading || g.lead || '',
+    filterAria: g.filterAria || '',
+    empty: g.empty || '',
+  }
+})
+
+const EMIRATE_TAB_ID_MAP = {
+  abuDhabi: 'abu-dhabi',
+}
+
+const emirateTabs = computed(() => {
+  const filters = communitiesMsg.value.emiratesFilter
+  if (Array.isArray(filters) && filters.length) return filters
+  const obj = communitiesMsg.value.emirateFilters
+  if (obj && typeof obj === 'object') {
+    return Object.entries(obj).map(([id, label]) => ({
+      id: EMIRATE_TAB_ID_MAP[id] || id,
+      label,
+    }))
+  }
+  return COMMUNITY_EMIRATES
+})
+
+const emiratesCopy = computed(() => {
+  const e = communitiesMsg.value.emirates || communitiesMsg.value.page?.emiratesSection || {}
+  return {
+    heading: e.heading || '',
+    lead: e.subheading || e.lead || '',
+  }
+})
+
+const emirateOverviews = computed(
+  () => communitiesMsg.value.emirateOverviews || EMIRATE_OVERVIEWS
+)
+
+const WHY_ICONS = [MapPin, TrendingUp, Building2, Shield]
+
+const whyCopy = computed(() => {
+  const w = communitiesMsg.value.whyExplore || communitiesMsg.value.page?.whySection || {}
+  return {
+    eyebrow: w.eyebrow || '',
+    heading: w.heading || '',
+    lead: w.subheading || w.lead || '',
+  }
+})
+
+const whyPoints = computed(() => {
+  const section = communitiesMsg.value.page?.whySection
+  const list =
+    communitiesMsg.value.whyExplore?.valuePoints ||
+    section?.points ||
+    []
+  return list.map((item, i) => ({ ...item, icon: WHY_ICONS[i] || MapPin }))
+})
+
+const communitiesCta = computed(() => {
+  const c = communitiesMsg.value.cta || communitiesMsg.value.page?.cta || {}
+  return {
+    heading: c.heading || '',
+    viewAllOffPlan: c.viewAllOffPlan || t('common.viewAllOffPlan'),
+    contactAdvisory: c.contactAdvisory || t('contact.page.cta.contactUs'),
+  }
+})
+
+const communitiesCtaBody = computed(() => communitiesMsg.value.cta?.body || communitiesMsg.value.cta?.lead || '')
 
 const filteredCommunities = computed(() => {
   void visibilityReady.value

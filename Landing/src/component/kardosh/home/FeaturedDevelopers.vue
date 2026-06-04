@@ -10,20 +10,20 @@
       >
         <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           <div class="lg:col-span-4 lg:sticky lg:top-28">
-            <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">Trusted partners</p>
+            <p class="text-primary text-sm font-semibold uppercase tracking-[0.2em]">{{ t('home.featuredDevs.eyebrow') }}</p>
             <h2
               id="trusted-partners-heading"
               class="text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white mt-3 leading-tight"
             >
-              Featured developers
+              {{ t('home.featuredDevs.heading') }}
             </h2>
             <p class="text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-              Browse off-plan inventory from established UAE developers — with live project data and transparent pricing.
+              {{ t('home.featuredDevs.subheading') }}
             </p>
 
             <ul class="mt-6 space-y-3.5" role="list">
               <li
-                v-for="point in TRUST_POINTS"
+                v-for="point in trustPoints"
                 :key="point"
                 class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300"
               >
@@ -47,7 +47,7 @@
                 <p class="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
                   {{ catalogStats.developers }}
                 </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Active developers</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ t('home.featuredDevs.activeDevelopers') }}</p>
               </div>
               <div
                 class="rounded-xl border border-slate-200/80 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-3 min-w-[7rem]"
@@ -55,7 +55,7 @@
                 <p class="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
                   {{ catalogStats.projects }}+
                 </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Off-plan projects</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ t('home.featuredDevs.offPlanProjects') }}</p>
               </div>
             </div>
 
@@ -64,14 +64,14 @@
                 to="/developers"
                 class="btn bg-primary hover:bg-primary-dark text-white rounded-lg inline-flex items-center justify-center gap-2 px-6"
               >
-                View all developers
+                {{ t('home.featuredDevs.viewAllDevelopers') }}
                 <ArrowRight class="size-4 shrink-0" aria-hidden="true" />
               </RouterLink>
               <RouterLink
                 to="/off-plan"
                 class="btn btn-secondary inline-flex items-center justify-center"
               >
-                Browse off-plan
+                {{ t('home.featuredDevs.browseOffPlan') }}
               </RouterLink>
             </div>
           </div>
@@ -82,7 +82,7 @@
               class="flex items-center justify-end gap-4 mb-5 pb-5 border-b border-slate-200/80 dark:border-slate-700/80"
             >
               <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-400">
-                Top {{ featured.length }} partners
+                {{ topPartnersLabel }}
               </span>
             </div>
 
@@ -97,7 +97,7 @@
               v-else-if="!featured.length"
               class="text-center text-slate-500 dark:text-slate-400 py-16 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
             >
-              Developer catalogue loading soon — check back shortly.
+              {{ loadingSoonMessage }}
             </p>
 
             <template v-else>
@@ -149,16 +149,21 @@ import DeveloperGridSkeleton from '@/component/kardosh/skeleton/DeveloperGridSke
 import DeveloperCardInner from '@/component/kardosh/home/DeveloperCardInner.vue'
 import { HOME_STRIP_CAROUSEL, toSwiperBreakpoints } from '@/config/home-carousels'
 import { developerProfileRoute } from '@/utils/mapDeveloper'
+import { useT } from '@/composables/useT'
+import { useMessages } from '@/composables/useMessages'
 
 import 'swiper/css'
 
+const t = useT()
+const messages = useMessages()
 const devCarouselBreakpoints = toSwiperBreakpoints(HOME_STRIP_CAROUSEL)
 
-const TRUST_POINTS = [
-  'Verified developer logos linked to live off-plan stock',
-  'Project pages with pricing, payment plans, and galleries',
-  'Filter by community, bedrooms, and budget on our catalogue',
-]
+const trustPoints = computed(() => messages.value.home?.featuredDevs?.trustPoints || [])
+const loadingSoonMessage = computed(
+  () =>
+    messages.value.home?.featuredDevs?.loadingSoon ||
+    'Developer catalogue loading soon — check back shortly.'
+)
 
 const { projects, uaeDevelopers, loading, loadProjects, loadDeveloperLogos } = useReelly()
 
@@ -179,6 +184,10 @@ const featured = computed(() =>
 )
 
 const featuredMobile = computed(() => featured.value.slice(0, 6))
+
+const topPartnersLabel = computed(() =>
+  t('home.featuredDevs.topPartners', { count: featured.value.length })
+)
 
 const catalogStats = computed(() => ({
   developers: uaeDevelopers.value.length,

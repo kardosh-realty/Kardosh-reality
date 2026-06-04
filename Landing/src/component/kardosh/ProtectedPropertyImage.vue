@@ -50,6 +50,7 @@ import { computed } from 'vue'
 import PropertyImageWatermark from '@/component/kardosh/PropertyImageWatermark.vue'
 import {
   LISTING_CARD_IMAGE_WIDTH,
+  LISTING_CARD_SRCSET_WIDTHS,
   LISTING_GALLERY_DESKTOP_WIDTHS,
   LISTING_GALLERY_IMAGE_WIDTH,
   LISTING_GALLERY_MOBILE_WIDTHS,
