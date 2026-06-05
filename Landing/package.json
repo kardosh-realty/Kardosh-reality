@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build",
+    "build": "npm install && node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview --host",
     "audit:reelly": "node scripts/audit-reelly-apis.mjs"
