@@ -5,12 +5,18 @@
       <div class="footer-lang-dropdown__wrap">
         <Languages class="footer-lang-dropdown__icon size-4 shrink-0" aria-hidden="true" />
         <span class="footer-lang-dropdown__label" aria-hidden="true">{{ currentLabel }}</span>
-        <ChevronDown class="footer-lang-dropdown__chevron size-4 shrink-0" aria-hidden="true" />
+        <ChevronDown
+          v-if="hasMultipleLocales"
+          class="footer-lang-dropdown__chevron size-4 shrink-0"
+          aria-hidden="true"
+        />
         <select
           :id="selectId"
           class="footer-lang-dropdown__select"
+          :class="{ 'footer-lang-dropdown__select--single': !hasMultipleLocales }"
           :value="locale"
           :dir="textDirection"
+          :disabled="!hasMultipleLocales"
           :aria-label="`${t('footer.language')}, ${currentLabel}`"
           @change="onChange"
         >
@@ -36,6 +42,8 @@ const t = useT()
 const { locale, locales, setLocale, textDirection } = useLanguage()
 const router = useRouter()
 const route = useRoute()
+
+const hasMultipleLocales = computed(() => locales.length > 1)
 
 const currentLabel = computed(
   () => locales.find((l) => l.id === locale.value)?.label ?? 'English'

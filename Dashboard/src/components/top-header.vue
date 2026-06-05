@@ -60,38 +60,6 @@
 
             <ul class="list-none mb-0 space-x-1">
                 
-                <li ref="langDropdownEl" class="dropdown inline-block relative">
-                    <button 
-                        class="dropdown-toggle h-8 inline-flex items-center justify-center gap-1.5 px-2.5 tracking-wide align-middle duration-500 text-center bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-gray-800 text-slate-900 dark:text-white rounded-md"
-                        type="button"
-                        @click="onToggleLang"
-                    >
-                        <Languages class="size-4" />
-                        <span class="text-[13px] font-medium">{{ currentLocale.short }}</span>
-                        <ChevronDown class="size-3.5" />
-                    </button>
-                    
-                    <div 
-                        v-show="showLang"
-                        class="dropdown-menu absolute end-0 m-0 mt-2 z-[1100] w-40 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow-md shadow-gray-200 dark:shadow-gray-700 border border-gray-100 dark:border-gray-800"
-                        @click.stop
-                    >
-                        <ul class="list-none py-2 text-start">
-                            <li v-for="loc in locales" :key="loc.id" class="my-1 ms-0">
-                                <button
-                                    type="button"
-                                    @click="onLocale(loc.id)"
-                                    class="w-full flex items-center justify-between text-[15px] font-medium py-1.5 px-4 dark:text-white/70 hover:text-primary dark:hover:text-white"
-                                    :class="loc.id === locale ? 'text-primary' : ''"
-                                >
-                                    <span>{{ loc.label }}</span>
-                                    <i v-if="loc.id === locale" class="ri-check-line"></i>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                
                 <li ref="notifDropdownEl" class="dropdown inline-block relative">
                     <button 
                         class="dropdown-toggle relative size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-[20px] text-center bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-100 dark:border-gray-800 text-slate-900 dark:text-white rounded-md" 
@@ -228,7 +196,6 @@ import { RouterLink, useRouter } from 'vue-router'
 
 import BrandLogo from '@/components/BrandLogo.vue'
 import { BRAND } from '@/config/brand'
-import { useLanguage } from '@/composables/useLanguage'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 import { useHeaderSearch } from '@/composables/useHeaderSearch'
@@ -242,7 +209,6 @@ import 'simplebar-vue/dist/simplebar.min.css'
 import {
     Bell,
     ChevronDown,
-    Languages,
     Menu,
 } from 'lucide-vue-next'
 
@@ -251,21 +217,9 @@ const props = defineProps({
     setToggle: Function
 })
 
-const { locale, locales, setLocale } = useLanguage()
-const currentLocale = computed(
-    () => locales.find((l) => l.id === locale.value) ?? locales[0]
-)
-
-function onLocale(id) {
-    setLocale(id)
-    showLang.value = false
-}
-
-const showLang = ref(false)
 const notificationsOpen = ref(false)
 const userMenu = ref(false)
 
-const langDropdownEl = ref(null)
 const notifDropdownEl = ref(null)
 const userDropdownEl = ref(null)
 const searchDropdownEl = ref(null)
@@ -324,7 +278,6 @@ watch(
 )
 
 function closeAllDropdowns() {
-    showLang.value = false
     notificationsOpen.value = false
     userMenu.value = false
     searchOpen.value = false
@@ -333,17 +286,10 @@ function closeAllDropdowns() {
 function isInsideDropdown(target) {
     if (!(target instanceof Node)) return false
     return (
-        langDropdownEl.value?.contains(target) ||
         notifDropdownEl.value?.contains(target) ||
         userDropdownEl.value?.contains(target) ||
         searchDropdownEl.value?.contains(target)
     )
-}
-
-function onToggleLang() {
-    const next = !showLang.value
-    closeAllDropdowns()
-    showLang.value = next
 }
 
 function onToggleNotifications() {

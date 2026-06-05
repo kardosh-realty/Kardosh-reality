@@ -510,7 +510,7 @@ export default {
     stats: [
       { value: '24h', label: 'Typical response time' },
       { value: 'Business Bay', label: 'Dubai headquarters' },
-      { value: 'EN · PT', label: 'Advisory languages' },
+      { value: 'English', label: 'Advisory language' },
       { value: '1484387', label: 'RERA license no.' },
     ],
     expectations: [

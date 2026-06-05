@@ -3,10 +3,9 @@ import { DEFAULT_LOCALE, localeFromPath, localePath, stripLocaleFromPath } from 
 
 const STORAGE_KEY = 'kardosh-locale'
 
-/** Site languages — content translation comes later; URL + html lang switch now. */
+/** Site languages (Portuguese temporarily disabled). */
 export const LOCALES = [
   { id: 'en', label: 'English', short: 'EN', dir: 'ltr', htmlLang: 'en' },
-  { id: 'pt', label: 'Português', short: 'PT', dir: 'ltr', htmlLang: 'pt' },
 ]
 
 const locale = ref(DEFAULT_LOCALE)
@@ -34,8 +33,8 @@ function applyLocale(id) {
 }
 
 export function syncLocaleFromRoute(route) {
-  const id = route?.params?.locale === 'pt' ? 'pt' : DEFAULT_LOCALE
-  if (!LOCALES.some((l) => l.id === id)) return
+  const fromUrl = route?.params?.locale === 'pt' ? 'pt' : localeFromPath(route?.path || '/')
+  const id = LOCALES.some((l) => l.id === fromUrl) ? fromUrl : DEFAULT_LOCALE
   locale.value = id
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, id)
@@ -48,9 +47,10 @@ export function initLanguage(pathname) {
   const fromUrl = localeFromPath(pathname || window.location.pathname)
   const stored = localStorage.getItem(STORAGE_KEY)
   const fallback = LOCALES.some((l) => l.id === stored) ? stored : DEFAULT_LOCALE
-  const id = fromUrl || fallback
+  const id = LOCALES.some((l) => l.id === fromUrl) ? fromUrl : fallback
   locale.value = id
   applyLocale(id)
+  if (stored !== id) localStorage.setItem(STORAGE_KEY, id)
 }
 
 export function useLanguage() {

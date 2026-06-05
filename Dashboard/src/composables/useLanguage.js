@@ -2,11 +2,9 @@ import { computed, ref, readonly } from 'vue'
 
 const STORAGE_KEY = 'kardosh-locale'
 
-/** ISO-style ids; `dir` is applied to `<html dir="...">` */
+/** English only — language switcher temporarily disabled. */
 export const LOCALES = [
   { id: 'en', label: 'English', short: 'EN', dir: 'ltr' },
-  { id: 'ar', label: 'العربية', short: 'AR', dir: 'rtl' },
-  { id: 'pt', label: 'Português', short: 'PT', dir: 'ltr' },
 ]
 
 const RTL_IDS = new Set(LOCALES.filter((l) => l.dir === 'rtl').map((l) => l.id))
@@ -27,19 +25,14 @@ function applyLocale(id) {
   root.classList.toggle('kardosh-rtl', dir === 'rtl')
 }
 
+const locale = ref('en')
+
 export function initLanguage() {
   if (typeof window === 'undefined') return
-  const stored = localStorage.getItem(STORAGE_KEY) || 'en'
-  const id = LOCALES.some((l) => l.id === stored) ? stored : 'en'
-  locale.value = id
-  applyLocale(id)
+  locale.value = 'en'
+  localStorage.setItem(STORAGE_KEY, 'en')
+  applyLocale('en')
 }
-
-const locale = ref(
-  typeof localStorage !== 'undefined'
-    ? localStorage.getItem(STORAGE_KEY) || 'en'
-    : 'en'
-)
 
 export function useLanguage() {
   const textDirection = computed(() => localeDirection(locale.value))

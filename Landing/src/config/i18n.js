@@ -4,7 +4,8 @@ export const DEFAULT_LOCALE = 'en'
 /** Trailing segment for non-default locales (`/off-plan/pt`). */
 export const LOCALE_URL_SEGMENT = 'pt'
 
-export const SUPPORTED_LOCALES = ['en', 'pt']
+/** Portuguese temporarily disabled — keep segment for stripping legacy `/pt` URLs. */
+export const SUPPORTED_LOCALES = ['en']
 
 export function isSupportedLocale(id) {
   return SUPPORTED_LOCALES.includes(id)

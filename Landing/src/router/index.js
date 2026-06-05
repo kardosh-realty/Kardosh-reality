@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@/lib/vue-router-core.js'
 import { scrollBehaviorOption } from '@/utils/smoothScroll'
 import { isDashboardOnlyPath, redirectToDashboard } from '@/config/dashboard'
 import {
+  DEFAULT_LOCALE,
   localeFromPath,
   localePath,
   stripLocaleFromPath,
@@ -45,8 +46,8 @@ const removedToHome = [
   '/maintenance',
 ]
 
-function localeFromTo(to) {
-  return to.params.locale === 'pt' ? 'pt' : localeFromPath(to.path)
+function localeFromTo() {
+  return DEFAULT_LOCALE
 }
 
 function redirectKeepingLocale(targetPath) {
@@ -206,12 +207,13 @@ const appRoutes = [
 ]
 
 const routes = [
-  /** Old prefix-style URLs → trailing `/pt` */
+  /** Legacy Portuguese URLs → English (no suffix) */
   {
     path: '/pt/:rest(.*)',
     redirect: (to) => {
-      const rest = to.params.rest ? `/${String(to.params.rest).replace(/^\/+/, '')}` : '/'
-      return localePath(stripLocaleFromPath(rest), 'pt')
+      if (!to.params.rest) return '/'
+      const rest = `/${String(to.params.rest).replace(/^\/+/, '')}`
+      return stripLocaleFromPath(rest)
     },
   },
   ...appRoutes,
@@ -248,6 +250,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  if (to.params.locale === 'pt' || localeFromPath(to.path) === 'pt') {
+    const target = stripLocaleFromPath(to.fullPath)
+    if (target !== to.fullPath) return target
+  }
+
   syncLocaleFromRoute(to)
 
   const barePath = stripLocaleFromPath(to.path)
