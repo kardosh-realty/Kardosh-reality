@@ -5,7 +5,7 @@
   "scripts": {
     "dev:landing": "npm run dev --prefix Landing",
     "dev:dashboard": "npm run dev --prefix Dashboard",
-    "build:landing": "npm install --prefix Landing && npm run build --prefix Landing",
+    "build:landing": "npm install --prefix Landing && npm run build --prefix Landing && node scripts/copy-landing-dist.mjs",
     "start:landing": "npm run start --prefix Landing",
     "build:dashboard": "npm install --prefix Dashboard && npm run build --prefix Dashboard",
     "install:all": "npm install --prefix Landing && npm install --prefix Dashboard",
