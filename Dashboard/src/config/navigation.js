@@ -1,6 +1,6 @@
 /** Dashboard nav for Kardosh Realty admin */
 
-export const MAIN_SITE_URL = import.meta.env.VITE_MAIN_SITE_URL || 'http://localhost:5173'
+export const MAIN_SITE_URL = import.meta.env.VITE_MAIN_SITE_URL || 'https://kardoshrealty.ae'
 
 export const DASHBOARD_NAV = [
   { path: '/', label: 'Dashboard', icon: 'ri-dashboard-line' },
