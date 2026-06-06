@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "npm install && node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build",
-    "start": "serve dist -s",
+    "start": "node server/hostinger-server.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview --host",
     "audit:reelly": "node scripts/audit-reelly-apis.mjs"
@@ -20,7 +20,6 @@
     "leaflet": "^1.9.4",
     "libphonenumber-js": "^1.13.4",
     "lucide-vue-next": "^1.0.0",
-    "serve": "^14.2.6",
     "sharp": "^0.34.5",
     "swiper": "^12.1.4",
     "tailwindcss": "^4.3.0",

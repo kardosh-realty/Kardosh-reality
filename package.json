@@ -7,7 +7,8 @@
     "dev:dashboard": "npm run dev --prefix Dashboard",
     "build:landing": "npm install --prefix Landing && npm run build --prefix Landing && node scripts/copy-landing-dist.mjs",
     "start:landing": "npm run start --prefix Landing",
-    "build:dashboard": "npm install --prefix Dashboard && npm run build --prefix Dashboard",
+    "build:dashboard": "npm install --prefix Dashboard && npm run build --prefix Dashboard && node scripts/copy-dashboard-dist.mjs",
+    "start:dashboard": "npm run start --prefix Dashboard",
     "install:all": "npm install --prefix Landing && npm install --prefix Dashboard",
     "preview:landing": "npm run preview --prefix Landing",
     "preview:dashboard": "npm run preview --prefix Dashboard"
