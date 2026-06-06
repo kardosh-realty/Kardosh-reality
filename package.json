@@ -3,6 +3,8 @@
   "private": true,
   "description": "Kardosh Realty — Landing (public site) and Dashboard (admin)",
   "scripts": {
+    "build": "npm install --prefix Landing && npm install --prefix Dashboard && npm run build --prefix Landing && npm run build --prefix Dashboard && node scripts/compose-dist.mjs",
+    "start": "node server/hostinger-server.mjs",
     "dev:landing": "npm run dev --prefix Landing",
     "dev:dashboard": "npm run dev --prefix Dashboard",
     "build:landing": "npm install --prefix Landing && npm run build --prefix Landing && node scripts/copy-landing-dist.mjs",

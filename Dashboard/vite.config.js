@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, envDir, '')
 
   return {
+    base: '/admin/',
     envDir,
     define: viteClientEnv(env),
     plugins: [vue(), tailwindcss()],
