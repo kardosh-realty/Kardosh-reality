@@ -121,6 +121,15 @@ const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
   const pathname = requestUrl.pathname
 
+  if (pathname === '/api/health') {
+    sendJson(res, 200, {
+      ok: true,
+      app: 'kardosh-realty',
+      routes: ['/', '/admin', '/api/reelly/*'],
+    })
+    return
+  }
+
   if (pathname.startsWith('/api/reelly')) {
     await proxyReelly(req, res, requestUrl)
     return
