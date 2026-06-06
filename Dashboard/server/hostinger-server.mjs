@@ -97,6 +97,11 @@ function serveFile(res, filePath) {
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
 
+  if (requestUrl.pathname === '/api/health') {
+    sendJson(res, 200, { ok: true, app: 'kardosh-dashboard', routes: ['/', '/api/reelly/*'] })
+    return
+  }
+
   if (requestUrl.pathname.startsWith('/api/reelly')) {
     await proxyReelly(req, res, requestUrl)
     return

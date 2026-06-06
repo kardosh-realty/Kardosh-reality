@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { processImageProxy } from '../lib/imageProxyCore.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const landingRoot = path.resolve(__dirname, '..')
@@ -77,6 +78,39 @@ async function proxyReelly(req, res, requestUrl) {
   }
 }
 
+async function proxyImage(req, res, requestUrl) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { Allow: 'GET, HEAD' })
+    res.end('Method not allowed')
+    return
+  }
+
+  try {
+    const result = await processImageProxy({
+      url: requestUrl.searchParams.get('url'),
+      width: requestUrl.searchParams.get('w'),
+      quality: requestUrl.searchParams.get('q'),
+      method: req.method,
+    })
+
+    res.writeHead(result.status, {
+      'Content-Type': result.contentType,
+      'Cache-Control': result.cacheControl,
+    })
+
+    if (req.method === 'HEAD') {
+      res.end()
+      return
+    }
+    res.end(result.body)
+  } catch (err) {
+    sendJson(res, 502, {
+      error: 'Image proxy failed',
+      message: err?.message || 'Unknown error',
+    })
+  }
+}
+
 function safeFilePath(requestUrl) {
   const decoded = decodeURIComponent(requestUrl.pathname)
   const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '')
@@ -96,6 +130,16 @@ function serveFile(res, filePath) {
 
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
+
+  if (requestUrl.pathname === '/api/health') {
+    sendJson(res, 200, { ok: true, app: 'kardosh-landing', routes: ['/', '/api/reelly/*', '/api/proxy-image'] })
+    return
+  }
+
+  if (requestUrl.pathname === '/api/proxy-image') {
+    await proxyImage(req, res, requestUrl)
+    return
+  }
 
   if (requestUrl.pathname.startsWith('/api/reelly')) {
     await proxyReelly(req, res, requestUrl)
