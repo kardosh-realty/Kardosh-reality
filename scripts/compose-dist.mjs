@@ -25,5 +25,15 @@ fs.cpSync(landingDist, outputDist, { recursive: true })
 fs.rmSync(adminDist, { recursive: true, force: true })
 fs.cpSync(dashboardDist, adminDist, { recursive: true })
 
+// The Node server handles SPA fallback + API routing. A SPA .htaccess in the
+// served folder makes Apache rewrite /api/* to index.html BEFORE Passenger runs
+// the Node app, which breaks the Reelly proxy and image proxy on Hostinger.
+for (const htaccess of [path.join(outputDist, '.htaccess'), path.join(adminDist, '.htaccess')]) {
+  if (fs.existsSync(htaccess)) {
+    fs.rmSync(htaccess)
+    console.log(`[compose-dist] removed ${path.relative(root, htaccess)} (Node server owns routing)`)
+  }
+}
+
 console.log(`[compose-dist] Landing -> dist (${fs.readdirSync(outputDist).length} entries)`)
 console.log(`[compose-dist] Dashboard -> dist/admin (${fs.readdirSync(adminDist).length} entries)`)
