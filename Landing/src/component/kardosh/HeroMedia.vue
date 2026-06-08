@@ -106,6 +106,7 @@ import {
   deferUntilIdle,
   shouldDeferHeroVideo,
   heroVideoDeferMs,
+  isMobileViewport,
 } from '@/composables/useDeferUntilIdle'
 import {
   DEFAULT_HERO_POSTER,
@@ -222,15 +223,13 @@ function scheduleHeroVideo() {
     embedVideo.value = true
     return
   }
+  // Phones and data-saver users keep the poster only — no multi-MB hero video
+  // download. This is the dominant mobile LCP / total-byte-weight win.
+  if (isMobileViewport() || shouldDeferHeroVideo()) return
   if (!embedIframeUrl.value && !useMp4.value) return
 
   const enableVideo = () => {
     embedVideo.value = true
-  }
-
-  if (shouldDeferHeroVideo()) {
-    enableVideo()
-    return
   }
 
   const { delay, timeout } = heroVideoDeferMs()

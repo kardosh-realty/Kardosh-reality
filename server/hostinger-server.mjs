@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { processImageProxy } from '../Landing/lib/imageProxyCore.mjs'
 
@@ -116,22 +117,56 @@ function safeJoin(baseDir, requestPath) {
   return path.join(baseDir, normalized)
 }
 
-function serveFile(res, filePath, { admin = false } = {}) {
+const LONG_CACHE_EXT = new Set([
+  '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
+])
+
+function cacheControlFor(filePath, ext) {
+  // Hashed build assets never change → cache forever.
+  if (filePath.includes(`${path.sep}assets${path.sep}`)) return 'public, max-age=31536000, immutable'
+  // Other static media/fonts (public/) → 30 days; HTML stays fresh.
+  if (LONG_CACHE_EXT.has(ext)) return 'public, max-age=2592000'
+  return 'no-cache'
+}
+
+const COMPRESSIBLE_EXT = new Set([
+  '.css', '.html', '.js', '.json', '.svg', '.txt', '.webmanifest', '.xml',
+])
+
+/** Pick a streaming compressor based on the client's Accept-Encoding. */
+function pickEncoder(req, ext) {
+  if (!COMPRESSIBLE_EXT.has(ext)) return null
+  const accept = String(req?.headers['accept-encoding'] || '')
+  if (/\bbr\b/.test(accept)) {
+    return ['br', zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } })]
+  }
+  if (/\bgzip\b/.test(accept)) return ['gzip', zlib.createGzip({ level: 6 })]
+  return null
+}
+
+function serveFile(res, filePath, { admin = false, req = null } = {}) {
   const ext = path.extname(filePath).toLowerCase()
   const headers = {
     'Content-Type': MIME[ext] || 'application/octet-stream',
-    'Cache-Control': filePath.includes(`${path.sep}assets${path.sep}`)
-      ? 'public, max-age=31536000, immutable'
-      : 'no-cache',
+    'Cache-Control': cacheControlFor(filePath, ext),
   }
 
   if (admin) headers['X-Robots-Tag'] = 'noindex, nofollow'
+
+  const encoder = pickEncoder(req, ext)
+  if (encoder) {
+    headers['Content-Encoding'] = encoder[0]
+    headers['Vary'] = 'Accept-Encoding'
+    res.writeHead(200, headers)
+    fs.createReadStream(filePath).pipe(encoder[1]).pipe(res)
+    return
+  }
 
   res.writeHead(200, headers)
   fs.createReadStream(filePath).pipe(res)
 }
 
-function serveSpa(reqPath, res, { basePath, baseDir, admin = false }) {
+function serveSpa(reqPath, res, { basePath, baseDir, admin = false, req = null }) {
   const relativePath = basePath ? reqPath.slice(basePath.length) || '/' : reqPath
   let filePath = safeJoin(baseDir, relativePath)
 
@@ -146,11 +181,11 @@ function serveSpa(reqPath, res, { basePath, baseDir, admin = false }) {
   }
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    serveFile(res, filePath, { admin })
+    serveFile(res, filePath, { admin, req })
     return
   }
 
-  serveFile(res, path.join(baseDir, 'index.html'), { admin })
+  serveFile(res, path.join(baseDir, 'index.html'), { admin, req })
 }
 
 const server = http.createServer(async (req, res) => {
@@ -183,11 +218,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/admin/')) {
-    serveSpa(pathname, res, { basePath: '/admin', baseDir: adminDir, admin: true })
+    serveSpa(pathname, res, { basePath: '/admin', baseDir: adminDir, admin: true, req })
     return
   }
 
-  serveSpa(pathname, res, { basePath: '', baseDir: distDir })
+  serveSpa(pathname, res, { basePath: '', baseDir: distDir, req })
 })
 
 server.listen(PORT, () => {

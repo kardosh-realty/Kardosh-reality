@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -82,15 +83,47 @@ function safeFilePath(requestUrl) {
   return path.join(distDir, normalized)
 }
 
-function serveFile(res, filePath) {
+const LONG_CACHE_EXT = new Set([
+  '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
+])
+const COMPRESSIBLE_EXT = new Set([
+  '.css', '.html', '.js', '.json', '.svg', '.txt', '.webmanifest', '.xml',
+])
+
+function cacheControlFor(filePath, ext) {
+  if (filePath.includes(`${path.sep}assets${path.sep}`)) return 'public, max-age=31536000, immutable'
+  if (LONG_CACHE_EXT.has(ext)) return 'public, max-age=2592000'
+  return 'no-cache'
+}
+
+function pickEncoder(req, ext) {
+  if (!COMPRESSIBLE_EXT.has(ext)) return null
+  const accept = String(req?.headers['accept-encoding'] || '')
+  if (/\bbr\b/.test(accept)) {
+    return ['br', zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } })]
+  }
+  if (/\bgzip\b/.test(accept)) return ['gzip', zlib.createGzip({ level: 6 })]
+  return null
+}
+
+function serveFile(res, filePath, req) {
   const ext = path.extname(filePath).toLowerCase()
-  res.writeHead(200, {
+  const headers = {
     'Content-Type': MIME[ext] || 'application/octet-stream',
-    'Cache-Control': filePath.includes(`${path.sep}assets${path.sep}`)
-      ? 'public, max-age=31536000, immutable'
-      : 'no-cache',
+    'Cache-Control': cacheControlFor(filePath, ext),
     'X-Robots-Tag': 'noindex, nofollow',
-  })
+  }
+
+  const encoder = req ? pickEncoder(req, ext) : null
+  if (encoder) {
+    headers['Content-Encoding'] = encoder[0]
+    headers['Vary'] = 'Accept-Encoding'
+    res.writeHead(200, headers)
+    fs.createReadStream(filePath).pipe(encoder[1]).pipe(res)
+    return
+  }
+
+  res.writeHead(200, headers)
   fs.createReadStream(filePath).pipe(res)
 }
 
@@ -119,11 +152,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    serveFile(res, filePath)
+    serveFile(res, filePath, req)
     return
   }
 
-  serveFile(res, path.join(distDir, 'index.html'))
+  serveFile(res, path.join(distDir, 'index.html'), req)
 })
 
 server.listen(PORT, () => {

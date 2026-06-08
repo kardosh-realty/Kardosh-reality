@@ -39,6 +39,12 @@ export function shouldDeferHeroVideo() {
   return false
 }
 
+/** Phones keep the poster only — the multi-MB hero video is desktop-only (LCP + data win). */
+export function isMobileViewport() {
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(max-width: 767px)').matches
+}
+
 /** Longer defer on narrow viewports (Lighthouse mobile). */
 export function heroVideoDeferMs() {
   if (typeof window === 'undefined') return { delay: 800, timeout: 3000 }

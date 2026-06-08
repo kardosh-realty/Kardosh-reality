@@ -28,6 +28,38 @@ function preconnectPlugin(env) {
   }
 }
 
+/**
+ * Preload the hero poster (the LCP element) using its hashed build URL so the
+ * browser fetches it during HTML parse — before the SPA bundle boots.
+ */
+function heroPreloadPlugin() {
+  return {
+    name: 'kardosh-hero-preload',
+    enforce: 'post',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        if (!ctx.bundle) return html
+        const find = (re) => Object.keys(ctx.bundle).find((f) => re.test(f))
+        const desktop = find(/001-hero-(?!mobile)[\w-]+\.webp$/)
+        const mobile = find(/001-hero-mobile-[\w-]+\.webp$/)
+        const primary = desktop || mobile
+        if (!primary) return html
+        const srcset = [
+          desktop && `/${desktop} 1600w`,
+          mobile && `/${mobile} 768w`,
+        ]
+          .filter(Boolean)
+          .join(', ')
+        const tag =
+          `<link rel="preload" as="image" href="/${primary}" ` +
+          `imagesrcset="${srcset}" imagesizes="100vw" fetchpriority="high" />`
+        return html.replace('</head>', `    ${tag}\n  </head>`)
+      },
+    },
+  }
+}
+
 /** Inject all VITE_* vars from kardosh/.env (fixes dev when envDir alone does not reach the client). */
 function viteClientEnv(env) {
   return Object.fromEntries(
@@ -44,7 +76,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir,
     define: viteClientEnv(env),
-    plugins: [vue(), tailwindcss(), preconnectPlugin(env), imageProxyDevPlugin()],
+    plugins: [vue(), tailwindcss(), preconnectPlugin(env), heroPreloadPlugin(), imageProxyDevPlugin()],
     build: {
       target: 'es2020',
       cssCodeSplit: true,
