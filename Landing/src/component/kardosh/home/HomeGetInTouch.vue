@@ -244,8 +244,9 @@ import { ref, computed, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { Building2, Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Shield, X } from 'lucide-vue-next'
 import StatusButton from '@/components/ui/StatusButton.vue'
-import { BRAND, RERA_LICENSE_LABEL, SOCIAL } from '@/config/brand'
+import { SOCIAL } from '@/config/brand'
 import { CONTACT, GOOGLE_MAP_EMBED, GOOGLE_MAPS_DIRECTIONS } from '@/config/uae'
+import { site, reraLabel } from '@/composables/useSiteSettings'
 import { whatsAppLink, WHATSAPP } from '@/config/marketing'
 import { submitLead } from '@/services/leads'
 import PhoneInput from '@/components/ui/PhoneInput.vue'
@@ -390,16 +391,16 @@ const contactChannels = computed(() => {
   return [
     {
       label: ch.phone || 'Phone',
-      value: CONTACT.phone,
-      href: CONTACT.phoneTel,
+      value: site.phone,
+      href: `tel:${String(site.phone || '').replace(/\s/g, '')}`,
       hint: CONTACT.hours,
       icon: Phone,
       external: true,
     },
     {
       label: ch.email || 'Email',
-      value: BRAND.email,
-      href: `mailto:${BRAND.email}`,
+      value: site.email,
+      href: `mailto:${site.email}`,
       hint: hints.emailReply,
       icon: Mail,
       external: true,
@@ -414,15 +415,15 @@ const contactChannels = computed(() => {
     },
     {
       label: ch.office || 'Office',
-      value: CONTACT.addressShort,
+      value: site.addressShort,
       href: props.pageMode ? GOOGLE_MAPS_DIRECTIONS : '/contact',
-      hint: CONTACT.address,
+      hint: site.address,
       icon: MapPin,
       external: props.pageMode,
     },
     {
       label: ch.rera || 'RERA',
-      value: RERA_LICENSE_LABEL,
+      value: reraLabel.value,
       href: props.pageMode ? undefined : '/contact',
       hint: hints.reraAgency,
       icon: Shield,

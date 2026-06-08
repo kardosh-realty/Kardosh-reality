@@ -27,7 +27,7 @@
           />
         </div>
         <div class="property-contact-card__agency-text">
-          <p class="property-contact-card__agency-name">{{ BRAND.name }}</p>
+          <p class="property-contact-card__agency-name">{{ site.companyName }}</p>
           <p class="property-contact-card__agency-tag">UAE property specialists</p>
         </div>
       </div>
@@ -54,12 +54,12 @@
         </a>
 
         <div class="property-contact-card__cta-duo">
-          <a :href="CONTACT.phoneTel" class="property-contact-card__cta property-contact-card__cta--ghost">
+          <a :href="phoneTel" class="property-contact-card__cta property-contact-card__cta--ghost">
             <Phone class="size-[1.125rem]" aria-hidden="true" />
             <span>Call</span>
           </a>
           <a
-            :href="`mailto:${CONTACT.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`"
+            :href="`mailto:${site.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`"
             class="property-contact-card__cta property-contact-card__cta--ghost"
           >
             <Mail class="size-[1.125rem]" aria-hidden="true" />
@@ -74,8 +74,8 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { BRAND } from '@/config/brand'
-import { CONTACT, formatArea, formatStartingPrice } from '@/config/uae'
+import { formatArea, formatStartingPrice } from '@/config/uae'
+import { site } from '@/composables/useSiteSettings'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon.vue'
 import { WHATSAPP } from '@/config/marketing'
@@ -88,6 +88,8 @@ const props = defineProps({
 const hasSpecs = computed(
   () => Boolean(props.property?.completionDate || props.property?.square)
 )
+
+const phoneTel = computed(() => `tel:${String(site.phone || '').replace(/\s/g, '')}`)
 
 const contactLink = computed(() => {
   const title = props.property?.title || props.property?.name || 'Property'
@@ -109,7 +111,7 @@ const mailSubject = computed(() => `Enquiry: ${propertyTitle.value}`)
 
 const mailBody = computed(() => {
   const lines = [
-    `Hello ${BRAND.name},`,
+    `Hello ${site.companyName},`,
     '',
     `I'm interested in ${propertyTitle.value} and would like more details on availability, pricing, and payment plans.`,
   ]
