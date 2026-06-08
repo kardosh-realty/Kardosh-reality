@@ -186,12 +186,77 @@
                   <input v-model.trim="account.email" type="email" class="form-input border border-gray-200! dark:border-gray-800! mt-2" />
                 </div>
                 <div>
-                  <label class="font-medium">New password</label>
-                  <input v-model="account.password" type="password" autocomplete="new-password" placeholder="Leave blank to keep current" class="form-input border border-gray-200! dark:border-gray-800! mt-2" />
+                  <div class="flex items-center justify-between">
+                    <label class="font-medium">New password</label>
+                    <div class="relative" @mouseenter="hoverReqs = true" @mouseleave="hoverReqs = false">
+                      <Info :size="18" class="cursor-pointer transition-colors" :class="account.password ? strengthTextColor : 'text-slate-400'" />
+                      <Transition name="fade">
+                        <div v-if="reqsOpen" class="absolute right-0 z-20 mt-2 w-60 rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 p-3 shadow-lg">
+                          <ul class="space-y-1.5" aria-label="Password requirements">
+                            <li v-for="req in passwordRequirements" :key="req.text" class="flex items-center gap-2">
+                              <Check v-if="req.met" :size="16" class="text-emerald-500 shrink-0" />
+                              <X v-else :size="16" class="text-slate-400 shrink-0" />
+                              <span class="text-xs" :class="req.met ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">{{ req.text }}</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </Transition>
+                    </div>
+                  </div>
+                  <div class="relative mt-2">
+                    <input
+                      v-model="account.password"
+                      :type="showPassword ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      placeholder="Leave blank to keep current"
+                      class="form-input border-2! pr-10!"
+                      :class="account.password ? strengthBorder : 'border-gray-200! dark:border-gray-800!'"
+                      @focus="focusReqs = true"
+                      @blur="focusReqs = false"
+                    />
+                    <button
+                      type="button"
+                      class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-primary"
+                      :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                      @click="showPassword = !showPassword"
+                    >
+                      <EyeOff v-if="showPassword" :size="16" />
+                      <Eye v-else :size="16" />
+                    </button>
+                  </div>
+                  <div v-if="account.password" class="mt-2">
+                    <div class="flex gap-1">
+                      <span
+                        v-for="n in 5"
+                        :key="n"
+                        class="h-1 flex-1 rounded-full transition-colors"
+                        :class="n <= strengthScore ? strengthBarColor : 'bg-gray-200 dark:bg-slate-700'"
+                      />
+                    </div>
+                    <p class="mt-1 text-xs" :class="strengthTextColor">{{ strengthText }}</p>
+                  </div>
                 </div>
                 <div>
                   <label class="font-medium">Confirm new password</label>
-                  <input v-model="account.confirm" type="password" autocomplete="new-password" class="form-input border border-gray-200! dark:border-gray-800! mt-2" />
+                  <div class="relative mt-2">
+                    <input
+                      v-model="account.confirm"
+                      :type="showPassword ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      class="form-input border-2! pr-10!"
+                      :class="!account.confirm ? 'border-gray-200! dark:border-gray-800!' : (passwordsMatch ? 'border-green-400!' : 'border-red-500!')"
+                    />
+                    <button
+                      type="button"
+                      class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-primary"
+                      :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                      @click="showPassword = !showPassword"
+                    >
+                      <EyeOff v-if="showPassword" :size="16" />
+                      <Eye v-else :size="16" />
+                    </button>
+                  </div>
+                  <p v-if="account.confirm && !passwordsMatch" class="mt-1 text-xs text-red-500">Passwords do not match</p>
                 </div>
               </div>
               <div class="mt-6">
@@ -209,6 +274,7 @@
 
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
+import { Eye, EyeOff, Check, X, Info } from 'lucide-vue-next'
 import PageHeader from '@/components/PageHeader.vue'
 import { site, loadSiteSettings, applySettings } from '@/composables/useSiteSettings'
 import { saveSiteSettings, uploadLogo, uploadAdminAvatar } from '@/services/siteSettings'
@@ -241,6 +307,45 @@ const cloneSocials = (arr) => (arr || []).map((s) => ({ platform: s.platform || 
 const form = reactive(Object.fromEntries(SITE_FIELDS.map((k) => [k, site[k]])))
 form.socials = cloneSocials(site.socials)
 const account = reactive({ displayName: '', email: '', password: '', confirm: '', avatarUrl: '' })
+
+const showPassword = ref(false)
+const focusReqs = ref(false)
+const hoverReqs = ref(false)
+const reqsOpen = computed(() => focusReqs.value || hoverReqs.value)
+
+const PASSWORD_REQUIREMENTS = [
+  { regex: /.{8,}/, text: 'At least 8 characters' },
+  { regex: /[0-9]/, text: 'At least 1 number' },
+  { regex: /[a-z]/, text: 'At least 1 lowercase letter' },
+  { regex: /[A-Z]/, text: 'At least 1 uppercase letter' },
+  { regex: /[!-/:-@[-`{-~]/, text: 'At least 1 special character' },
+]
+
+const passwordRequirements = computed(() =>
+  PASSWORD_REQUIREMENTS.map((r) => ({ text: r.text, met: r.regex.test(account.password) }))
+)
+const strengthScore = computed(() => passwordRequirements.value.filter((r) => r.met).length)
+
+const strengthBorder = computed(
+  () =>
+    ['border-gray-200!', 'border-red-500!', 'border-orange-500!', 'border-amber-500!', 'border-green-400!', 'border-emerald-500!'][
+      strengthScore.value
+    ]
+)
+const strengthBarColor = computed(
+  () => ['bg-gray-200', 'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-green-400', 'bg-emerald-500'][strengthScore.value]
+)
+const strengthTextColor = computed(
+  () => ['text-slate-400', 'text-red-500', 'text-orange-500', 'text-amber-500', 'text-green-500', 'text-emerald-500'][strengthScore.value]
+)
+const strengthText = computed(
+  () =>
+    ['Enter a password', 'Weak password', 'Medium password', 'Strong password', 'Very strong password', 'Very strong password'][
+      strengthScore.value
+    ]
+)
+
+const passwordsMatch = computed(() => account.password !== '' && account.confirm === account.password)
 
 const profileInitials = computed(() => {
   const name = account.displayName || account.email || 'A'
@@ -368,3 +473,15 @@ async function onSaveAccount() {
   }
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+</style>
