@@ -1,6 +1,6 @@
 import { fetchLeads } from '@/services/leads'
 import { fetchAllTestimonials } from '@/services/testimonials'
-import { fetchProjects } from '@/services/reelly'
+import { fetchAllProjects } from '@/services/reelly'
 import { buildInquiryChart } from '@/services/dashboard'
 import { UAE_COMMUNITIES, projectCommunitySlugs } from '@/config/communities'
 
@@ -74,7 +74,7 @@ export async function fetchReportData({ rangeDays = '30' } = {}) {
   const [leadsSettled, testimonialsSettled, projectsSettled] = await Promise.allSettled([
     fetchLeads({ limit: 500 }),
     fetchAllTestimonials(),
-    fetchProjects({ limit: '100' }),
+    fetchAllProjects(),
   ])
 
   const allLeads =

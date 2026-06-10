@@ -4,6 +4,8 @@
  * @see https://docs.reelly.ai/docs/reelly-api-v20-getting-started
  */
 
+import { fetchAllPaginated } from '@kardosh/shared/reelly/pagination.js'
+
 const BASE = '/api/reelly'
 
 const DEFAULT_QUERY = {
@@ -100,6 +102,20 @@ export async function fetchProjects(params = {}) {
   })
   const { results, count } = normalizeList(data)
   return { count, results: results.map(mapProject) }
+}
+
+/** Fetch every UAE project from Reelly (not just the first page). */
+export async function fetchAllProjects(params = {}) {
+  const { count, results } = await fetchAllPaginated(async (page) => {
+    const data = await reellyFetch('/projects', {
+      country: 'United Arab Emirates',
+      ...params,
+      ...page,
+    })
+    const normalized = normalizeList(data)
+    return { count: normalized.count, results: normalized.results.map(mapProject) }
+  })
+  return { count, results }
 }
 
 function collectImages(project) {

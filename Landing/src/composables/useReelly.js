@@ -1,12 +1,12 @@
 import { ref, computed, watch } from 'vue'
 import {
-  fetchProjects,
+  fetchAllProjects,
+  fetchAllProjectMarkers,
+  fetchAllDeveloperLogos,
   fetchProjectById,
   fetchProjectBySlug,
-  fetchProjectMarkers,
   fetchProjectUnits,
   fetchDeveloperById,
-  fetchDeveloperLogos,
 } from '@/services/reelly/client'
 import { mapReellyProject, mapReellyMarker } from '@/services/reelly/mapProject'
 import { enrichProjectsWithAmenities, clearAmenitiesDetailCache } from '@/services/reelly/enrichAmenities'
@@ -134,7 +134,7 @@ export async function loadProjects(force = false) {
   loading.value = true
   error.value = null
 
-  projectsPromise = fetchProjects({ limit: '50', offset: '0', ...reellyQueryParams(locale) })
+  projectsPromise = fetchAllProjects(reellyQueryParams(locale))
     .then(async ({ results }) => {
       const mapped = results.map((p) => mapAndLocalizeProject(p))
       if (mapped.length) writeCache(cacheKey, mapped)
@@ -165,8 +165,8 @@ export async function loadMarkers(force = false) {
   markersLoading.value = true
   const query = reellyQueryParams(locale)
   markersPromise = Promise.all([
-    fetchProjectMarkers({ limit: '50', ...query }),
-    fetchProjects({ limit: '50', offset: '0', ...query }).catch(() => ({ results: [] })),
+    fetchAllProjectMarkers(query),
+    fetchAllProjects(query).catch(() => ({ results: [] })),
   ])
     .then(([{ results: markerRows }, { results: projectRows }]) => {
       const byId = new Map(projectRows.map((p) => [p.id, p]))
@@ -204,7 +204,7 @@ export async function loadDeveloperLogos(force = false) {
     return cached
   }
 
-  logosPromise = fetchDeveloperLogos()
+  logosPromise = fetchAllDeveloperLogos()
     .then(({ results }) => {
       developerLogos.value = results
       if (results.length) writeCache(cacheKey, results)

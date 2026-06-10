@@ -45,7 +45,7 @@ export async function loadOffPlan(force = false) {
       projectsLoading.value = true
       error.value = ''
       try {
-        const { results } = await fetchProjects({ limit: '50' })
+        const { results } = await fetchAllProjects()
         projects.value = results
       } catch (e) {
         error.value = e?.message || 'Could not load off-plan data from Reelly.'

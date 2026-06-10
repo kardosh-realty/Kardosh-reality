@@ -1,5 +1,6 @@
 import { normalizeList } from './normalize'
 import { reellyQueryParams } from './locale'
+import { fetchAllPaginated } from '@kardosh/shared/reelly/pagination.js'
 
 const BASE = '/api/reelly'
 
@@ -58,6 +59,13 @@ export async function fetchProjects(params = {}) {
   return normalizeList(data)
 }
 
+/** Fetch every UAE project page from Reelly (not just the first 50). */
+export async function fetchAllProjects(params = {}) {
+  return fetchAllPaginated((page) =>
+    fetchProjects({ country: 'United Arab Emirates', ...params, ...page })
+  )
+}
+
 export async function fetchProjectById(id, params = {}) {
   return reellyFetch(`/projects/${id}`, params)
 }
@@ -74,6 +82,13 @@ export async function fetchProjectMarkers(params = {}) {
     ...params,
   })
   return normalizeList(data)
+}
+
+/** Fetch every map marker page from Reelly. */
+export async function fetchAllProjectMarkers(params = {}) {
+  return fetchAllPaginated((page) =>
+    fetchProjectMarkers({ country: 'United Arab Emirates', ...params, ...page })
+  )
 }
 
 /** @see https://docs.reelly.ai/docs/available-units — Business/Enterprise only */
@@ -96,9 +111,14 @@ export async function fetchDeveloperById(id, params = {}) {
   return reellyFetch(`/developers/${id}`, params)
 }
 
-export async function fetchDeveloperLogos() {
-  const data = await reellyFetch('/developers/logos')
+export async function fetchDeveloperLogos(params = {}) {
+  const data = await reellyFetch('/developers/logos', params)
   return normalizeList(data)
+}
+
+/** Fetch all developer logos (paginated when the API returns partial pages). */
+export async function fetchAllDeveloperLogos(params = {}) {
+  return fetchAllPaginated((page) => fetchDeveloperLogos(page))
 }
 
 export async function fetchDeveloperLogo(id) {

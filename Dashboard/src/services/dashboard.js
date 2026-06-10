@@ -1,6 +1,6 @@
 import { fetchLeads } from '@/services/leads'
 import { fetchAllTestimonials } from '@/services/testimonials'
-import { fetchProjects } from '@/services/reelly'
+import { fetchAllProjects } from '@/services/reelly'
 import { UAE_COMMUNITIES, projectCommunitySlugs } from '@/config/communities'
 import { LEAD_STATUS_STYLES } from '@/config/leads'
 import { leadStatusLabel } from '@/utils/leadFilters'
@@ -174,7 +174,7 @@ export async function fetchDashboardData() {
   const [leadsSettled, testimonialsSettled, projectsSettled] = await Promise.allSettled([
     fetchLeads({ limit: 200 }),
     fetchAllTestimonials(),
-    fetchProjects({ limit: '100' }),
+    fetchAllProjects(),
   ])
 
   const leads =

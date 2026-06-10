@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { fetchLeads } from '@/services/leads'
 import { fetchAllTestimonials } from '@/services/testimonials'
-import { fetchProjects } from '@/services/reelly'
+import { fetchAllProjects } from '@/services/reelly'
 import { isSupabaseConfigured } from '@/lib/supabase'
 
 const query = ref('')
@@ -20,7 +20,7 @@ async function loadSearchIndex() {
   const [leadsRes, testimonialsRes, projectsRes] = await Promise.allSettled([
     fetchLeads({ limit: 200 }),
     fetchAllTestimonials(),
-    fetchProjects({ limit: '80' }),
+    fetchAllProjects(),
   ])
 
   cache = {
