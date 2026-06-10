@@ -39,3 +39,52 @@ export async function fetchAllPaginated(fetchPage, {
 
   return { count: totalCount ?? all.length, results: all }
 }
+
+/**
+ * Fetch page 0 first, then remaining pages in concurrent batches (faster for large catalogues).
+ * @param {(params: { limit: string, offset: string }) => Promise<{ results?: unknown[], count?: number }>} fetchPage
+ */
+export async function fetchAllPaginatedConcurrent(fetchPage, {
+  pageSize = REELLY_PAGE_SIZE,
+  maxPages = REELLY_MAX_PAGES,
+  concurrency = 3,
+} = {}) {
+  const first = await fetchPage({ limit: String(pageSize), offset: '0' })
+  const firstBatch = first?.results ?? []
+  let totalCount = typeof first?.count === 'number' ? first.count : null
+
+  if (!firstBatch.length || firstBatch.length < pageSize) {
+    return { count: totalCount ?? firstBatch.length, results: firstBatch }
+  }
+
+  const all = [...firstBatch]
+  const totalPages =
+    totalCount != null
+      ? Math.min(maxPages, Math.ceil(totalCount / pageSize))
+      : maxPages
+
+  const offsets = []
+  for (let page = 1; page < totalPages; page++) {
+    offsets.push(page * pageSize)
+  }
+
+  for (let i = 0; i < offsets.length; i += concurrency) {
+    const chunk = offsets.slice(i, i + concurrency)
+    const pages = await Promise.all(
+      chunk.map(async (offset) => {
+        const data = await fetchPage({ limit: String(pageSize), offset: String(offset) })
+        return data?.results ?? []
+      })
+    )
+    for (const batch of pages) {
+      if (!batch.length) return { count: totalCount ?? all.length, results: all }
+      all.push(...batch)
+      if (batch.length < pageSize) return { count: totalCount ?? all.length, results: all }
+      if (totalCount != null && all.length >= totalCount) {
+        return { count: totalCount, results: all }
+      }
+    }
+  }
+
+  return { count: totalCount ?? all.length, results: all }
+}

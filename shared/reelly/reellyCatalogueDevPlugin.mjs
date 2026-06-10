@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { handleCatalogueRequest, isCatalogueKind } from './catalogueHandler.mjs'
+import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache } from './catalogueHandler.mjs'
 
 function loadApiKey(envDir) {
   try {
@@ -21,6 +21,10 @@ export function reellyCatalogueDevPlugin({ envDir }) {
     name: 'kardosh-reelly-catalogue-dev',
     enforce: 'pre',
     configureServer(server) {
+      if (apiKey) {
+        void warmCatalogueCache(apiKey)
+      }
+
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url || '/', 'http://localhost')
         const match = url.pathname.match(/^\/api\/reelly\/catalogue\/([^/]+)$/)

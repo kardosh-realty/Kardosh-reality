@@ -28,6 +28,7 @@ Thumbs.db
 *.timestamp-*-*.mjs
 .eslintcache
 __screenshots__/
+.cache/
 
 # Optional: large local media (uncomment if you do not want videos in git)
 # Landing/public/videos/*.mp4

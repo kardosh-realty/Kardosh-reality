@@ -8,6 +8,9 @@ import {
 } from '@/services/projectCuration'
 import { UAE_COMMUNITIES, projectCommunitySlugs, emirateLabel } from '@/config/communities'
 import { sortOffPlanProjects } from '@kardosh/shared/offPlan/projectMeta.js'
+import { readBrowserCatalogueCache } from '@kardosh/shared/reelly/browserCatalogueCache.js'
+
+const PROJECTS_CACHE_KEY = 'kardosh-dashboard-projects-v2'
 
 const projects = ref([])
 const hidden = ref(new Set())
@@ -33,6 +36,11 @@ function isKeyHidden(type, id) {
 export async function loadOffPlan(force = false) {
   if (loadPromise && !force) return loadPromise
 
+  if (!force && !projects.value.length) {
+    const hit = readBrowserCatalogueCache(PROJECTS_CACHE_KEY, { arrayOnly: true })
+    if (hit?.data?.length) projects.value = hit.data
+  }
+
   loadPromise = (async () => {
     loading.value = true
     try {
@@ -52,17 +60,18 @@ export async function loadOffPlan(force = false) {
       loading.value = false
     }
 
-    if (!projects.value.length || force) {
-      projectsLoading.value = true
-      error.value = ''
-      try {
-        const { results } = await fetchAllProjects()
-        projects.value = results
-      } catch (e) {
+    const showProjectsSpinner = !projects.value.length
+    if (showProjectsSpinner) projectsLoading.value = true
+    error.value = ''
+    try {
+      const { results } = await fetchAllProjects({}, { force })
+      if (results?.length) projects.value = results
+    } catch (e) {
+      if (!projects.value.length) {
         error.value = e?.message || 'Could not load off-plan data from Reelly.'
-      } finally {
-        projectsLoading.value = false
       }
+    } finally {
+      projectsLoading.value = false
     }
 
     loadPromise = null

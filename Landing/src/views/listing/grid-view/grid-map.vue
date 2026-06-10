@@ -41,7 +41,7 @@
       <div class="map-page__layout">
         <aside class="map-page__sidebar">
           <p class="map-page__sidebar-head">{{ t('map.projects') }}</p>
-          <div class="map-page__list" role="list">
+          <div ref="listRef" class="map-page__list" role="list">
             <div v-if="markersLoading" class="space-y-2" role="status" :aria-label="t('map.loadingListings')">
               <PropertyListItemSkeleton v-for="n in 6" :key="n" />
             </div>
@@ -51,7 +51,7 @@
             <template v-else>
               <component
                 :is="isMobile ? 'button' : RouterLink"
-                v-for="m in sidebarMarkers"
+                v-for="(m, index) in sidebarMarkers"
                 :key="m.id"
                 :ref="(el) => setCardRef(m.id, el)"
                 :to="isMobile ? undefined : projectDetailPath(m)"
@@ -71,7 +71,7 @@
                   img-class="map-page__card-img-el"
                   watermark-size="xs"
                   simple
-                  loading="lazy"
+                  :loading="index < eagerImageCount ? 'eager' : 'lazy'"
                   :width="120"
                   :height="90"
                 />
@@ -84,14 +84,20 @@
                   <p v-if="markerPrice(m)" class="map-page__card-price">{{ markerPrice(m) }}</p>
                 </div>
               </component>
-              <button
+              <div
                 v-if="sidebarHasMore"
-                type="button"
-                class="map-page__load-more"
-                @click="sidebarLimit += SIDEBAR_BATCH"
+                class="map-page__list-tail"
+                :class="{ 'map-page__list-tail--row': isMobile }"
+                aria-hidden="true"
               >
-                {{ t('map.loadMore', { count: sidebarRemaining }) }}
-              </button>
+                <PropertyListItemSkeleton v-for="n in tailSkeletonCount" :key="`tail-${n}`" />
+              </div>
+              <div
+                v-if="sidebarHasMore"
+                ref="scrollSentinel"
+                class="map-page__sentinel"
+                aria-hidden="true"
+              />
             </template>
           </div>
         </aside>
@@ -170,6 +176,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { formatAedInMillions } from '@/config/uae'
 import { useReelly } from '@/composables/useReelly'
 import { useMediaQuery } from '@/composables/useMediaQuery'
+import { useScrollSentinel } from '@/composables/useScrollSentinel'
 import { projectDetailPath } from '@/utils/seoRoutes'
 import ProtectedPropertyImage from '@/component/kardosh/ProtectedPropertyImage.vue'
 import { usePageHero } from '@/composables/usePageHero'
@@ -183,9 +190,18 @@ const { markers, markersLoading, loadMarkers } = useReelly()
 const selectedId = ref(null)
 const searchQuery = ref('')
 const cardRefs = ref({})
+const listRef = ref(null)
 
-const SIDEBAR_BATCH = 48
-const sidebarLimit = ref(SIDEBAR_BATCH)
+const SIDEBAR_INITIAL = 20
+const SIDEBAR_BATCH = 20
+const SIDEBAR_INITIAL_MOBILE = 8
+const SIDEBAR_BATCH_MOBILE = 8
+const sidebarLimit = ref(SIDEBAR_INITIAL)
+const eagerImageCount = 6
+const tailSkeletonCount = computed(() => (isMobile.value ? 1 : 2))
+
+const batchSize = computed(() => (isMobile.value ? SIDEBAR_BATCH_MOBILE : SIDEBAR_BATCH))
+const initialBatch = computed(() => (isMobile.value ? SIDEBAR_INITIAL_MOBILE : SIDEBAR_INITIAL))
 
 const filteredMarkers = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
@@ -220,12 +236,64 @@ const sidebarHasMore = computed(
   () => !searchQuery.value.trim() && filteredMarkers.value.length > sidebarLimit.value
 )
 
-const sidebarRemaining = computed(() =>
-  Math.min(SIDEBAR_BATCH, filteredMarkers.value.length - sidebarLimit.value)
+function loadMoreSidebar() {
+  if (!sidebarHasMore.value) return
+  sidebarLimit.value = Math.min(
+    sidebarLimit.value + batchSize.value,
+    filteredMarkers.value.length
+  )
+  nextTick(ensureListFilled)
+}
+
+const { sentinel: scrollSentinel, reconnect: reconnectScrollSentinel } = useScrollSentinel(
+  loadMoreSidebar,
+  {
+    rootRef: listRef,
+    enabled: () => sidebarHasMore.value && !searchQuery.value.trim() && !markersLoading.value,
+    rootMargin: '160px',
+  }
 )
 
+async function ensureListFilled() {
+  await nextTick()
+  const list = listRef.value
+  if (!list || searchQuery.value.trim() || !sidebarHasMore.value) return
+
+  const overflows = isMobile.value
+    ? list.scrollWidth > list.clientWidth + 4
+    : list.scrollHeight > list.clientHeight + 4
+
+  if (!overflows) {
+    loadMoreSidebar()
+    await ensureListFilled()
+  } else {
+    reconnectScrollSentinel()
+  }
+}
+
 watch(searchQuery, () => {
-  sidebarLimit.value = SIDEBAR_BATCH
+  sidebarLimit.value = initialBatch.value
+  nextTick(ensureListFilled)
+})
+
+watch(isMobile, () => {
+  sidebarLimit.value = initialBatch.value
+  nextTick(ensureListFilled)
+})
+
+watch(
+  () => filteredMarkers.value.length,
+  (count) => {
+    if (!count) return
+    if (sidebarLimit.value < initialBatch.value) {
+      sidebarLimit.value = initialBatch.value
+    }
+    nextTick(ensureListFilled)
+  }
+)
+
+watch(markersLoading, (loading) => {
+  if (!loading) nextTick(ensureListFilled)
 })
 
 const mapCountLabel = computed(() => {
@@ -301,9 +369,11 @@ function dockSummary(m) {
 }
 
 onMounted(async () => {
+  sidebarLimit.value = initialBatch.value
   await loadMarkers()
   if (filteredMarkers.value.length) {
     selectedId.value = filteredMarkers.value[0].id
   }
+  await ensureListFilled()
 })
 </script>

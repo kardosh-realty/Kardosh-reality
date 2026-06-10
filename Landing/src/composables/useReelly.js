@@ -45,29 +45,10 @@ let logosPromise = null
 let loadedLocale = null
 let localeWatcherInstalled = false
 
-const CACHE_TTL_MS = 1000 * 60 * 60 * 12
-
-function readCache(key, { arrayOnly = true } = {}) {
-  try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return null
-    const { savedAt, data } = JSON.parse(raw)
-    if (Date.now() - savedAt > CACHE_TTL_MS) return null
-    if (arrayOnly && !Array.isArray(data)) return null
-    if (data == null) return null
-    return data
-  } catch {
-    return null
-  }
-}
-
-function writeCache(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data }))
-  } catch {
-    /* quota / private mode */
-  }
-}
+import {
+  readBrowserCatalogueCache,
+  writeBrowserCatalogueCache,
+} from '@kardosh/shared/reelly/browserCatalogueCache.js'
 
 function applyVisibility(list) {
   return list.filter((p) => !isProjectHiddenCascade(p))
@@ -121,6 +102,28 @@ function installLocaleWatcher() {
   )
 }
 
+async function fetchProjectsFromNetwork(locale, cacheKey) {
+  const { results } = await fetchAllProjects(reellyQueryParams(locale))
+  const mapped = results.map((p) => mapAndLocalizeProject(p))
+  const sorted = await applyProjectPipeline(mapped)
+  if (mapped.length) writeBrowserCatalogueCache(cacheKey, mapped)
+  projects.value = sorted
+  loadedLocale = locale
+  void enrichProjectsWithAmenities(projects.value, { locale })
+  return projects.value
+}
+
+async function fetchMarkersFromNetwork(locale, cacheKey) {
+  const query = reellyQueryParams(locale)
+  const { results: markerRows } = await fetchAllProjectMarkers(query)
+  const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
+  const visible = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
+  if (visible.length) writeBrowserCatalogueCache(cacheKey, visible)
+  markers.value = visible
+  loadedLocale = locale
+  return markers.value
+}
+
 export async function loadProjects(force = false) {
   installLocaleWatcher()
   const locale = getLocaleId()
@@ -131,10 +134,23 @@ export async function loadProjects(force = false) {
   await loadVisibility()
 
   const cacheKey = reellyProjectsCacheKey(locale)
-  const cached = !force ? readCache(cacheKey) : null
-  if (cached?.length) {
-    projects.value = await applyProjectPipeline(cached)
+  const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
+  if (hit?.data?.length) {
+    projects.value = await applyProjectPipeline(hit.data)
     loadedLocale = locale
+    void enrichProjectsWithAmenities(projects.value, { locale })
+    if (hit.fresh) return projects.value
+    if (!projectsPromise) {
+      projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
+        .catch((e) => {
+          error.value = e.message
+          return projects.value
+        })
+        .finally(() => {
+          projectsPromise = null
+          loading.value = false
+        })
+    }
     return projects.value
   }
 
@@ -146,16 +162,7 @@ export async function loadProjects(force = false) {
   loading.value = true
   error.value = null
 
-  projectsPromise = fetchAllProjects(reellyQueryParams(locale))
-    .then(async ({ results }) => {
-      const mapped = results.map((p) => mapAndLocalizeProject(p))
-      const sorted = await applyProjectPipeline(mapped)
-      if (sorted.length) writeCache(cacheKey, mapped)
-      projects.value = sorted
-      loadedLocale = locale
-      void enrichProjectsWithAmenities(projects.value, { locale })
-      return projects.value
-    })
+  projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
     .catch((e) => {
       error.value = e.message
       projects.value = []
@@ -163,6 +170,7 @@ export async function loadProjects(force = false) {
     })
     .finally(() => {
       loading.value = false
+      projectsPromise = null
     })
 
   return projectsPromise
@@ -178,30 +186,31 @@ export async function loadMarkers(force = false) {
   await loadVisibility()
 
   const cacheKey = reellyMarkersCacheKey(locale)
-  const cached = !force ? readCache(cacheKey) : null
-  if (cached?.length) {
-    markers.value = applyVisibility(cached).filter((m) => m.latitude && m.longitude)
+  const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
+  if (hit?.data?.length) {
+    markers.value = applyVisibility(hit.data).filter((m) => m.latitude && m.longitude)
     loadedLocale = locale
+    if (hit.fresh) return markers.value
+    if (!markersPromise) {
+      markersPromise = fetchMarkersFromNetwork(locale, cacheKey)
+        .catch(() => markers.value)
+        .finally(() => {
+          markersPromise = null
+          markersLoading.value = false
+        })
+    }
     return markers.value
   }
 
   markersLoading.value = true
-  const query = reellyQueryParams(locale)
-  markersPromise = fetchAllProjectMarkers(query)
-    .then(({ results: markerRows }) => {
-      const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
-      const visible = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
-      if (visible.length) writeCache(cacheKey, visible)
-      markers.value = visible
-      loadedLocale = locale
-      return markers.value
-    })
+  markersPromise = fetchMarkersFromNetwork(locale, cacheKey)
     .catch(() => {
       markers.value = []
       return []
     })
     .finally(() => {
       markersLoading.value = false
+      markersPromise = null
     })
 
   return markersPromise
@@ -213,19 +222,33 @@ export async function loadDeveloperLogos(force = false) {
   if (logosPromise && !force) return logosPromise
 
   const cacheKey = reellyLogosCacheKey(locale)
-  const cached = !force ? readCache(cacheKey) : null
-  if (cached?.length) {
-    developerLogos.value = cached
-    return cached
+  const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
+  if (hit?.data?.length) {
+    developerLogos.value = hit.data
+    if (hit.fresh) return hit.data
+    logosPromise = fetchAllDeveloperLogos()
+      .then(({ results }) => {
+        developerLogos.value = results
+        if (results.length) writeBrowserCatalogueCache(cacheKey, results)
+        return results
+      })
+      .catch(() => developerLogos.value)
+      .finally(() => {
+        logosPromise = null
+      })
+    return hit.data
   }
 
   logosPromise = fetchAllDeveloperLogos()
     .then(({ results }) => {
       developerLogos.value = results
-      if (results.length) writeCache(cacheKey, results)
+      if (results.length) writeBrowserCatalogueCache(cacheKey, results)
       return results
     })
     .catch(() => developerLogos.value)
+    .finally(() => {
+      logosPromise = null
+    })
 
   return logosPromise
 }
@@ -239,16 +262,16 @@ export async function fetchFullProject(id) {
   }
 
   const cacheKey = reellyProjectDetailCacheKey(numericId, locale)
-  const cached = readCache(cacheKey, { arrayOnly: false })
-  if (cached) {
-    projectDetailMemory.set(memoryKey, cached)
-    return cached
+  const hit = readBrowserCatalogueCache(cacheKey, { arrayOnly: false })
+  if (hit?.data) {
+    projectDetailMemory.set(memoryKey, hit.data)
+    return hit.data
   }
 
   const raw = await fetchProjectById(numericId, reellyQueryParams(locale))
   const mapped = mapAndLocalizeProject(raw, { full: true })
   projectDetailMemory.set(memoryKey, mapped)
-  writeCache(cacheKey, mapped)
+  writeBrowserCatalogueCache(cacheKey, mapped)
   return mapped
 }
 
@@ -494,8 +517,8 @@ export async function getListingById(param) {
     } catch {
       const cacheKey = reellyProjectsCacheKey(locale)
       if (!projects.value.length) {
-        const cachedList = readCache(cacheKey)
-        if (cachedList?.length) projects.value = cachedList
+        const hit = readBrowserCatalogueCache(cacheKey, { arrayOnly: true })
+        if (hit?.data?.length) projects.value = hit.data
       }
       if (!projects.value.length) await loadProjects()
       return projects.value.find((p) => p.id === numericId) || null
@@ -522,8 +545,10 @@ export async function getListingById(param) {
 
   const cacheKey = reellyProjectsCacheKey(locale)
   if (!projects.value.length) {
-    const cachedList = readCache(cacheKey)
-    if (cachedList?.length) projects.value = cachedList
+  if (!projects.value.length) {
+    const hit = readBrowserCatalogueCache(cacheKey, { arrayOnly: true })
+    if (hit?.data?.length) projects.value = hit.data
+  }
   }
   if (!projects.value.length) await loadProjects()
 

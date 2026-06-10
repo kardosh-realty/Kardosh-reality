@@ -4,8 +4,19 @@
  * @see https://docs.reelly.ai/docs/reelly-api-v20-getting-started
  */
 
+import {
+  readBrowserCatalogueCache,
+  writeBrowserCatalogueCache,
+  DEFAULT_CACHE_TTL_MS,
+} from '@kardosh/shared/reelly/browserCatalogueCache.js'
+
 const BASE = '/api/reelly'
 const RETRYABLE = new Set([429, 502, 503, 504])
+const PROJECTS_CACHE_KEY = 'kardosh-dashboard-projects-v2'
+
+let memProjects = null
+let memProjectsAt = 0
+let projectsInflight = null
 
 const DEFAULT_QUERY = {
   language: 'en-us',
@@ -26,7 +37,7 @@ async function reellyFetch(path, params = {}, { retries = 3 } = {}) {
   const qs = buildQuery(params)
   const url = qs ? `${BASE}${path}?${qs}` : `${BASE}${path}`
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 120_000)
+  const timer = setTimeout(() => controller.abort(), path.startsWith('/catalogue/') ? 180_000 : 120_000)
 
   try {
     for (let attempt = 0; attempt < retries; attempt++) {
@@ -114,13 +125,48 @@ export async function fetchProjects(params = {}) {
 }
 
 /** Fetch every UAE project from Reelly (single aggregated server request). */
-export async function fetchAllProjects(params = {}) {
+async function fetchAllProjectsNetwork(params = {}) {
   const data = await reellyFetch('/catalogue/projects', {
     country: 'United Arab Emirates',
     ...params,
   })
   const { results, count } = normalizeList(data)
   return { count, results: results.map(mapProject) }
+}
+
+function storeProjectsResult(result) {
+  memProjects = result
+  memProjectsAt = Date.now()
+  if (result.results.length) writeBrowserCatalogueCache(PROJECTS_CACHE_KEY, result.results)
+  return result
+}
+
+function revalidateAllProjects(params = {}) {
+  if (projectsInflight) return projectsInflight
+  projectsInflight = fetchAllProjectsNetwork(params)
+    .then(storeProjectsResult)
+    .finally(() => {
+      projectsInflight = null
+    })
+  return projectsInflight
+}
+
+export async function fetchAllProjects(params = {}, { force = false } = {}) {
+  if (memProjects && Date.now() - memProjectsAt < DEFAULT_CACHE_TTL_MS && !force) {
+    return memProjects
+  }
+
+  const hit = !force ? readBrowserCatalogueCache(PROJECTS_CACHE_KEY, { arrayOnly: true }) : null
+  if (hit?.data?.length) {
+    memProjects = { count: hit.data.length, results: hit.data }
+    memProjectsAt = hit.savedAt
+    if (hit.stale) void revalidateAllProjects(params)
+    return memProjects
+  }
+
+  if (projectsInflight && !force) return projectsInflight
+
+  return revalidateAllProjects(params)
 }
 
 function collectImages(project) {

@@ -1,9 +1,11 @@
-import { fetchAllPaginated } from './pagination.js'
+import { fetchAllPaginatedConcurrent } from './pagination.js'
+import { readDiskCatalogue, writeDiskCatalogue } from './catalogueDiskCache.mjs'
 
 const UPSTREAM = 'https://api-reelly.up.railway.app/api/v2/clients'
 const CACHE_TTL_MS = 1000 * 60 * 60 * 6
-const PAGE_DELAY_MS = 150
-const MAX_UPSTREAM_CONCURRENCY = 2
+const DISK_STALE_MS = 1000 * 60 * 60 * 24 * 7
+const PAGE_CONCURRENCY = 3
+const MAX_UPSTREAM_CONCURRENCY = 3
 
 /** @type {Map<string, { expires: number, payload: object }>} */
 const memoryCache = new Map()
@@ -85,7 +87,7 @@ async function fetchCataloguePayload(kind, searchParams, apiKey) {
   }
 
   if (cfg.paginate) {
-    return fetchAllPaginated(
+    return fetchAllPaginatedConcurrent(
       async (page) => {
         const pageParams = new URLSearchParams(params)
         pageParams.set('limit', page.limit)
@@ -98,7 +100,7 @@ async function fetchCataloguePayload(kind, searchParams, apiKey) {
         }
         return normalizeList(await res.json())
       },
-      { pageDelayMs: PAGE_DELAY_MS }
+      { concurrency: PAGE_CONCURRENCY }
     )
   }
 
@@ -111,30 +113,52 @@ async function fetchCataloguePayload(kind, searchParams, apiKey) {
   return normalizeList(await res.json())
 }
 
-/**
- * Serve a fully aggregated Reelly catalogue (projects, markers, developer logos).
- * Cached in memory with single-flight deduplication for concurrent requests.
- */
-export async function handleCatalogueRequest(kind, searchParams, apiKey) {
-  if (!CATALOGUE_ROUTES[kind]) return null
+function storeCatalogue(key, payload) {
+  memoryCache.set(key, { expires: Date.now() + CACHE_TTL_MS, payload })
+  writeDiskCatalogue(key, payload)
+  return payload
+}
 
-  const key = cacheKey(kind, searchParams)
-  const cached = memoryCache.get(key)
-  if (cached && cached.expires > Date.now()) return cached.payload
-
+function refreshCatalogue(kind, searchParams, apiKey, key) {
   if (inflight.has(key)) return inflight.get(key)
 
   const promise = fetchCataloguePayload(kind, searchParams, apiKey)
-    .then((payload) => {
-      memoryCache.set(key, { expires: Date.now() + CACHE_TTL_MS, payload })
-      return payload
-    })
+    .then((payload) => storeCatalogue(key, payload))
     .finally(() => {
       inflight.delete(key)
     })
 
   inflight.set(key, promise)
   return promise
+}
+
+/**
+ * Serve a fully aggregated Reelly catalogue (projects, markers, developer logos).
+ * Memory + disk cache with stale-while-revalidate for fast cold starts.
+ */
+export async function handleCatalogueRequest(kind, searchParams, apiKey) {
+  if (!CATALOGUE_ROUTES[kind]) return null
+
+  const key = cacheKey(kind, searchParams)
+
+  const mem = memoryCache.get(key)
+  if (mem && mem.expires > Date.now()) return mem.payload
+
+  if (inflight.has(key)) return inflight.get(key)
+
+  const disk = readDiskCatalogue(key)
+  if (disk && disk.age < CACHE_TTL_MS) {
+    memoryCache.set(key, { expires: Date.now() + CACHE_TTL_MS, payload: disk.payload })
+    return disk.payload
+  }
+
+  if (disk && disk.age < DISK_STALE_MS) {
+    memoryCache.set(key, { expires: Date.now() + 60_000, payload: disk.payload })
+    void refreshCatalogue(kind, searchParams, apiKey, key)
+    return disk.payload
+  }
+
+  return refreshCatalogue(kind, searchParams, apiKey, key)
 }
 
 export function isCatalogueKind(kind) {
