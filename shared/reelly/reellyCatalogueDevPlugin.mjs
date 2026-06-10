@@ -23,7 +23,9 @@ export function reellyCatalogueDevPlugin({ envDir }) {
     enforce: 'pre',
     configureServer(server) {
       if (apiKey) {
-        void warmCatalogueCache(apiKey)
+        void warmCatalogueCache(apiKey).catch((err) => {
+          console.warn('[reelly] catalogue warm-up failed:', err?.message || err)
+        })
       }
 
       server.middlewares.use(async (req, res, next) => {

@@ -213,7 +213,9 @@ export async function warmCatalogueCache(apiKey, { attempts = 4 } = {}) {
       console.warn(`[reelly] catalogue warm-up attempt ${attempt + 1} failed, retry in ${waitMs}ms`)
       await sleep(waitMs)
     } else {
-      throw failed[0]?.reason || new Error('Catalogue warm-up failed')
+      console.warn(
+        `[reelly] catalogue warm-up incomplete after ${attempts} attempts (${failed.length} failed)`
+      )
     }
   }
 }
