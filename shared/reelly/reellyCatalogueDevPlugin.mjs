@@ -19,6 +19,7 @@ export function reellyCatalogueDevPlugin({ envDir }) {
 
   return {
     name: 'kardosh-reelly-catalogue-dev',
+    enforce: 'pre',
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url || '/', 'http://localhost')

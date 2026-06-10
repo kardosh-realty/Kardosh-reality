@@ -114,6 +114,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           timeout: 120_000,
           proxyTimeout: 120_000,
+          bypass(req) {
+            const path = req.url?.split('?')[0] || ''
+            if (path.startsWith('/api/reelly/catalogue/')) return null
+          },
           rewrite: (p) => p.replace(/^\/api\/reelly/, '/api/v2/clients'),
           configure: (proxy) => {
             proxy.on('proxyReq', (proxyReq) => {

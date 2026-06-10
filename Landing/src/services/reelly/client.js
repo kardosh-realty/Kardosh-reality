@@ -17,12 +17,12 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function reellyFetch(path, params = {}, { retries = 3 } = {}) {
+async function reellyFetch(path, params = {}, { retries = 3, timeoutMs } = {}) {
   const qs = buildQuery(params)
   const url = qs ? `${BASE}${path}?${qs}` : `${BASE}${path}`
   const controller = new AbortController()
-  const timeoutMs = 120_000
-  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  const waitMs = timeoutMs ?? (path.startsWith('/catalogue/') ? 180_000 : 120_000)
+  const timer = setTimeout(() => controller.abort(), waitMs)
 
   try {
     for (let attempt = 0; attempt < retries; attempt++) {
