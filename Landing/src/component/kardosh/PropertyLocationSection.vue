@@ -190,14 +190,14 @@ const showSection = computed(
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  background: #0a0a0a;
+  background: var(--color-primary, #1e3a5f);
   color: #fff;
   flex-shrink: 0;
 }
 
 .dark .property-location__icon {
-  background: #f8fafc;
-  color: #0a0a0a;
+  background: var(--color-primary, #7eb3e8);
+  color: #fff;
 }
 
 .property-location__title {
@@ -240,7 +240,7 @@ const showSection = computed(
 }
 
 .property-location__maps-link:hover {
-  border-color: #0a0a0a;
+  border-color: var(--color-primary, #1e3a5f);
   background: #f8fafc;
 }
 
@@ -251,7 +251,7 @@ const showSection = computed(
 }
 
 .dark .property-location__maps-link:hover {
-  border-color: #f8fafc;
+  border-color: var(--color-primary, #7eb3e8);
 }
 
 .property-location__grid {
@@ -430,19 +430,25 @@ const showSection = computed(
 }
 
 .property-location__btn--primary {
-  background: #0a0a0a;
+  background: var(--color-primary, #1e3a5f);
   color: #fff;
-  border: 1px solid #0a0a0a;
+  border: 1px solid var(--color-primary, #1e3a5f);
 }
 
 .property-location__btn--primary:hover {
-  background: #000;
+  background: var(--color-primary-dark, #152a45);
+  border-color: var(--color-primary-dark, #152a45);
 }
 
 .dark .property-location__btn--primary {
-  background: #f8fafc;
-  color: #0a0a0a;
-  border-color: #f8fafc;
+  background: var(--color-primary, #7eb3e8);
+  color: #fff;
+  border-color: var(--color-primary, #7eb3e8);
+}
+
+.dark .property-location__btn--primary:hover {
+  background: var(--color-primary-dark, #5b8ec4);
+  border-color: var(--color-primary-dark, #5b8ec4);
 }
 
 .property-location__btn--outline {
@@ -452,7 +458,8 @@ const showSection = computed(
 }
 
 .property-location__btn--outline:hover {
-  border-color: #0a0a0a;
+  border-color: var(--color-primary, #1e3a5f);
+  color: var(--color-primary-dark, #152a45);
 }
 
 .dark .property-location__btn--outline {
@@ -461,7 +468,8 @@ const showSection = computed(
 }
 
 .dark .property-location__btn--outline:hover {
-  border-color: #f8fafc;
+  border-color: var(--color-primary, #7eb3e8);
+  color: var(--color-primary, #7eb3e8);
 }
 
 .property-location__note {
