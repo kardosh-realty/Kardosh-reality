@@ -127,7 +127,10 @@
                   <p class="property-details-panel__sublead">
                     Downloadable floor plans and layout brochures for this project.
                   </p>
-                  <PropertyDocumentList :documents="property.floorPlanPdfs" />
+                  <PropertyDocumentList
+                    :documents="property.floorPlanPdfs"
+                    :allow-download="false"
+                  />
                 </div>
 
                 <p
@@ -145,6 +148,7 @@
                 <PropertyDocumentList
                   :documents="property.marketingBrochure ? [property.marketingBrochure] : []"
                   empty-text="No marketing brochure available for this project."
+                  :allow-download="false"
                 />
               </template>
 
@@ -162,6 +166,7 @@
                 <PropertyDocumentList
                   :documents="property.documents || []"
                   empty-text="No additional documents for this project."
+                  :allow-download="false"
                 />
               </template>
 

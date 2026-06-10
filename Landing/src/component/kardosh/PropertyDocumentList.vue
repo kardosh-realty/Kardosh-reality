@@ -19,10 +19,14 @@
         </p>
       </div>
       <DownloadButton
+        v-if="allowDownload"
         :url="doc.url"
         :filename="doc.name"
         class="shrink-0"
       />
+      <p v-else class="text-xs text-slate-400 shrink-0 text-right max-w-[9rem] leading-snug">
+        {{ lockedText }}
+      </p>
     </div>
     <p v-if="!documents?.length" class="text-slate-400 text-sm">{{ emptyText }}</p>
   </div>
@@ -35,5 +39,8 @@ import DownloadButton from '@/components/ui/DownloadButton.vue'
 defineProps({
   documents: { type: Array, default: () => [] },
   emptyText: { type: String, default: 'No documents available.' },
+  /** When false, PDFs are listed but not downloadable on the public site. */
+  allowDownload: { type: Boolean, default: false },
+  lockedText: { type: String, default: 'Available on request' },
 })
 </script>

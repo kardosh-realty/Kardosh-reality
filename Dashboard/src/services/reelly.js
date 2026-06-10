@@ -127,6 +127,8 @@ export function mapProjectDetail(project) {
   if (min && max && max !== min) priceRange = `${fmt(min)} – ${fmt(max)}`
   else if (min || max) priceRange = `From ${fmt(min || max)}`
 
+  const docs = collectProjectDocuments(project)
+
   return {
     ...base,
     images: collectImages(project),
@@ -141,7 +143,107 @@ export function mapProjectDetail(project) {
     completionDate: project.completion_date || project.planned_completion_date || base.completionDate,
     salesStatus: project.sale_status || base.status,
     constructionStatus: project.construction_status || '',
+    marketingBrochure: docs.marketingBrochure,
+    floorPlanPdfs: docs.floorPlanPdfs,
+    documents: docs.documents,
   }
+}
+
+function isPdfUrl(url) {
+  if (!url) return false
+  return /\.pdf(\?|$)/i.test(url) || url.toLowerCase().includes('.pdf')
+}
+
+function isImageUrl(url) {
+  if (!url) return false
+  return /\.(jpe?g|png|webp|gif)(\?|$)/i.test(url) || url.includes('image')
+}
+
+function cleanDocumentName(name, fallback = 'Document') {
+  if (!name) return fallback
+  const trimmed = name.split(' - /vault')[0].split('/vault')[0].trim()
+  if (!trimmed) return fallback
+  return trimmed.replace(/\.pdf$/i, '').trim() || fallback
+}
+
+function toDownloadDoc({ id, name, url, description, type }) {
+  return {
+    id,
+    name: cleanDocumentName(name, name),
+    url,
+    description: description || null,
+    type,
+  }
+}
+
+function mediaUrl(item) {
+  if (!item) return null
+  if (typeof item === 'string') return item
+  return item.url || null
+}
+
+/** PDFs and brochures available for admin download only. */
+export function collectProjectDocuments(project) {
+  if (!project) {
+    return { marketingBrochure: null, floorPlanPdfs: [], documents: [] }
+  }
+
+  const floorPlanPdfs = (project.floor_plans || [])
+    .map((fp) => ({
+      id: fp.id,
+      name: fp.name || 'Floor plan',
+      url: fp.file,
+      description: fp.description,
+      isImage: isImageUrl(fp.file),
+    }))
+    .filter((fp) => fp.url && !fp.isImage && (isPdfUrl(fp.url) || fp.url))
+    .map((fp) =>
+      toDownloadDoc({
+        id: fp.id,
+        name: fp.name || 'Floor plan PDF',
+        url: fp.url,
+        description: fp.description,
+        type: 'floor_plan',
+      })
+    )
+
+  const marketingBrochure = project.marketing_brochure
+    ? toDownloadDoc({
+        id: 'brochure',
+        name: 'Marketing brochure',
+        url: project.marketing_brochure,
+        type: 'brochure',
+      })
+    : null
+
+  const documents = []
+  ;(project.documents || []).forEach((doc, i) => {
+    const url = doc.url || doc.file
+    if (!url) return
+    documents.push(
+      toDownloadDoc({
+        id: doc.id || `doc-${i}`,
+        name: doc.name || doc.title || 'Document',
+        url,
+        description: doc.description,
+        type: doc.type || 'document',
+      })
+    )
+  })
+
+  const generalPlanUrl = mediaUrl(project.general_plan)
+  if (generalPlanUrl && !isImageUrl(generalPlanUrl) && isPdfUrl(generalPlanUrl)) {
+    documents.push(
+      toDownloadDoc({
+        id: 'general-plan',
+        name: 'Master plan',
+        url: generalPlanUrl,
+        type: 'masterplan',
+      })
+    )
+  }
+
+  return { marketingBrochure, floorPlanPdfs, documents }
 }
 
 export async function fetchProjectById(id, params = {}) {

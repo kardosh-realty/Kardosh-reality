@@ -45,6 +45,15 @@
         </div>
       </div>
 
+      <ProjectDocumentsSkeleton v-if="detailLoading" class="mt-6" />
+      <ProjectDocumentsPanel
+        v-else-if="projectDetail"
+        class="mt-6"
+        :marketing-brochure="projectDetail.marketingBrochure"
+        :floor-plan-pdfs="projectDetail.floorPlanPdfs"
+        :documents="projectDetail.documents"
+      />
+
       <!-- Embedded public project page -->
       <div class="mt-6 relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900">
         <div
@@ -74,12 +83,17 @@ import { useRoute } from 'vue-router'
 import { useOffPlan } from '@/composables/useOffPlan'
 import { useToast } from '@/composables/useToast'
 import { MAIN_SITE_URL } from '@/config/navigation'
+import { fetchProjectById } from '@/services/reelly'
+import ProjectDocumentsPanel from '@/components/ProjectDocumentsPanel.vue'
+import ProjectDocumentsSkeleton from '@/components/skeleton/ProjectDocumentsSkeleton.vue'
 
 const route = useRoute()
 const toast = useToast()
 const { projectRows, loadOffPlan, toggleProject } = useOffPlan()
 
 const iframeLoaded = ref(false)
+const detailLoading = ref(false)
+const projectDetail = ref(null)
 
 const row = computed(() =>
   projectRows.value.find((p) => String(p.id) === String(route.params.id)) || null
@@ -99,5 +113,19 @@ function onToggle() {
   toast.success(row.value.ownHidden ? 'Project hidden from website.' : 'Project is live on website.')
 }
 
-onMounted(loadOffPlan)
+async function loadProjectDetail() {
+  detailLoading.value = true
+  try {
+    projectDetail.value = await fetchProjectById(route.params.id)
+  } catch {
+    projectDetail.value = null
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  await loadOffPlan()
+  loadProjectDetail()
+})
 </script>
