@@ -15,12 +15,15 @@ import { properties as localProperties } from '@/component/data/data'
 import { formatArea } from '@/config/uae'
 import { buildDeveloperStats, enrichDeveloperLogo, mapDeveloper } from '@/utils/mapDeveloper'
 import { loadVisibility, isProjectHiddenCascade, slugify } from '@/services/visibility'
+import { loadProjectCuration } from '@/services/projectCuration'
+import { sortOffPlanProjects } from '@kardosh/shared/offPlan/projectMeta.js'
 import { normalizeRouteSlug, parseSlugParam, projectSlug } from '@/utils/seoRoutes'
 import { getLocaleId } from '@/composables/useLanguage'
 import {
   reellyLogosCacheKey,
-  reellyProjectDetailCacheKey,
   reellyProjectsCacheKey,
+  reellyMarkersCacheKey,
+  reellyProjectDetailCacheKey,
   reellyQueryParams,
 } from '@/services/reelly/locale'
 import { getMessages } from '@/locales'
@@ -68,6 +71,15 @@ function writeCache(key, data) {
 
 function applyVisibility(list) {
   return list.filter((p) => !isProjectHiddenCascade(p))
+}
+
+async function applyProjectPipeline(mapped) {
+  const featuredOrder = await loadProjectCuration()
+  const visible = applyVisibility(mapped)
+  return sortOffPlanProjects(visible, featuredOrder).map((p) => ({
+    ...p,
+    adminFeatured: featuredOrder.has(String(p.id)),
+  }))
 }
 
 function mapAndLocalizeProject(raw, options = {}) {
@@ -121,7 +133,7 @@ export async function loadProjects(force = false) {
   const cacheKey = reellyProjectsCacheKey(locale)
   const cached = !force ? readCache(cacheKey) : null
   if (cached?.length) {
-    projects.value = applyVisibility(cached)
+    projects.value = await applyProjectPipeline(cached)
     loadedLocale = locale
     return projects.value
   }
@@ -137,8 +149,9 @@ export async function loadProjects(force = false) {
   projectsPromise = fetchAllProjects(reellyQueryParams(locale))
     .then(async ({ results }) => {
       const mapped = results.map((p) => mapAndLocalizeProject(p))
-      if (mapped.length) writeCache(cacheKey, mapped)
-      projects.value = applyVisibility(mapped)
+      const sorted = await applyProjectPipeline(mapped)
+      if (sorted.length) writeCache(cacheKey, mapped)
+      projects.value = sorted
       loadedLocale = locale
       void enrichProjectsWithAmenities(projects.value, { locale })
       return projects.value
@@ -162,12 +175,25 @@ export async function loadMarkers(force = false) {
   if (markers.value.length && loadedLocale === locale && !force) return markers.value
   if (markersPromise && !force && loadedLocale === locale) return markersPromise
 
+  await loadVisibility()
+
+  const cacheKey = reellyMarkersCacheKey(locale)
+  const cached = !force ? readCache(cacheKey) : null
+  if (cached?.length) {
+    markers.value = applyVisibility(cached).filter((m) => m.latitude && m.longitude)
+    loadedLocale = locale
+    return markers.value
+  }
+
   markersLoading.value = true
   const query = reellyQueryParams(locale)
   markersPromise = fetchAllProjectMarkers(query)
     .then(({ results: markerRows }) => {
       const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
-      markers.value = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
+      const visible = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
+      if (visible.length) writeCache(cacheKey, visible)
+      markers.value = visible
+      loadedLocale = locale
       return markers.value
     })
     .catch(() => {

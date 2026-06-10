@@ -1,4 +1,6 @@
 /** Width tuned for property cards — capped for mobile PageSpeed. */
+import { isAllowedReellyImageHost } from '@kardosh/shared/reelly/imageHosts.js'
+
 export const LISTING_CARD_IMAGE_WIDTH = 560
 
 /** Default responsive breakpoints for srcset (mobile loads smallest first). */
@@ -20,16 +22,12 @@ export const LISTING_THUMB_IMAGE_WIDTH = 160
 /** Developer logo strip */
 export const DEVELOPER_LOGO_WIDTH = 200
 
-const ALLOWED_HOST_SUFFIXES = ['storage.googleapis.com', 'googleapis.com', 'reelly.io']
-
 export function isReellyCdnUrl(url) {
   if (!url || typeof url !== 'string') return false
   if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) return false
   try {
     const { hostname } = new URL(url)
-    return ALLOWED_HOST_SUFFIXES.some(
-      (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`)
-    )
+    return isAllowedReellyImageHost(hostname)
   } catch {
     return false
   }

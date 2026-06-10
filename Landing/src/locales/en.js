@@ -328,6 +328,18 @@ export default {
     noResults: 'No properties match your search. Try different filters.',
   },
 
+  listings: {
+    filters: {
+      label: 'Filter off-plan projects',
+      all: 'All projects',
+      featured: 'Featured',
+      new: 'New projects',
+      old: 'Established',
+      noAvailability: 'No availability',
+    },
+    paginationSummary: 'Showing {start}–{end} of {total} projects',
+  },
+
   cookie: {
     title: 'Cookies & privacy',
     body:
@@ -986,6 +998,7 @@ export default {
     defaultProject: 'Project',
     defaultLocation: 'UAE',
     planBadge: 'Plan {badge}',
+    loadMore: 'Load {count} more',
   },
 
   testimonials: {

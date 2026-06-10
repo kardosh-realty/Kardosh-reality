@@ -1,7 +1,9 @@
 /**
  * Shared Reelly image proxy — fetch upstream, resize to WebP, cache-friendly response.
  */
-const ALLOWED_HOST_SUFFIXES = ['storage.googleapis.com', 'googleapis.com', 'reelly.io']
+import { isAllowedReellyImageHost } from '../../shared/reelly/imageHosts.js'
+
+const UPSTREAM_TIMEOUT_MS = 20_000
 
 export const IMAGE_PROXY_CACHE_HEADER =
   'public, max-age=31536000, immutable, s-maxage=31536000, stale-while-revalidate=86400'
@@ -14,10 +16,7 @@ export function isAllowedImageUrl(value) {
     return false
   }
   if (parsed.protocol !== 'https:') return false
-  return ALLOWED_HOST_SUFFIXES.some(
-    (suffix) =>
-      parsed.hostname === suffix || parsed.hostname.endsWith(`.${suffix}`)
-  )
+  return isAllowedReellyImageHost(parsed.hostname)
 }
 
 /**
@@ -32,10 +31,21 @@ export async function processImageProxy({ url, width = 0, quality = 72, method =
   const maxWidth = Math.min(Math.max(Number(width) || 0, 0), 1920)
   const q = Math.min(Math.max(Number(quality) || 72, 40), 90)
 
-  const upstream = await fetch(String(url), {
-    method: method === 'HEAD' ? 'HEAD' : 'GET',
-    headers: { Accept: 'image/*,*/*;q=0.8' },
-  })
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS)
+
+  let upstream
+  try {
+    upstream = await fetch(String(url), {
+      method: method === 'HEAD' ? 'HEAD' : 'GET',
+      headers: { Accept: 'image/*,*/*;q=0.8' },
+      signal: controller.signal,
+    })
+  } catch {
+    return { status: 502, contentType: 'text/plain', body: Buffer.alloc(0), cacheControl: 'no-store' }
+  } finally {
+    clearTimeout(timer)
+  }
 
   if (!upstream.ok) {
     return { status: upstream.status, contentType: 'text/plain', body: Buffer.alloc(0), cacheControl: 'no-store' }

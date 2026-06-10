@@ -337,6 +337,18 @@ export default {
     },
   },
 
+  listings: {
+    filters: {
+      label: 'Filtrar projetos off-plan',
+      all: 'Todos os projetos',
+      featured: 'Em destaque',
+      new: 'Novos projetos',
+      old: 'Estabelecidos',
+      noAvailability: 'Sem disponibilidade',
+    },
+    paginationSummary: 'A mostrar {start}–{end} de {total} projetos',
+  },
+
   cookie: {
     title: 'Cookies e privacidade',
     body:
@@ -962,6 +974,7 @@ export default {
     defaultProject: 'Projeto',
     defaultLocation: 'UAE',
     planBadge: 'Plano {badge}',
+    loadMore: 'Carregar mais {count}',
   },
 
   testimonials: {

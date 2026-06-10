@@ -1,12 +1,21 @@
 import { ref, computed } from 'vue'
-import { fetchProjects } from '@/services/reelly'
+import { fetchAllProjects } from '@/services/reelly'
 import { fetchHidden, setHidden, entityKey, slugify } from '@/services/visibility'
+import {
+  fetchCuration,
+  setProjectFeatured,
+  moveFeaturedProject,
+} from '@/services/projectCuration'
 import { UAE_COMMUNITIES, projectCommunitySlugs, emirateLabel } from '@/config/communities'
+import { sortOffPlanProjects } from '@kardosh/shared/offPlan/projectMeta.js'
 
 const projects = ref([])
 const hidden = ref(new Set())
+const featuredOrder = ref(new Map())
 const source = ref('unconfigured')
+const curationSource = ref('unconfigured')
 const dbError = ref('')
+const curationError = ref('')
 const loading = ref(false)
 const projectsLoading = ref(false)
 const error = ref('')
@@ -25,13 +34,17 @@ export async function loadOffPlan(force = false) {
   if (loadPromise && !force) return loadPromise
 
   loadPromise = (async () => {
-    // 1) Visibility flags — fast and independent. Drives the banner regardless of Reelly.
     loading.value = true
     try {
       const vis = await fetchHidden()
       hidden.value = vis.hidden
       source.value = vis.source
       dbError.value = vis.error || ''
+
+      const cur = await fetchCuration()
+      featuredOrder.value = cur.order
+      curationSource.value = cur.source
+      curationError.value = cur.error || ''
     } catch (e) {
       source.value = 'error'
       dbError.value = e?.message || 'Could not read visibility settings.'
@@ -39,8 +52,6 @@ export async function loadOffPlan(force = false) {
       loading.value = false
     }
 
-    // 2) Reelly projects — for counts/lists. A slow or failed call must not block
-    //    the page or the visibility banner above.
     if (!projects.value.length || force) {
       projectsLoading.value = true
       error.value = ''
@@ -70,6 +81,13 @@ async function toggle(type, id, label) {
   hidden.value = updated
 
   source.value = await setHidden(type, id, next, label)
+}
+
+async function refreshCuration() {
+  const cur = await fetchCuration()
+  featuredOrder.value = cur.order
+  curationSource.value = cur.source
+  curationError.value = cur.error || ''
 }
 
 export function useOffPlan() {
@@ -106,33 +124,47 @@ export function useOffPlan() {
       .sort((a, b) => b.projectCount - a.projectCount)
   })
 
-  const projectRows = computed(() =>
-    projects.value
-      .map((p) => {
-        const ownHidden = isKeyHidden('project', p.id)
-        const devHidden = isKeyHidden('developer', developerId(p.developer))
-        const communityHidden = projectCommunitySlugs(p).some((slug) =>
-          isKeyHidden('community', slug)
-        )
-        const cascadedBy = devHidden ? 'developer' : communityHidden ? 'community' : null
-        return {
-          ...p,
-          ownHidden,
-          cascadedBy,
-          effectiveHidden: ownHidden || devHidden || communityHidden,
-        }
-      })
-      .sort((a, b) => a.title.localeCompare(b.title))
-  )
+  const projectRows = computed(() => {
+    const rows = projects.value.map((p) => {
+      const ownHidden = isKeyHidden('project', p.id)
+      const devHidden = isKeyHidden('developer', developerId(p.developer))
+      const communityHidden = projectCommunitySlugs(p).some((slug) =>
+        isKeyHidden('community', slug)
+      )
+      const cascadedBy = devHidden ? 'developer' : communityHidden ? 'community' : null
+      const id = String(p.id)
+      return {
+        ...p,
+        ownHidden,
+        cascadedBy,
+        effectiveHidden: ownHidden || devHidden || communityHidden,
+        adminFeatured: featuredOrder.value.has(id),
+        featuredSort: featuredOrder.value.get(id) ?? null,
+      }
+    })
+    return sortOffPlanProjects(rows, featuredOrder.value)
+  })
 
   const stats = computed(() => ({
     projects: projects.value.length,
     visibleProjects: projectRows.value.filter((p) => !p.effectiveHidden).length,
+    featuredProjects: projectRows.value.filter((p) => p.adminFeatured).length,
     communities: communities.value.length,
     developers: developers.value.length,
   }))
 
   const listLoading = computed(() => loading.value || projectsLoading.value)
+
+  async function toggleFeatured(p) {
+    const next = !p.adminFeatured
+    await setProjectFeatured(p.id, next, p.title)
+    await refreshCuration()
+  }
+
+  async function moveFeatured(p, direction) {
+    await moveFeaturedProject(p.id, direction)
+    await refreshCuration()
+  }
 
   return {
     loading,
@@ -140,7 +172,9 @@ export function useOffPlan() {
     listLoading,
     error,
     source,
+    curationSource,
     dbError,
+    curationError,
     communities,
     developers,
     projectRows,
@@ -149,5 +183,7 @@ export function useOffPlan() {
     toggleCommunity: (c) => toggle('community', c.id, c.name),
     toggleDeveloper: (d) => toggle('developer', d.id, d.name),
     toggleProject: (p) => toggle('project', p.id, p.title),
+    toggleFeatured,
+    moveFeatured,
   }
 }

@@ -94,8 +94,11 @@ export function mapProject(project) {
     area: areaName(project.location),
     locationLabel: locationLabel(project.location),
     status: project.sale_status || project.construction_status || project.status || '—',
+    saleStatus: project.sale_status,
+    modifiedAt: project.modified || project.updated || project.created_at || null,
     completionDate: project.completion_date || null,
     priceLabel: price ? `From AED ${price.toLocaleString('en-AE')}` : 'Price on request',
+    _raw: project,
   }
 }
 

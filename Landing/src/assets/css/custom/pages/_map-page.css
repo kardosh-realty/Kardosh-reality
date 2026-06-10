@@ -249,6 +249,30 @@
     color: #e2e8f0;
 }
 
+.map-page__load-more {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--kardosh-border, #e2e8f0);
+    background: #fff;
+    color: #475569;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.map-page__load-more:hover {
+    border-color: var(--color-primary, #0a0a0a);
+    color: var(--color-primary, #0a0a0a);
+}
+
+.dark .map-page__load-more {
+    background: rgb(15 23 42);
+    border-color: rgb(51 65 85);
+    color: rgb(203 213 225);
+}
+
 .map-page__map {
     position: relative;
     min-height: 0;

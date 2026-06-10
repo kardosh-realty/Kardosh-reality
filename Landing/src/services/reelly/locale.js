@@ -15,11 +15,15 @@ export function reellyQueryParams(locale = getLocaleId()) {
 }
 
 export function reellyProjectsCacheKey(locale = getLocaleId()) {
-  return `kardosh-reelly-projects-v3-${locale}`
+  return `kardosh-reelly-projects-v4-${locale}`
 }
 
 export function reellyLogosCacheKey(locale = getLocaleId()) {
   return `kardosh-reelly-logos-v3-${locale}`
+}
+
+export function reellyMarkersCacheKey(locale = getLocaleId()) {
+  return `kardosh-reelly-markers-v1-${locale}`
 }
 
 export function reellyProjectDetailCacheKey(id, locale = getLocaleId()) {

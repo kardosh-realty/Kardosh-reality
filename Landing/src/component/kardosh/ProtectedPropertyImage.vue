@@ -14,7 +14,7 @@
         :sizes="sizes"
       />
       <img
-        :src="resolvedSrc"
+        :src="displaySrc"
         :srcset="desktopSrcSet"
         :sizes="sizes"
         :alt="alt"
@@ -24,14 +24,15 @@
         :loading="loading"
         :fetchpriority="fetchpriority"
         draggable="false"
+        @error="onError"
         @dragstart.prevent
       />
     </picture>
     <img
       v-else
-      :src="resolvedSrc"
-      :srcset="resolvedSrcSet || undefined"
-      :sizes="sizes"
+      :src="displaySrc"
+      :srcset="simple ? undefined : resolvedSrcSet || undefined"
+      :sizes="simple ? undefined : sizes"
       :alt="alt"
       :class="imgClass"
       :width="width"
@@ -39,6 +40,7 @@
       :loading="loading"
       :fetchpriority="fetchpriority"
       draggable="false"
+      @error="onError"
       @dragstart.prevent
     />
     <PropertyImageWatermark :size="watermarkSize" />
@@ -46,8 +48,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import PropertyImageWatermark from '@/component/kardosh/PropertyImageWatermark.vue'
+import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
 import {
   LISTING_CARD_IMAGE_WIDTH,
   LISTING_CARD_SRCSET_WIDTHS,
@@ -68,22 +71,28 @@ const props = defineProps({
   width: { type: [Number, String], default: 560 },
   height: { type: [Number, String], default: 338 },
   sizes: { type: String, default: '(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 400px' },
-  /** JPEG/WebP quality passed to the image proxy (lower = smaller files). */
   quality: { type: Number, default: 72 },
-  /** When false, only the primary `src` is used (e.g. tiny thumbs). */
   responsive: { type: Boolean, default: true },
+  /** Single proxy URL only — avoids heavy srcset (map list, thumbs). */
+  simple: { type: Boolean, default: false },
   watermarkSize: { type: String, default: 'md' },
-  /** Image fills the wrapper (absolute inset-0 cover) */
   fill: { type: Boolean, default: false },
 })
+
+const failed = ref(false)
+
+watch(
+  () => props.src,
+  () => {
+    failed.value = false
+  }
+)
 
 const displayWidth = computed(() => Number(props.width) || LISTING_CARD_IMAGE_WIDTH)
 
 const isGallerySize = computed(
-  () => props.responsive && displayWidth.value >= LISTING_GALLERY_IMAGE_WIDTH
+  () => !props.simple && props.responsive && displayWidth.value >= LISTING_GALLERY_IMAGE_WIDTH
 )
-
-const useGalleryPicture = computed(() => isGallerySize.value && Boolean(mobileSrcSet.value))
 
 const resolvedSrc = computed(() =>
   proxyReellyImageUrl(props.src, {
@@ -91,6 +100,16 @@ const resolvedSrc = computed(() =>
     quality: props.quality,
   })
 )
+
+const displaySrc = computed(() =>
+  failed.value ? DUBAI_PROPERTY_FALLBACK : resolvedSrc.value || DUBAI_PROPERTY_FALLBACK
+)
+
+function onError() {
+  if (!failed.value) failed.value = true
+}
+
+const useGalleryPicture = computed(() => isGallerySize.value && Boolean(mobileSrcSet.value))
 
 const mobileSrcSet = computed(() => {
   if (!isGallerySize.value) return ''
@@ -101,7 +120,7 @@ const mobileSrcSet = computed(() => {
 })
 
 const desktopSrcSet = computed(() => {
-  if (!props.responsive) return ''
+  if (!props.responsive || props.simple) return ''
   if (isGallerySize.value) {
     return proxyReellyImageSrcSet(props.src, {
       widths: LISTING_GALLERY_DESKTOP_WIDTHS,

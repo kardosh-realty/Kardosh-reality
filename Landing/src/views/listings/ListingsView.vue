@@ -13,6 +13,8 @@
         <PropertySearchBar variant="listing" :show-tabs="false" :initial-mode="mode" />
       </div>
 
+      <ListingFilterBar v-if="mode === 'off-plan'" :mode="mode" />
+
       <p v-if="error" class="text-center text-red-600 dark:text-red-400 py-4 text-sm">
         {{ error }}
       </p>
@@ -31,6 +33,7 @@
         :items-per-page="12"
         :items="filtered"
         :card-variant="mode === 'off-plan' ? 'luxury' : 'default'"
+        :summary-template="t('listings.paginationSummary')"
         grid-class="listings-property-grid grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 lg:gap-7"
       />
     </div>
@@ -48,6 +51,7 @@ import Footer from '@/component/footer.vue'
 import Switcher from '@/component/switcher.vue'
 import PageHero from '@/component/kardosh/PageHero.vue'
 import PropertySearchBar from '@/component/kardosh/PropertySearchBar.vue'
+import ListingFilterBar from '@/component/kardosh/ListingFilterBar.vue'
 import Pagination from '@/component/pagination.vue'
 import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleton.vue'
 import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
@@ -55,6 +59,8 @@ import { useReelly } from '@/composables/useReelly'
 import { usePageHero } from '@/composables/usePageHero'
 import { useT } from '@/composables/useT'
 import { projectMatchesBedroomFilter } from '@/services/reelly/mapProject'
+import { filterOffPlanByStatus } from '@kardosh/shared/offPlan/projectMeta.js'
+import { getFeaturedOrder } from '@/services/projectCuration'
 
 const props = defineProps({
   mode: { type: String, required: true }, // off-plan | rent
@@ -117,6 +123,11 @@ const filtered = computed(() => {
   }
   if (type) {
     list = list.filter((p) => matchesPropertyType(p, type))
+  }
+
+  if (props.mode === 'off-plan') {
+    const status = (route.query.status || '').toString()
+    list = filterOffPlanByStatus(list, status, getFeaturedOrder())
   }
 
   return list

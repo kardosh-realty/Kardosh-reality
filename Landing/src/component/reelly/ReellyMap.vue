@@ -223,24 +223,37 @@ function renderMarkers() {
   layerGroup.clearLayers()
   markerById = new Map()
 
+  const valid = props.markers.filter((m) => m.latitude && m.longitude)
   const bounds = []
-  props.markers.forEach((m) => {
-    if (!m.latitude || !m.longitude) return
-    const marker = L.marker([m.latitude, m.longitude], { icon: defaultIcon })
-    marker.on('click', () => emit('select', m.id))
-    layerGroup.addLayer(marker)
-    markerById.set(m.id, marker)
-    bounds.push([m.latitude, m.longitude])
-  })
+  let index = 0
+  const batchSize = 150
 
-  if (bounds.length && props.selectedId == null) {
-    map.fitBounds(bounds, { padding: [48, 48], maxZoom: 12 })
-    map.once('moveend', updateAnchor)
-  } else if (!bounds.length) {
-    map.setView([25.2048, 55.2708], 10)
+  function addBatch() {
+    const end = Math.min(index + batchSize, valid.length)
+    for (; index < end; index++) {
+      const m = valid[index]
+      const marker = L.marker([m.latitude, m.longitude], { icon: defaultIcon })
+      marker.on('click', () => emit('select', m.id))
+      layerGroup.addLayer(marker)
+      markerById.set(m.id, marker)
+      bounds.push([m.latitude, m.longitude])
+    }
+
+    if (index < valid.length) {
+      requestAnimationFrame(addBatch)
+      return
+    }
+
+    if (bounds.length && props.selectedId == null) {
+      map.fitBounds(bounds, { padding: [48, 48], maxZoom: 12 })
+      map.once('moveend', updateAnchor)
+    } else if (!bounds.length) {
+      map.setView([25.2048, 55.2708], 10)
+    }
+    updateAnchor()
   }
 
-  updateAnchor()
+  addBatch()
 }
 
 onMounted(() => {

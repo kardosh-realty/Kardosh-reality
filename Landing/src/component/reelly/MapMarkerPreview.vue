@@ -14,6 +14,7 @@
           :alt="displayMarker.title"
           class="map-marker-preview__img"
           loading="lazy"
+          @error="imageFailed = true"
         />
       </RouterLink>
       <div class="map-marker-preview__shade" aria-hidden="true" />
@@ -114,6 +115,8 @@ import { ArrowRight, MapPin, X } from 'lucide-vue-next'
 import { fetchFullProject } from '@/composables/useReelly'
 import { enrichMapMarker } from '@/services/reelly/mapMarker'
 import { projectDetailPath } from '@/utils/seoRoutes'
+import { DUBAI_PROPERTY_FALLBACK } from '@/config/dubai-images'
+import { MAP_MARKER_IMAGE_WIDTH, proxyReellyImageUrl } from '@/services/reelly/imageProxy'
 
 const props = defineProps({
   marker: { type: Object, default: null },
@@ -134,14 +137,24 @@ defineEmits(['close'])
 
 const imageIndex = ref(0)
 const detailMarker = ref(null)
+const imageFailed = ref(false)
+
+watch(
+  () => [props.marker?.id, imageIndex.value],
+  () => {
+    imageFailed.value = false
+  }
+)
 
 const displayMarker = computed(() => detailMarker.value || props.marker)
 
 const imageCount = computed(() => displayMarker.value?.images?.length || 0)
 
-const activeImage = computed(
-  () => displayMarker.value?.images?.[imageIndex.value] || displayMarker.value?.image
-)
+const activeImage = computed(() => {
+  if (imageFailed.value) return DUBAI_PROPERTY_FALLBACK
+  const raw = displayMarker.value?.images?.[imageIndex.value] || displayMarker.value?.image
+  return proxyReellyImageUrl(raw, { width: MAP_MARKER_IMAGE_WIDTH }) || DUBAI_PROPERTY_FALLBACK
+})
 
 const detailTo = computed(() =>
   displayMarker.value ? projectDetailPath(displayMarker.value) : '/off-plan'

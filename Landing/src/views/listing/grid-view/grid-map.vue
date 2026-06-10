@@ -51,7 +51,7 @@
             <template v-else>
               <component
                 :is="isMobile ? 'button' : RouterLink"
-                v-for="m in filteredMarkers"
+                v-for="m in sidebarMarkers"
                 :key="m.id"
                 :ref="(el) => setCardRef(m.id, el)"
                 :to="isMobile ? undefined : projectDetailPath(m)"
@@ -70,6 +70,10 @@
                   wrapper-class="map-page__card-img"
                   img-class="map-page__card-img-el"
                   watermark-size="xs"
+                  simple
+                  loading="lazy"
+                  :width="120"
+                  :height="90"
                 />
                 <div v-else class="map-page__card-img map-page__card-img--empty" aria-hidden="true" />
                 <div class="map-page__card-body">
@@ -80,6 +84,14 @@
                   <p v-if="markerPrice(m)" class="map-page__card-price">{{ markerPrice(m) }}</p>
                 </div>
               </component>
+              <button
+                v-if="sidebarHasMore"
+                type="button"
+                class="map-page__load-more"
+                @click="sidebarLimit += SIDEBAR_BATCH"
+              >
+                {{ t('map.loadMore', { count: sidebarRemaining }) }}
+              </button>
             </template>
           </div>
         </aside>
@@ -108,6 +120,10 @@
             wrapper-class="map-page__dock-img"
             img-class="map-page__dock-img-el"
             watermark-size="xs"
+            simple
+            loading="lazy"
+            :width="160"
+            :height="120"
           />
           <div
             v-else
@@ -168,6 +184,9 @@ const selectedId = ref(null)
 const searchQuery = ref('')
 const cardRefs = ref({})
 
+const SIDEBAR_BATCH = 48
+const sidebarLimit = ref(SIDEBAR_BATCH)
+
 const filteredMarkers = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
   if (!q) return markers.value
@@ -184,6 +203,29 @@ const filteredMarkers = computed(() => {
       .toLowerCase()
     return hay.includes(q)
   })
+})
+
+const sidebarMarkers = computed(() => {
+  const list = filteredMarkers.value
+  const limit = searchQuery.value.trim() ? list.length : sidebarLimit.value
+  let slice = list.slice(0, limit)
+  if (selectedId.value != null && !slice.some((m) => m.id === selectedId.value)) {
+    const selected = list.find((m) => m.id === selectedId.value)
+    if (selected) slice = [selected, ...slice.slice(0, Math.max(0, limit - 1))]
+  }
+  return slice
+})
+
+const sidebarHasMore = computed(
+  () => !searchQuery.value.trim() && filteredMarkers.value.length > sidebarLimit.value
+)
+
+const sidebarRemaining = computed(() =>
+  Math.min(SIDEBAR_BATCH, filteredMarkers.value.length - sidebarLimit.value)
+)
+
+watch(searchQuery, () => {
+  sidebarLimit.value = SIDEBAR_BATCH
 })
 
 const mapCountLabel = computed(() => {

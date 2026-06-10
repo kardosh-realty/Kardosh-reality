@@ -2,13 +2,26 @@
   <div class="container-fluid relative px-3 dash-page">
     <div class="layout-specing">
       <div class="md:flex justify-between items-center">
-        <PageHeader title="Projects" crumb="All off-plan projects from the website — hide individual projects from the public site" />
+        <PageHeader
+          title="Projects"
+          crumb="Pin featured projects to the top of the public off-plan page — new launches also rise automatically"
+        />
         <span class="text-slate-400 text-sm mt-2 md:mt-0">
-          {{ stats.visibleProjects }} shown · {{ stats.projects - stats.visibleProjects }} hidden
+          {{ stats.visibleProjects }} shown · {{ stats.featuredProjects }} featured ·
+          {{ stats.projects - stats.visibleProjects }} hidden
         </span>
       </div>
 
       <OffPlanNotice :error="error" :source="source" :db-error="dbError" />
+
+      <div
+        v-if="curationSource === 'error'"
+        class="mt-4 rounded-md border border-amber-300 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/40 p-4 text-sm text-amber-900 dark:text-amber-100"
+      >
+        <p class="font-medium">Could not read <code>project_curation</code> table.</p>
+        <p v-if="curationError" class="text-xs mt-1 opacity-80">{{ curationError }}</p>
+        <p class="mt-2 text-xs">Run <code>supabase/migrations/008_project_curation.sql</code> in Supabase, then refresh.</p>
+      </div>
 
       <div class="mt-6 flex flex-wrap items-center gap-3">
         <div class="form-icon relative">
@@ -21,8 +34,12 @@
           />
         </div>
         <label class="inline-flex items-center gap-2 text-sm text-slate-500">
-          <input type="checkbox" v-model="hiddenOnly" class="form-checkbox accent-primary rounded-sm" />
+          <input v-model="hiddenOnly" type="checkbox" class="form-checkbox accent-primary rounded-sm" />
           Hidden only
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-slate-500">
+          <input v-model="featuredOnly" type="checkbox" class="form-checkbox accent-primary rounded-sm" />
+          Featured only
         </label>
       </div>
 
@@ -53,7 +70,13 @@
               Off-Plan
             </span>
             <span
-              v-if="p.effectiveHidden"
+              v-if="p.adminFeatured"
+              class="absolute top-3 end-3 bg-amber-500 text-white text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded"
+            >
+              Featured
+            </span>
+            <span
+              v-else-if="p.effectiveHidden"
               class="absolute top-3 end-3 bg-slate-900/85 text-white text-[11px] font-medium px-2 py-1 rounded"
             >
               {{ p.cascadedBy ? `Hidden via ${p.cascadedBy}` : 'Hidden' }}
@@ -84,12 +107,41 @@
               </RouterLink>
             </div>
 
+            <div v-if="p.adminFeatured" class="mt-3 flex gap-2">
+              <button
+                type="button"
+                class="flex-1 inline-flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-gray-700 py-1.5 text-xs font-medium"
+                @click="moveFeatured(p, 'up')"
+              >
+                <i class="ri-arrow-up-line" /> Up
+              </button>
+              <button
+                type="button"
+                class="flex-1 inline-flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-gray-700 py-1.5 text-xs font-medium"
+                @click="moveFeatured(p, 'down')"
+              >
+                <i class="ri-arrow-down-line" /> Down
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md border py-2 text-sm font-medium transition"
+              :class="p.adminFeatured
+                ? 'border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10'
+                : 'border-gray-200 dark:border-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'"
+              @click="toggleFeatured(p)"
+            >
+              <i :class="p.adminFeatured ? 'ri-star-fill' : 'ri-star-line'" />
+              {{ p.adminFeatured ? 'Remove from featured' : 'Feature on top' }}
+            </button>
+
             <button
               type="button"
               @click="toggleProject(p)"
               :disabled="!!p.cascadedBy"
               :title="p.cascadedBy ? `Unhide the ${p.cascadedBy} to control this project` : ''"
-              class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-md border py-2 text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
+              class="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-md border py-2 text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
               :class="p.ownHidden
                 ? 'border-emerald-600/30 text-emerald-600 hover:bg-emerald-600/10'
                 : 'border-gray-200 dark:border-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'"
@@ -111,15 +163,30 @@ import OffPlanNotice from '@/components/OffPlanNotice.vue'
 import CardGridSkeleton from '@/components/skeleton/CardGridSkeleton.vue'
 import { useOffPlan } from '@/composables/useOffPlan'
 
-const { projectRows, stats, listLoading: loading, error, source, dbError, loadOffPlan, toggleProject } = useOffPlan()
+const {
+  projectRows,
+  stats,
+  listLoading: loading,
+  error,
+  source,
+  dbError,
+  curationSource,
+  curationError,
+  loadOffPlan,
+  toggleProject,
+  toggleFeatured,
+  moveFeatured,
+} = useOffPlan()
 
 const query = ref('')
 const hiddenOnly = ref(false)
+const featuredOnly = ref(false)
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
   return projectRows.value.filter((p) => {
     if (hiddenOnly.value && !p.effectiveHidden) return false
+    if (featuredOnly.value && !p.adminFeatured) return false
     if (!q) return true
     return (
       p.title.toLowerCase().includes(q) ||

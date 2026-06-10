@@ -128,6 +128,7 @@ export function mapReellyProject(project, { full = false } = {}) {
     saleStatus: project.sale_status,
     constructionStatus: project.construction_status || project.status,
     completionDate: project.completion_date,
+    modifiedAt: project.modified || project.updated || project.created_at || project.created || null,
     overview: project.overview || project.short_description || '',
     bedrooms: extractProjectBedrooms(project),
     amenities,
