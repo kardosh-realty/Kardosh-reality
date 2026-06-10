@@ -103,14 +103,25 @@ function installLocaleWatcher() {
 }
 
 async function fetchProjectsFromNetwork(locale, cacheKey) {
-  const { results } = await fetchAllProjects(reellyQueryParams(locale))
-  const mapped = results.map((p) => mapAndLocalizeProject(p))
-  const sorted = await applyProjectPipeline(mapped)
-  if (mapped.length) writeBrowserCatalogueCache(cacheKey, mapped)
-  projects.value = sorted
-  loadedLocale = locale
-  void enrichProjectsWithAmenities(projects.value, { locale })
-  return projects.value
+  try {
+    const { results } = await fetchAllProjects(reellyQueryParams(locale))
+    const mapped = results.map((p) => mapAndLocalizeProject(p))
+    const sorted = await applyProjectPipeline(mapped)
+    if (mapped.length) writeBrowserCatalogueCache(cacheKey, mapped)
+    projects.value = sorted
+    loadedLocale = locale
+    void enrichProjectsWithAmenities(projects.value, { locale })
+    return projects.value
+  } catch (e) {
+    const stale = readBrowserCatalogueCache(cacheKey, { arrayOnly: true, allowStale: true })
+    if (stale?.data?.length) {
+      projects.value = await applyProjectPipeline(stale.data)
+      loadedLocale = locale
+      void enrichProjectsWithAmenities(projects.value, { locale })
+      return projects.value
+    }
+    throw e
+  }
 }
 
 async function fetchMarkersFromNetwork(locale, cacheKey) {
@@ -125,55 +136,61 @@ async function fetchMarkersFromNetwork(locale, cacheKey) {
 }
 
 export async function loadProjects(force = false) {
-  installLocaleWatcher()
-  const locale = getLocaleId()
+  try {
+    installLocaleWatcher()
+    const locale = getLocaleId()
 
-  if (projects.value.length && loadedLocale === locale && !force) return projects.value
-  if (projectsPromise && !force && loadedLocale === locale) return projectsPromise
+    if (projects.value.length && loadedLocale === locale && !force) return projects.value
+    if (projectsPromise && !force && loadedLocale === locale) return projectsPromise
 
-  await loadVisibility()
+    await loadVisibility()
 
-  const cacheKey = reellyProjectsCacheKey(locale)
-  const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
-  if (hit?.data?.length) {
-    projects.value = await applyProjectPipeline(hit.data)
-    loadedLocale = locale
-    void enrichProjectsWithAmenities(projects.value, { locale })
-    if (hit.fresh) return projects.value
-    if (!projectsPromise) {
-      projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
-        .catch((e) => {
-          error.value = e.message
-          return projects.value
-        })
-        .finally(() => {
-          projectsPromise = null
-          loading.value = false
-        })
+    const cacheKey = reellyProjectsCacheKey(locale)
+    const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
+    if (hit?.data?.length) {
+      projects.value = await applyProjectPipeline(hit.data)
+      loadedLocale = locale
+      void enrichProjectsWithAmenities(projects.value, { locale })
+      if (hit.fresh) return projects.value
+      if (!projectsPromise) {
+        projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
+          .catch((e) => {
+            error.value = e.message
+            return projects.value
+          })
+          .finally(() => {
+            projectsPromise = null
+            loading.value = false
+          })
+      }
+      return projects.value
     }
+
+    if (force || loadedLocale !== locale) {
+      resetReellyPromises()
+      projects.value = []
+    }
+
+    loading.value = true
+    error.value = null
+
+    projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
+      .catch((e) => {
+        error.value = e.message
+        return projects.value
+      })
+      .finally(() => {
+        loading.value = false
+        projectsPromise = null
+      })
+
+    return projectsPromise
+  } catch (e) {
+    loading.value = false
+    projectsPromise = null
+    error.value = e?.message || 'Could not load projects'
     return projects.value
   }
-
-  if (force || loadedLocale !== locale) {
-    resetReellyPromises()
-    projects.value = []
-  }
-
-  loading.value = true
-  error.value = null
-
-  projectsPromise = fetchProjectsFromNetwork(locale, cacheKey)
-    .catch((e) => {
-      error.value = e.message
-      projects.value = []
-      return []
-    })
-    .finally(() => {
-      loading.value = false
-      projectsPromise = null
-    })
-
-  return projectsPromise
 }
 
 export async function loadMarkers(force = false) {
@@ -327,7 +344,11 @@ export async function resolveDeveloperIdBySlug(param) {
     if (mSlug === want || (wantLegacy && mSlug === wantLegacy)) return m.developerId
   }
 
-  await loadProjects()
+  try {
+    await loadProjects()
+  } catch {
+    /* catalogue optional for slug resolution */
+  }
   const projectHit = projects.value.find(
     (p) =>
       slugify(p.developer) === want ||

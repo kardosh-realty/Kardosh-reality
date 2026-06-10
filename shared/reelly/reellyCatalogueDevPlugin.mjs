@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache } from './catalogueHandler.mjs'
+import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache, catalogueCacheKey } from './catalogueHandler.mjs'
+import { readDiskCatalogue } from './catalogueDiskCache.mjs'
 
 function loadApiKey(envDir) {
   try {
@@ -52,6 +53,16 @@ export function reellyCatalogueDevPlugin({ envDir }) {
           res.setHeader('Cache-Control', 'public, max-age=3600')
           res.end(JSON.stringify(payload))
         } catch (err) {
+          const staleKey = catalogueCacheKey(kind, url.searchParams)
+          const disk = readDiskCatalogue(staleKey)
+          if (disk?.payload) {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json; charset=utf-8')
+            res.setHeader('Cache-Control', 'public, max-age=300')
+            res.setHeader('X-Catalogue-Cache', 'stale')
+            res.end(JSON.stringify(disk.payload))
+            return
+          }
           res.statusCode = err?.status || 502
           res.setHeader('Content-Type', 'application/json; charset=utf-8')
           res.end(

@@ -157,6 +157,12 @@
 
           <ListingGridSkeleton v-if="!displayProjects.length && projectsLoading" :count="4" />
           <p
+            v-else-if="projectsError && !displayProjects.length"
+            class="text-amber-700 dark:text-amber-300 rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/30 p-6 text-center text-sm"
+          >
+            Project list is temporarily unavailable. The developer profile above is still valid — try again shortly.
+          </p>
+          <p
             v-else-if="!displayProjects.length"
             class="text-slate-500 dark:text-slate-400 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center"
           >
@@ -214,6 +220,7 @@ const route = useRoute()
 const developer = ref(null)
 const loading = ref(true)
 const projectsLoading = ref(false)
+const projectsError = ref(null)
 const error = ref(null)
 const descriptionExpanded = ref(false)
 
@@ -301,16 +308,23 @@ async function loadPage() {
 
   loading.value = true
   error.value = null
+  projectsError.value = null
 
   try {
-    projectsLoading.value = true
-    await loadProjects()
     developer.value = await fetchDeveloperDetail(param)
   } catch (e) {
     error.value = e?.message || 'Developer not found'
     developer.value = null
   } finally {
     loading.value = false
+  }
+
+  projectsLoading.value = true
+  try {
+    await loadProjects()
+  } catch (e) {
+    projectsError.value = e?.message || 'Could not load projects'
+  } finally {
     projectsLoading.value = false
   }
 }

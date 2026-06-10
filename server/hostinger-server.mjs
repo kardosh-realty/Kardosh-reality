@@ -4,7 +4,8 @@ import path from 'node:path'
 import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { processImageProxy } from '../Landing/lib/imageProxyCore.mjs'
-import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache } from '../shared/reelly/catalogueHandler.mjs'
+import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache, catalogueCacheKey } from '../shared/reelly/catalogueHandler.mjs'
+import { readDiskCatalogue } from '../shared/reelly/catalogueDiskCache.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
@@ -67,6 +68,17 @@ async function proxyReelly(req, res, requestUrl) {
       })
       res.end(JSON.stringify(payload))
     } catch (err) {
+      const staleKey = catalogueCacheKey(kind, requestUrl.searchParams)
+      const disk = readDiskCatalogue(staleKey)
+      if (disk?.payload) {
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=300',
+          'X-Catalogue-Cache': 'stale',
+        })
+        res.end(JSON.stringify(disk.payload))
+        return
+      }
       sendJson(res, err?.status || 502, {
         error: 'Catalogue fetch failed',
         message: err?.message || 'Unknown error',

@@ -41,6 +41,17 @@ function cacheKey(kind, searchParams) {
   return `${kind}?${entries.map(([k, v]) => `${k}=${v}`).join('&')}`
 }
 
+export function catalogueCacheKey(kind, searchParams) {
+  return cacheKey(kind, searchParams)
+}
+
+function staleDiskPayload(key) {
+  const disk = readDiskCatalogue(key)
+  if (!disk?.payload) return null
+  memoryCache.set(key, { expires: Date.now() + 60_000, payload: disk.payload })
+  return disk.payload
+}
+
 async function acquireUpstreamSlot() {
   if (upstreamActive < MAX_UPSTREAM_CONCURRENCY) {
     upstreamActive++
@@ -124,6 +135,11 @@ function refreshCatalogue(kind, searchParams, apiKey, key) {
 
   const promise = fetchCataloguePayload(kind, searchParams, apiKey)
     .then((payload) => storeCatalogue(key, payload))
+    .catch((err) => {
+      const stale = staleDiskPayload(key)
+      if (stale) return stale
+      throw err
+    })
     .finally(() => {
       inflight.delete(key)
     })
@@ -166,8 +182,8 @@ export function isCatalogueKind(kind) {
 }
 
 /** Pre-fetch catalogues after deploy/restart so the first visitor does not wait. */
-export function warmCatalogueCache(apiKey) {
-  if (!apiKey) return Promise.resolve()
+export async function warmCatalogueCache(apiKey, { attempts = 4 } = {}) {
+  if (!apiKey) return
 
   const baseParams = new URLSearchParams({
     language: 'en-us',
@@ -183,10 +199,21 @@ export function warmCatalogueCache(apiKey) {
     ['projects', uaeParams],
   ]
 
-  return Promise.allSettled(
-    jobs.map(async ([kind, params]) => {
-      await handleCatalogueRequest(kind, params, apiKey)
-      console.log(`[reelly] catalogue warmed: ${kind}`)
-    })
-  )
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const results = await Promise.allSettled(
+      jobs.map(async ([kind, params]) => {
+        await handleCatalogueRequest(kind, params, apiKey)
+        console.log(`[reelly] catalogue warmed: ${kind}`)
+      })
+    )
+    const failed = results.filter((r) => r.status === 'rejected')
+    if (!failed.length) return
+    if (attempt < attempts - 1) {
+      const waitMs = 5000 * (attempt + 1)
+      console.warn(`[reelly] catalogue warm-up attempt ${attempt + 1} failed, retry in ${waitMs}ms`)
+      await sleep(waitMs)
+    } else {
+      throw failed[0]?.reason || new Error('Catalogue warm-up failed')
+    }
+  }
 }
