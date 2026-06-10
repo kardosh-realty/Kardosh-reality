@@ -4,6 +4,7 @@ import path from 'node:path'
 import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { processImageProxy } from '../Landing/lib/imageProxyCore.mjs'
+import { handleCatalogueRequest, isCatalogueKind, warmCatalogueCache } from '../shared/reelly/catalogueHandler.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
@@ -48,6 +49,29 @@ async function proxyReelly(req, res, requestUrl) {
       error: 'Server misconfiguration',
       message: 'REELLY_API_KEY is not set in Hostinger environment variables.',
     })
+    return
+  }
+
+  const catalogueMatch = requestUrl.pathname.match(/^\/api\/reelly\/catalogue\/([^/]+)$/)
+  if (catalogueMatch && req.method === 'GET') {
+    const kind = catalogueMatch[1]
+    if (!isCatalogueKind(kind)) {
+      sendJson(res, 404, { error: 'Unknown catalogue' })
+      return
+    }
+    try {
+      const payload = await handleCatalogueRequest(kind, requestUrl.searchParams, apiKey)
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600',
+      })
+      res.end(JSON.stringify(payload))
+    } catch (err) {
+      sendJson(res, err?.status || 502, {
+        error: 'Catalogue fetch failed',
+        message: err?.message || 'Unknown error',
+      })
+    }
     return
   }
 
@@ -196,7 +220,7 @@ const server = http.createServer(async (req, res) => {
     sendJson(res, 200, {
       ok: true,
       app: 'kardosh-realty',
-      routes: ['/', '/admin', '/api/reelly/*', '/api/proxy-image'],
+      routes: ['/', '/admin', '/api/reelly/*', '/api/reelly/catalogue/*', '/api/proxy-image'],
     })
     return
   }
@@ -229,4 +253,7 @@ server.listen(PORT, () => {
   console.log(`[hostinger] serving Landing from ${distDir}`)
   console.log(`[hostinger] serving Dashboard from ${adminDir}`)
   console.log(`[hostinger] listening on :${PORT}`)
+  void warmCatalogueCache(process.env.REELLY_API_KEY).catch((err) => {
+    console.warn('[hostinger] catalogue warm-up failed:', err?.message || err)
+  })
 })

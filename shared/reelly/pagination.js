@@ -7,15 +7,21 @@ export const REELLY_MAX_PAGES = 50
  * Walk paginated Reelly list endpoints until the batch is empty or shorter than page size.
  * @param {(params: { limit: string, offset: string }) => Promise<{ results?: unknown[], count?: number }>} fetchPage
  */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export async function fetchAllPaginated(fetchPage, {
   pageSize = REELLY_PAGE_SIZE,
   maxPages = REELLY_MAX_PAGES,
+  pageDelayMs = 0,
 } = {}) {
   const all = []
   let offset = 0
   let totalCount = null
 
   for (let page = 0; page < maxPages; page++) {
+    if (pageDelayMs > 0 && page > 0) await sleep(pageDelayMs)
     const data = await fetchPage({
       limit: String(pageSize),
       offset: String(offset),

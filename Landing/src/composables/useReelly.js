@@ -164,20 +164,9 @@ export async function loadMarkers(force = false) {
 
   markersLoading.value = true
   const query = reellyQueryParams(locale)
-  markersPromise = Promise.all([
-    fetchAllProjectMarkers(query),
-    fetchAllProjects(query).catch(() => ({ results: [] })),
-  ])
-    .then(([{ results: markerRows }, { results: projectRows }]) => {
-      const byId = new Map(projectRows.map((p) => [p.id, p]))
-      const merged = markerRows.map((row) => {
-        const full = byId.get(row.id)
-        return mapAndLocalizeMarker(
-          full
-            ? { ...full, location: row.location || full.location, id: row.id }
-            : row
-        )
-      })
+  markersPromise = fetchAllProjectMarkers(query)
+    .then(({ results: markerRows }) => {
+      const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
       markers.value = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
       return markers.value
     })

@@ -4,9 +4,8 @@
  * @see https://docs.reelly.ai/docs/reelly-api-v20-getting-started
  */
 
-import { fetchAllPaginated } from '@kardosh/shared/reelly/pagination.js'
-
 const BASE = '/api/reelly'
+const RETRYABLE = new Set([429, 502, 503, 504])
 
 const DEFAULT_QUERY = {
   language: 'en-us',
@@ -23,35 +22,42 @@ function buildQuery(params = {}) {
   return q.toString()
 }
 
-async function reellyFetch(path, params = {}) {
+async function reellyFetch(path, params = {}, { retries = 3 } = {}) {
   const qs = buildQuery(params)
   const url = qs ? `${BASE}${path}?${qs}` : `${BASE}${path}`
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 90_000)
+  const timer = setTimeout(() => controller.abort(), 120_000)
 
-  let res
   try {
-    res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal,
-    })
-  } catch (e) {
-    if (e?.name === 'AbortError') {
-      const err = new Error('Reelly API timed out — the server took too long to respond.')
-      err.status = 408
-      throw err
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const res = await fetch(url, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        })
+        if (res.ok || !RETRYABLE.has(res.status) || attempt === retries - 1) {
+          if (!res.ok) {
+            const err = new Error(`Reelly API error: ${res.status}`)
+            err.status = res.status
+            throw err
+          }
+          return res.json()
+        }
+      } catch (e) {
+        if (e?.name === 'AbortError') {
+          const err = new Error('Reelly API timed out — the server took too long to respond.')
+          err.status = 408
+          throw err
+        }
+        if (!RETRYABLE.has(e?.status) || attempt === retries - 1) throw e
+      }
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)))
     }
-    throw e
   } finally {
     clearTimeout(timer)
   }
 
-  if (!res.ok) {
-    const err = new Error(`Reelly API error: ${res.status}`)
-    err.status = res.status
-    throw err
-  }
-  return res.json()
+  throw new Error('Reelly API error')
 }
 
 function normalizeList(data) {
@@ -104,18 +110,14 @@ export async function fetchProjects(params = {}) {
   return { count, results: results.map(mapProject) }
 }
 
-/** Fetch every UAE project from Reelly (not just the first page). */
+/** Fetch every UAE project from Reelly (single aggregated server request). */
 export async function fetchAllProjects(params = {}) {
-  const { count, results } = await fetchAllPaginated(async (page) => {
-    const data = await reellyFetch('/projects', {
-      country: 'United Arab Emirates',
-      ...params,
-      ...page,
-    })
-    const normalized = normalizeList(data)
-    return { count: normalized.count, results: normalized.results.map(mapProject) }
+  const data = await reellyFetch('/catalogue/projects', {
+    country: 'United Arab Emirates',
+    ...params,
   })
-  return { count, results }
+  const { results, count } = normalizeList(data)
+  return { count, results: results.map(mapProject) }
 }
 
 function collectImages(project) {

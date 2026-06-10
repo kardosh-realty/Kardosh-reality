@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { envDir } from '../env-dir.mjs'
+import { reellyCatalogueDevPlugin } from '../shared/reelly/reellyCatalogueDevPlugin.mjs'
 
 function viteClientEnv(env) {
   return Object.fromEntries(
@@ -19,7 +20,7 @@ export default defineConfig(({ mode }) => {
     base: '/',
     envDir,
     define: viteClientEnv(env),
-    plugins: [vue(), tailwindcss()],
+    plugins: [vue(), tailwindcss(), reellyCatalogueDevPlugin({ envDir })],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

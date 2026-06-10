@@ -4,6 +4,7 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import { envDir } from '../env-dir.mjs'
 import { imageProxyDevPlugin } from './server/imageProxyDevPlugin.mjs'
+import { reellyCatalogueDevPlugin } from '../shared/reelly/reellyCatalogueDevPlugin.mjs'
 
 /** Preconnect to Supabase + Reelly image CDN for faster LCP / API. */
 function preconnectPlugin(env) {
@@ -76,7 +77,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir,
     define: viteClientEnv(env),
-    plugins: [vue(), tailwindcss(), preconnectPlugin(env), heroPreloadPlugin(), imageProxyDevPlugin()],
+    plugins: [vue(), tailwindcss(), preconnectPlugin(env), heroPreloadPlugin(), imageProxyDevPlugin(), reellyCatalogueDevPlugin({ envDir })],
     build: {
       target: 'es2020',
       cssCodeSplit: true,

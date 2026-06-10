@@ -1,8 +1,8 @@
 import { normalizeList } from './normalize'
 import { reellyQueryParams } from './locale'
-import { fetchAllPaginated } from '@kardosh/shared/reelly/pagination.js'
 
 const BASE = '/api/reelly'
+const RETRYABLE = new Set([429, 502, 503, 504])
 
 function buildQuery(params = {}) {
   const merged = { ...reellyQueryParams(), ...params }
@@ -13,37 +13,47 @@ function buildQuery(params = {}) {
   return q.toString()
 }
 
-async function reellyFetch(path, params = {}) {
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function reellyFetch(path, params = {}, { retries = 3 } = {}) {
   const qs = buildQuery(params)
   const url = qs ? `${BASE}${path}?${qs}` : `${BASE}${path}`
   const controller = new AbortController()
-  const timeoutMs = 90_000
+  const timeoutMs = 120_000
   const timer = setTimeout(() => controller.abort(), timeoutMs)
 
-  let res
   try {
-    res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal,
-    })
-  } catch (e) {
-    if (e?.name === 'AbortError') {
-      const err = new Error('The project catalogue took too long to load. Please try again.')
-      err.status = 408
-      throw err
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const res = await fetch(url, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        })
+        if (res.ok || !RETRYABLE.has(res.status) || attempt === retries - 1) {
+          if (!res.ok) {
+            const err = new Error(`Unable to load project catalogue (${res.status})`)
+            err.status = res.status
+            throw err
+          }
+          return res.json()
+        }
+      } catch (e) {
+        if (e?.name === 'AbortError') {
+          const err = new Error('The project catalogue took too long to load. Please try again.')
+          err.status = 408
+          throw err
+        }
+        if (!RETRYABLE.has(e?.status) || attempt === retries - 1) throw e
+      }
+      await sleep(400 * (attempt + 1))
     }
-    throw e
   } finally {
     clearTimeout(timer)
   }
 
-  if (!res.ok) {
-    const err = new Error(`Unable to load project catalogue (${res.status})`)
-    err.status = res.status
-    throw err
-  }
-
-  return res.json()
+  throw new Error('Unable to load project catalogue')
 }
 
 /** @see https://docs.reelly.ai/docs/reelly-api-v20-getting-started */
@@ -59,11 +69,13 @@ export async function fetchProjects(params = {}) {
   return normalizeList(data)
 }
 
-/** Fetch every UAE project page from Reelly (not just the first 50). */
+/** Fetch every UAE project page from Reelly (single aggregated server request). */
 export async function fetchAllProjects(params = {}) {
-  return fetchAllPaginated((page) =>
-    fetchProjects({ country: 'United Arab Emirates', ...params, ...page })
-  )
+  const data = await reellyFetch('/catalogue/projects', {
+    country: 'United Arab Emirates',
+    ...params,
+  })
+  return normalizeList(data)
 }
 
 export async function fetchProjectById(id, params = {}) {
@@ -84,11 +96,13 @@ export async function fetchProjectMarkers(params = {}) {
   return normalizeList(data)
 }
 
-/** Fetch every map marker page from Reelly. */
+/** Fetch every map marker page from Reelly (single aggregated server request). */
 export async function fetchAllProjectMarkers(params = {}) {
-  return fetchAllPaginated((page) =>
-    fetchProjectMarkers({ country: 'United Arab Emirates', ...params, ...page })
-  )
+  const data = await reellyFetch('/catalogue/markers', {
+    country: 'United Arab Emirates',
+    ...params,
+  })
+  return normalizeList(data)
 }
 
 /** @see https://docs.reelly.ai/docs/available-units — Business/Enterprise only */
@@ -116,9 +130,10 @@ export async function fetchDeveloperLogos(params = {}) {
   return normalizeList(data)
 }
 
-/** Fetch all developer logos (paginated when the API returns partial pages). */
+/** Fetch all developer logos (single aggregated server request). */
 export async function fetchAllDeveloperLogos(params = {}) {
-  return fetchAllPaginated((page) => fetchDeveloperLogos(page))
+  const data = await reellyFetch('/catalogue/developer-logos', params)
+  return normalizeList(data)
 }
 
 export async function fetchDeveloperLogo(id) {
