@@ -98,7 +98,7 @@ function urlEntry(loc, lastmod) {
   return parts.join('\n')
 }
 
-async function reellyFetch(pathSegment, params = {}) {
+async function reellyFetch(pathSegment, params = {}, { timeoutMs = 45_000 } = {}) {
   const apiKey = process.env.REELLY_API_KEY
   if (!apiKey) {
     console.warn('[sitemap] REELLY_API_KEY missing — skipping project/developer URLs')
@@ -106,14 +106,24 @@ async function reellyFetch(pathSegment, params = {}) {
   }
   const q = new URLSearchParams({ ...DEFAULT_QS, ...params })
   const url = `${REELLY_UPSTREAM}/${pathSegment.replace(/^\/+/, '')}?${q}`
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json', 'X-API-Key': apiKey },
-  })
-  if (!res.ok) {
-    console.warn(`[sitemap] Reelly ${pathSegment} → ${res.status}`)
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json', 'X-API-Key': apiKey },
+      signal: controller.signal,
+    })
+    if (!res.ok) {
+      console.warn(`[sitemap] Reelly ${pathSegment} → ${res.status}`)
+      return null
+    }
+    return res.json()
+  } catch (err) {
+    console.warn(`[sitemap] Reelly ${pathSegment} failed:`, err?.message || err)
     return null
+  } finally {
+    clearTimeout(timer)
   }
-  return res.json()
 }
 
 function normalizeList(data) {
@@ -125,10 +135,19 @@ function normalizeList(data) {
 }
 
 async function fetchAllProjects() {
+  if (['1', 'true', 'yes'].includes(String(process.env.SITEMAP_SKIP_DYNAMIC || '').toLowerCase())) {
+    console.warn('[sitemap] SITEMAP_SKIP_DYNAMIC set — skipping Reelly project URLs')
+    return []
+  }
+  if (process.env.CI && !['1', 'true', 'yes'].includes(String(process.env.SITEMAP_FULL || '').toLowerCase())) {
+    console.warn('[sitemap] CI build — skipping Reelly project URLs (set SITEMAP_FULL=1 for full sitemap)')
+    return []
+  }
   const out = []
   const limit = 100
   let offset = 0
-  for (let page = 0; page < 30; page++) {
+  const maxPages = Number(process.env.SITEMAP_MAX_PAGES || 30)
+  for (let page = 0; page < maxPages; page++) {
     const data = await reellyFetch('projects', {
       limit: String(limit),
       offset: String(offset),
@@ -143,6 +162,12 @@ async function fetchAllProjects() {
 }
 
 async function fetchDeveloperSlugs() {
+  if (['1', 'true', 'yes'].includes(String(process.env.SITEMAP_SKIP_DYNAMIC || '').toLowerCase())) {
+    return []
+  }
+  if (process.env.CI && !['1', 'true', 'yes'].includes(String(process.env.SITEMAP_FULL || '').toLowerCase())) {
+    return []
+  }
   const data = await reellyFetch('developers/logos', {})
   const list = normalizeList(data)
   const slugs = new Set()
@@ -161,48 +186,32 @@ async function fetchBlogSlugs() {
     return []
   }
   const url = `${base.replace(/\/+$/, '')}/rest/v1/blogs?select=slug,published_at&published=eq.true&order=published_at.desc&limit=200`
-  const res = await fetch(url, {
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      Accept: 'application/json',
-    },
-  })
-  if (!res.ok) {
-    console.warn(`[sitemap] blogs → ${res.status}`)
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 30_000)
+  try {
+    const res = await fetch(url, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        Accept: 'application/json',
+      },
+      signal: controller.signal,
+    })
+    if (!res.ok) {
+      console.warn(`[sitemap] blogs → ${res.status}`)
+      return []
+    }
+    const rows = await res.json()
+    return (rows || []).filter((r) => r?.slug).map((r) => r.slug)
+  } catch (err) {
+    console.warn('[sitemap] blogs failed:', err?.message || err)
     return []
+  } finally {
+    clearTimeout(timer)
   }
-  const rows = await res.json()
-  return (rows || []).filter((r) => r?.slug).map((r) => r.slug)
 }
 
-async function main() {
-  const today = new Date().toISOString().slice(0, 10)
-  const locs = new Set(STATIC_PATHS.map((p) => `${SITE_URL}${p === '/' ? '' : p}`))
-
-  for (const c of UAE_COMMUNITIES) {
-    locs.add(`${SITE_URL}/communities/${c.slug}`)
-  }
-
-  const [projects, devSlugs, blogSlugs] = await Promise.all([
-    fetchAllProjects(),
-    fetchDeveloperSlugs(),
-    fetchBlogSlugs(),
-  ])
-
-  for (const p of projects) {
-    const slug = projectSlug(p)
-    if (slug) locs.add(`${SITE_URL}/property-detail/${slug}`)
-  }
-
-  for (const slug of devSlugs) {
-    locs.add(`${SITE_URL}/developer/${slug}`)
-  }
-
-  for (const slug of blogSlugs) {
-    locs.add(`${SITE_URL}/blog/${slug}`)
-  }
-
+function writeSitemapFiles(locs, today) {
   const body = [...locs]
     .sort()
     .map((loc) => urlEntry(loc, today))
@@ -243,11 +252,54 @@ ${body}
   }
 
   fs.writeFileSync(robotsPath, robots, 'utf8')
-
   console.log(`[sitemap] Wrote ${locs.size} URLs → public/sitemap.xml (${SITE_URL})`)
+}
+
+async function main() {
+  const today = new Date().toISOString().slice(0, 10)
+  const locs = new Set(STATIC_PATHS.map((p) => `${SITE_URL}${p === '/' ? '' : p}`))
+
+  for (const c of UAE_COMMUNITIES) {
+    locs.add(`${SITE_URL}/communities/${c.slug}`)
+  }
+
+  try {
+    const [projects, devSlugs, blogSlugs] = await Promise.all([
+      fetchAllProjects(),
+      fetchDeveloperSlugs(),
+      fetchBlogSlugs(),
+    ])
+
+    for (const p of projects) {
+      const slug = projectSlug(p)
+      if (slug) locs.add(`${SITE_URL}/property-detail/${slug}`)
+    }
+
+    for (const slug of devSlugs) {
+      locs.add(`${SITE_URL}/developer/${slug}`)
+    }
+
+    for (const slug of blogSlugs) {
+      locs.add(`${SITE_URL}/blog/${slug}`)
+    }
+  } catch (err) {
+    console.warn('[sitemap] dynamic URL fetch failed — writing static sitemap only:', err?.message || err)
+  }
+
+  writeSitemapFiles(locs, today)
 }
 
 main().catch((e) => {
   console.error('[sitemap] failed:', e)
-  process.exit(1)
+  try {
+    const today = new Date().toISOString().slice(0, 10)
+    const locs = new Set(STATIC_PATHS.map((p) => `${SITE_URL}${p === '/' ? '' : p}`))
+    for (const c of UAE_COMMUNITIES) {
+      locs.add(`${SITE_URL}/communities/${c.slug}`)
+    }
+    writeSitemapFiles(locs, today)
+    process.exit(0)
+  } catch {
+    process.exit(1)
+  }
 })
