@@ -20,7 +20,7 @@
         <strong>Visible on /blogs</strong>, then save.
       </p>
 
-      <div v-else class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-7.5">
+      <div v-else class="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6">
         <article
           v-for="item in posts"
           :key="item.id"

@@ -4,7 +4,7 @@
   <PageHero
     :title="post?.title || 'Blog'"
     :subtitle="post?.excerpt || ''"
-    :image="post?.image || PAGE_HERO_IMAGES.about"
+    :image="PAGE_HERO_IMAGES.about"
   />
 
   <section class="relative md:py-24 py-16">
@@ -22,12 +22,18 @@
           <li><span class="text-slate-600 dark:text-slate-300 font-medium">Read:</span> {{ post.readMinutes }} min</li>
         </ul>
 
-        <img
+        <figure
           v-if="post.image"
-          :src="post.image"
-          :alt="post.title"
-          class="w-full rounded-xl shadow-sm mb-8 object-cover max-h-[420px]"
-        />
+          class="mb-8 flex justify-center mx-auto max-w-full p-3 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-800/35 dark:border-slate-700"
+        >
+          <img
+            :src="post.image"
+            :alt="post.title"
+            class="block w-auto max-w-full max-h-[min(28rem,68vh)] h-auto object-contain rounded-lg"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
 
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div

@@ -37,7 +37,14 @@
 }
 
 .kardosh-blog-prose img {
-  @apply w-full h-auto rounded-xl my-6 shadow-sm;
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(28rem, 68vh);
+  height: auto;
+  margin-inline: auto;
+  object-fit: contain;
+  @apply rounded-xl my-6 shadow-sm;
 }
 
 .kardosh-blog-prose hr {
