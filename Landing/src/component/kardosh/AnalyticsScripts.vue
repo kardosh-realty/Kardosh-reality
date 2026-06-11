@@ -5,6 +5,13 @@ import { hasAnalyticsConsent } from '@/composables/useCookieConsent'
 
 let analyticsLoaded = false
 
+function gtmAlreadyLoaded() {
+  return (
+    typeof window.google_tag_manager !== 'undefined' ||
+    Boolean(document.querySelector('script[src*="googletagmanager.com/gtm.js"]'))
+  )
+}
+
 function appendInlineScript(content) {
   const script = document.createElement('script')
   script.textContent = content
@@ -12,7 +19,7 @@ function appendInlineScript(content) {
 }
 
 function loadAnalytics() {
-  if (ANALYTICS.gtmId) {
+  if (ANALYTICS.gtmId && !gtmAlreadyLoaded()) {
     appendInlineScript(`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -20,7 +27,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','${ANALYTICS.gtmId}');`)
   }
 
-  if (ANALYTICS.gaId && !ANALYTICS.gtmId) {
+  if (ANALYTICS.gaId && !ANALYTICS.gtmId && !window.gtag) {
     const s = document.createElement('script')
     s.async = true
     s.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.gaId}`
@@ -58,7 +65,7 @@ watch(hasAnalyticsConsent, tryLoadAnalytics, { immediate: true })
 </script>
 
 <template>
-  <noscript v-if="ANALYTICS.gtmId">
+  <noscript v-if="ANALYTICS.gtmId && !gtmAlreadyLoaded()">
     <iframe
       :src="`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtmId}`"
       height="0"

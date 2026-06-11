@@ -22,8 +22,8 @@ export function whatsAppLink(message) {
 }
 
 export const ANALYTICS = {
-  gtmId: import.meta.env.VITE_GTM_ID || '',
-  gaId: import.meta.env.VITE_GA_MEASUREMENT_ID || '',
+  gtmId: import.meta.env.VITE_GTM_ID || 'GTM-5QH854KK',
+  gaId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-43VV5WNCWN',
   metaPixelId: import.meta.env.VITE_META_PIXEL_ID || '',
 }
 
