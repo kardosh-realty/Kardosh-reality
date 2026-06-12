@@ -47,6 +47,7 @@
       </div>
 
       <div class="kardosh-header__actions flex shrink-0 items-center gap-2">
+        <HeaderLanguageSwitcher class="kardosh-header__lang-desktop" />
         <HeaderThemeButton class="kardosh-header__theme-desktop" />
 
         <ContactTextSwapButton
@@ -104,6 +105,8 @@
             </div>
 
             <div class="kardosh-header__mobile-footer">
+              <HeaderLanguageSwitcher class="kardosh-header__lang-mobile" />
+
               <button
                 type="button"
                 class="kardosh-header__mobile-theme"
@@ -145,6 +148,7 @@ import { cn } from '@/lib/utils'
 import { useScroll } from '@/composables/useScroll'
 import { useTheme } from '@/composables/useTheme'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
+import HeaderLanguageSwitcher from '@/component/kardosh/HeaderLanguageSwitcher.vue'
 import HeaderThemeButton from '@/component/kardosh/HeaderThemeButton.vue'
 import MenuToggleIcon from '@/component/ui/MenuToggleIcon.vue'
 import ContactTextSwapButton from '@/component/ui/ContactTextSwapButton.vue'

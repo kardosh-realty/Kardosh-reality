@@ -3,9 +3,10 @@ import { DEFAULT_LOCALE, localeFromPath, localePath, stripLocaleFromPath } from 
 
 const STORAGE_KEY = 'kardosh-locale'
 
-/** Site languages (Portuguese temporarily disabled). */
+/** Site languages */
 export const LOCALES = [
   { id: 'en', label: 'English', short: 'EN', dir: 'ltr', htmlLang: 'en' },
+  { id: 'pt', label: 'Português', short: 'PT', dir: 'ltr', htmlLang: 'pt' },
 ]
 
 const locale = ref(DEFAULT_LOCALE)

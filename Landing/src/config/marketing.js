@@ -82,7 +82,17 @@ const HERO_YOUTUBE_ID_FROM_ENV = parseYouTubeId(
   import.meta.env.VITE_HERO_YOUTUBE_ID || import.meta.env.VITE_HERO_YOUTUBE_URL || ''
 )
 
-const HERO_VIDEO_URL = String(import.meta.env.VITE_HERO_VIDEO_URL || '').trim()
+const HERO_FORCE_DIRECT = ['true', '1', 'yes'].includes(
+  String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
+)
+
+/** Bundled poster lives in src/assets; MP4 is served from public/videos/ (not in git). */
+export const DEFAULT_LOCAL_HERO_MP4 = '/videos/dubai-hero.mp4'
+
+const HERO_VIDEO_URL = String(
+  import.meta.env.VITE_HERO_VIDEO_URL ||
+    (HERO_FORCE_DIRECT ? DEFAULT_LOCAL_HERO_MP4 : '')
+).trim()
 
 const HERO_VIMEO_ID_FROM_ENV =
   parseVimeoId(HERO_VIDEO_URL) ||
@@ -90,15 +100,11 @@ const HERO_VIMEO_ID_FROM_ENV =
 
 const HERO_MP4_SRC = isDirectVideoUrl(HERO_VIDEO_URL) ? HERO_VIDEO_URL : ''
 
-const HERO_FORCE_DIRECT = ['true', '1', 'yes'].includes(
-  String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
-)
-
-/** Direct MP4 when VITE_HERO_VIDEO_URL is a file/CDN link (not Vimeo/YouTube) */
+/** Direct MP4 when VITE_HERO_VIDEO_URL (or default /videos/dubai-hero.mp4) is set */
 export const HERO_USE_DIRECT_VIDEO = Boolean(HERO_MP4_SRC)
 
-/** @deprecated alias */
-export const HERO_USE_LOCAL_VIDEO = HERO_USE_DIRECT_VIDEO
+/** @deprecated alias — true when local/MP4 mode is active (not YouTube) */
+export const HERO_USE_LOCAL_VIDEO = HERO_FORCE_DIRECT || HERO_USE_DIRECT_VIDEO
 
 /** Vimeo background embed from VITE_HERO_VIDEO_URL or VITE_HERO_VIMEO_URL */
 export const HERO_VIMEO_ID = HERO_VIMEO_ID_FROM_ENV
@@ -126,11 +132,13 @@ export function heroYouTubeEmbedUrl(videoId, options = {}) {
     rel: '0',
     modestbranding: '1',
     playsinline: '1',
+    loop: '1',
+    playlist: videoId,
     iv_load_policy: '3',
     cc_load_policy: '0',
     disablekb: '1',
     fs: '0',
-    /** No playlist= — avoids prev/pause/next playlist controls in the embed */
+    enablejsapi: '1',
   })
   if (options.origin) params.set('origin', options.origin)
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`

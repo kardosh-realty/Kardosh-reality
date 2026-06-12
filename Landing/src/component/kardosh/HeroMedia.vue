@@ -19,6 +19,7 @@
         decoding="async"
         aria-hidden="true"
         @load="onPosterImageLoad"
+        @error="onPosterImageError"
       />
       <iframe
         v-if="embedVideo"
@@ -56,6 +57,7 @@
         decoding="async"
         aria-hidden="true"
         @load="onPosterImageLoad"
+        @error="onPosterImageError"
       />
       <video
         v-if="embedVideo"
@@ -92,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import {
   HERO_VIDEO,
   HERO_YOUTUBE_ID,
@@ -148,12 +150,83 @@ const embedIframeUrl = computed(() => {
 })
 
 let revealTimer = null
+let videoWatchdog = null
+let playbackKickTimer = null
 
 function clearRevealTimer() {
   if (revealTimer) {
     window.clearTimeout(revealTimer)
     revealTimer = null
   }
+}
+
+function clearVideoWatchdog() {
+  if (videoWatchdog) {
+    window.clearTimeout(videoWatchdog)
+    videoWatchdog = null
+  }
+}
+
+function clearPlaybackKickTimer() {
+  if (playbackKickTimer) {
+    window.clearInterval(playbackKickTimer)
+    playbackKickTimer = null
+  }
+}
+
+function forceRevealHeroVideo() {
+  clearRevealTimer()
+  clearVideoWatchdog()
+  if (!posterGateReady.value) markPosterReady()
+  if (embedIframeUrl.value) youtubeIframeReady.value = true
+  heroMediaReady.value = true
+}
+
+function startVideoWatchdog() {
+  clearVideoWatchdog()
+  const timeoutMs = useMp4.value ? 5000 : 8000
+  videoWatchdog = window.setTimeout(() => {
+    if (!heroMediaReady.value) forceRevealHeroVideo()
+  }, timeoutMs)
+}
+
+function kickEmbedPlayback() {
+  const iframe = youtubeIframeRef.value
+  if (!iframe?.contentWindow) return
+  try {
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+      '*'
+    )
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: 'command', func: 'mute', args: '' }),
+      '*'
+    )
+  } catch {
+    /* cross-origin — ignore */
+  }
+}
+
+function startPlaybackKick() {
+  clearPlaybackKickTimer()
+  kickEmbedPlayback()
+  playbackKickTimer = window.setInterval(kickEmbedPlayback, 2000)
+}
+
+function onPageVisible() {
+  if (document.visibilityState !== 'visible') return
+  if (!embedVideo.value) return
+  if (useMp4.value) {
+    kickMp4Playback()
+    if (!heroMediaReady.value) tryRevealHeroVideo()
+    return
+  }
+  kickEmbedPlayback()
+  if (!heroMediaReady.value) tryRevealHeroVideo()
+}
+
+function onPosterImageError() {
+  markPosterReady()
 }
 
 function tryRevealHeroVideo() {
@@ -188,6 +261,7 @@ function onEmbedIframeLoad() {
   updateYoutubeCover()
   youtubeIframeReady.value = true
   tryRevealHeroVideo()
+  startPlaybackKick()
 }
 
 function onVideoPlaying() {
@@ -200,6 +274,7 @@ function onVideoCanPlay() {
 
 function onVideoError() {
   console.warn('[hero] MP4 failed to load — check VITE_HERO_VIDEO_URL is a direct .mp4 link')
+  clearPlaybackKickTimer()
   useMp4.value = false
 }
 
@@ -212,9 +287,30 @@ async function startMp4WhenReady() {
   await nextTick()
   const el = videoEl.value
   if (!el) return
-  el.play().catch(() => {
-    /* autoplay blocked — poster remains visible */
-  })
+  el.muted = true
+  el.defaultMuted = true
+  el.setAttribute('muted', '')
+  el.setAttribute('playsinline', '')
+  try {
+    await el.play()
+    tryRevealHeroVideo()
+  } catch {
+    /* Safari may block first attempt — watchdog + retries handle it */
+  }
+}
+
+function kickMp4Playback() {
+  const el = videoEl.value
+  if (!el) return
+  el.muted = true
+  el.play().then(() => tryRevealHeroVideo()).catch(() => {})
+}
+
+function startMp4PlaybackKick() {
+  if (!useMp4.value) return
+  clearPlaybackKickTimer()
+  kickMp4Playback()
+  playbackKickTimer = window.setInterval(kickMp4Playback, 2000)
 }
 
 function scheduleHeroVideo() {
@@ -238,8 +334,10 @@ function scheduleHeroVideo() {
 
 watch(embedVideo, (ready) => {
   if (!ready) return
+  startVideoWatchdog()
   if (embedIframeUrl.value) return
   afterPosterReady()
+  startMp4PlaybackKick()
 })
 
 onMounted(async () => {
@@ -255,5 +353,16 @@ onMounted(async () => {
   if (embedVideo.value) {
     afterPosterReady()
   }
+
+  document.addEventListener('visibilitychange', onPageVisible)
+  window.addEventListener('pageshow', onPageVisible)
+})
+
+onUnmounted(() => {
+  clearRevealTimer()
+  clearVideoWatchdog()
+  clearPlaybackKickTimer()
+  document.removeEventListener('visibilitychange', onPageVisible)
+  window.removeEventListener('pageshow', onPageVisible)
 })
 </script>

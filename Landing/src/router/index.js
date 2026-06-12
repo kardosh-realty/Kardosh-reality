@@ -5,6 +5,7 @@ import {
   DEFAULT_LOCALE,
   localeFromPath,
   localePath,
+  migrateLegacyLocalePrefix,
   stripLocaleFromPath,
 } from '@/config/i18n'
 import { syncLocaleFromRoute } from '@/composables/useLanguage'
@@ -46,8 +47,9 @@ const removedToHome = [
   '/maintenance',
 ]
 
-function localeFromTo() {
-  return DEFAULT_LOCALE
+function localeFromTo(to) {
+  if (to?.params?.locale === 'pt') return 'pt'
+  return localeFromPath(to?.path || '/')
 }
 
 function redirectKeepingLocale(targetPath) {
@@ -207,13 +209,12 @@ const appRoutes = [
 ]
 
 const routes = [
-  /** Legacy Portuguese URLs → English (no suffix) */
+  /** Legacy prefix URLs (`/pt/off-plan`) → suffix (`/off-plan/pt`) */
   {
     path: '/pt/:rest(.*)',
     redirect: (to) => {
-      if (!to.params.rest) return '/'
-      const rest = `/${String(to.params.rest).replace(/^\/+/, '')}`
-      return stripLocaleFromPath(rest)
+      const legacy = to.params.rest ? `/pt/${to.params.rest}` : '/pt'
+      return migrateLegacyLocalePrefix(legacy) || '/pt'
     },
   },
   ...appRoutes,
@@ -250,11 +251,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.params.locale === 'pt' || localeFromPath(to.path) === 'pt') {
-    const target = stripLocaleFromPath(to.fullPath)
-    if (target !== to.fullPath) return target
-  }
-
   syncLocaleFromRoute(to)
 
   const barePath = stripLocaleFromPath(to.path)
