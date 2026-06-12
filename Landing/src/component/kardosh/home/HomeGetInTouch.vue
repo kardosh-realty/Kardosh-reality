@@ -246,8 +246,7 @@ import { Building2, Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Shi
 import StatusButton from '@/components/ui/StatusButton.vue'
 import { SOCIAL } from '@/config/brand'
 import { CONTACT, GOOGLE_MAP_EMBED, GOOGLE_MAPS_DIRECTIONS } from '@/config/uae'
-import { site, reraLabel } from '@/composables/useSiteSettings'
-import { whatsAppLink, WHATSAPP } from '@/config/marketing'
+import { site, reraLabel, whatsAppLink, propertyWhatsAppLink } from '@/composables/useSiteSettings'
 import { submitLead } from '@/services/leads'
 import PhoneInput from '@/components/ui/PhoneInput.vue'
 import { validatePhone } from '@/utils/validatePhone'
@@ -381,7 +380,7 @@ function clearRegarding() {
 
 const enquiryWhatsAppLink = computed(() =>
   regardingProperty.value
-    ? `${WHATSAPP.url}?text=${WHATSAPP.propertyMessage(regardingProperty.value)}`
+    ? propertyWhatsAppLink(regardingProperty.value)
     : whatsAppLink()
 )
 

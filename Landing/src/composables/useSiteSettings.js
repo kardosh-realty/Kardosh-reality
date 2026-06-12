@@ -3,7 +3,12 @@ import { Facebook, Globe, Instagram, Linkedin, Mail, MessageCircle, Music2, Phon
 import { BRAND, SOCIAL } from '@/config/brand'
 import { BRAND_LOGO } from '@/config/brand-assets'
 import { CONTACT } from '@/config/uae'
+import { syncWhatsappFromSite } from '@/config/marketing'
 import { fetchSiteSettings } from '@/services/siteSettings'
+
+const envWhatsApp = String(
+  import.meta.env.VITE_WHATSAPP_PHONE || import.meta.env.VITE_CONTACT_PHONE || ''
+).replace(/\D/g, '')
 
 /** platform key → { label, icon } for rendering social links */
 export const SOCIAL_PLATFORMS = {
@@ -37,7 +42,7 @@ export const site = reactive({
   address: CONTACT.address,
   addressShort: CONTACT.addressShort,
   reraLicense: BRAND.reraLicense,
-  whatsappPhone: '',
+  whatsappPhone: envWhatsApp,
   socials: [
     { platform: 'linkedin', url: SOCIAL.linkedin },
     { platform: 'instagram', url: SOCIAL.instagram },
@@ -56,8 +61,29 @@ export const reraLabel = computed(() => `RERA License No. ${site.reraLicense}`)
 /** wa.me link from whatsapp phone (falls back to contact phone). */
 export const whatsappHref = computed(() => {
   const digits = String(site.whatsappPhone || site.phone || '').replace(/\D/g, '')
-  return `https://wa.me/${digits}`
+  return digits ? `https://wa.me/${digits}` : 'https://wa.me/'
 })
+
+export function whatsAppLink(message) {
+  const defaultMsg = encodeURIComponent(
+    `Hello ${site.companyName}, I am interested in Dubai off-plan properties. Please contact me.`
+  )
+  const text = message || defaultMsg
+  const q = typeof text === 'string' && text.includes('%') ? text : encodeURIComponent(text)
+  return `${whatsappHref.value}?text=${q}`
+}
+
+export function propertyWhatsAppLink(title) {
+  const q = encodeURIComponent(`Hello, I would like more information about: ${title}`)
+  return `${whatsappHref.value}?text=${q}`
+}
+
+function applyWhatsappSync() {
+  syncWhatsappFromSite({
+    phone: site.whatsappPhone || site.phone,
+    companyName: site.companyName,
+  })
+}
 
 let loadPromise = null
 
@@ -92,6 +118,7 @@ export function loadSiteSettings() {
       const findSocial = (p) => (site.socials.find((s) => s.platform === p) || {}).url
       if (findSocial('linkedin')) SOCIAL.linkedin = findSocial('linkedin')
       if (findSocial('instagram')) SOCIAL.instagram = findSocial('instagram')
+      applyWhatsappSync()
     } catch {
       /* keep defaults */
     }
@@ -99,6 +126,8 @@ export function loadSiteSettings() {
   return loadPromise
 }
 
+applyWhatsappSync()
+
 export function useSiteSettings() {
-  return { site, reraLabel, whatsappHref, loadSiteSettings }
+  return { site, reraLabel, whatsappHref, whatsAppLink, propertyWhatsAppLink, loadSiteSettings }
 }

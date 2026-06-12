@@ -5,6 +5,7 @@ import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { processImageProxy } from '../lib/imageProxyCore.mjs'
 import { handleCatalogueRequest, isCatalogueKind } from '../../shared/reelly/catalogueHandler.mjs'
+import { resolveStaticPath } from '../../shared/staticPath.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const landingRoot = path.resolve(__dirname, '..')
@@ -138,12 +139,6 @@ async function proxyImage(req, res, requestUrl) {
   }
 }
 
-function safeFilePath(requestUrl) {
-  const decoded = decodeURIComponent(requestUrl.pathname)
-  const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '')
-  return path.join(distDir, normalized)
-}
-
 const LONG_CACHE_EXT = new Set([
   '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
 ])
@@ -207,8 +202,8 @@ const server = http.createServer(async (req, res) => {
     return
   }
 
-  let filePath = safeFilePath(requestUrl)
-  if (!filePath.startsWith(distDir)) {
+  let filePath = resolveStaticPath(distDir, requestUrl.pathname)
+  if (!filePath) {
     res.writeHead(403)
     res.end('Forbidden')
     return

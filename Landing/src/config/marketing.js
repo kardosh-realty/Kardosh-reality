@@ -1,18 +1,36 @@
+import { reactive } from 'vue'
 import { BRAND } from './brand'
 import { resolveHeroPosterPath } from './hero-poster'
 
 const phone = import.meta.env.VITE_WHATSAPP_PHONE || import.meta.env.VITE_CONTACT_PHONE || '97141234567'
 const digits = phone.replace(/\D/g, '')
 
-export const WHATSAPP = {
+function buildDefaultMessage(name = BRAND.name) {
+  return encodeURIComponent(
+    `Hello ${name}, I am interested in Dubai off-plan properties. Please contact me.`
+  )
+}
+
+/** Mutable — synced from Supabase site_settings after loadSiteSettings(). */
+export const WHATSAPP = reactive({
   phone: digits,
   /** wa.me link — no + prefix in path */
   url: `https://wa.me/${digits}`,
-  defaultMessage: encodeURIComponent(
-    `Hello ${BRAND.name}, I am interested in Dubai off-plan properties. Please contact me.`
-  ),
+  defaultMessage: buildDefaultMessage(),
   propertyMessage: (title) =>
     encodeURIComponent(`Hello, I would like more information about: ${title}`),
+})
+
+/** Keep WHATSAPP in sync when admin updates contact settings. */
+export function syncWhatsappFromSite({ phone, companyName } = {}) {
+  const nextDigits = String(phone || '').replace(/\D/g, '')
+  if (nextDigits) {
+    WHATSAPP.phone = nextDigits
+    WHATSAPP.url = `https://wa.me/${nextDigits}`
+  }
+  if (companyName) {
+    WHATSAPP.defaultMessage = buildDefaultMessage(companyName)
+  }
 }
 
 export function whatsAppLink(message) {

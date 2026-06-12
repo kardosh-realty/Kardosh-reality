@@ -75,10 +75,9 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { formatArea, formatStartingPrice } from '@/config/uae'
-import { site } from '@/composables/useSiteSettings'
+import { site, propertyWhatsAppLink } from '@/composables/useSiteSettings'
 import BrandLogo from '@/component/kardosh/BrandLogo.vue'
 import WhatsAppIcon from '@/components/ui/WhatsAppIcon.vue'
-import { WHATSAPP } from '@/config/marketing'
 import { ChevronRight, Mail, Phone, SendHorizontal } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -121,10 +120,9 @@ const mailBody = computed(() => {
   return lines.join('\n')
 })
 
-const propertyWhatsApp = computed(() => {
-  const title = props.property?.title || props.property?.name || 'a Dubai property'
-  return `${WHATSAPP.url}?text=${WHATSAPP.propertyMessage(title)}`
-})
+const propertyWhatsApp = computed(() =>
+  propertyWhatsAppLink(props.property?.title || props.property?.name || 'a Dubai property')
+)
 </script>
 
 <style scoped>

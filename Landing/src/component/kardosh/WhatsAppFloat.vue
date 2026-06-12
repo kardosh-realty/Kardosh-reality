@@ -81,8 +81,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { Phone, X } from 'lucide-vue-next'
-import { WHATSAPP } from '@/config/marketing'
-import { site, whatsappHref } from '@/composables/useSiteSettings'
+import { site, whatsAppLink, propertyWhatsAppLink } from '@/composables/useSiteSettings'
 
 const STORAGE_KEY = 'kardosh-contact-dock'
 
@@ -132,11 +131,10 @@ function closeDock() {
 const callHref = computed(() => `tel:${String(site.phone).replace(/\s/g, '')}`)
 
 const waLink = computed(() => {
-  const base = whatsappHref.value
-  if (props.message) return `${base}?text=${encodeURIComponent(props.message)}`
+  if (props.message) return whatsAppLink(props.message)
   if (route.name === 'property-detail' && route.params.slug) {
-    return `${base}?text=${WHATSAPP.propertyMessage(route.params.slug)}`
+    return propertyWhatsAppLink(String(route.params.slug))
   }
-  return `${base}?text=${WHATSAPP.defaultMessage}`
+  return whatsAppLink()
 })
 </script>

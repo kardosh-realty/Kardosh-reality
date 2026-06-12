@@ -147,11 +147,7 @@ async function proxyImage(req, res, requestUrl) {
   }
 }
 
-function safeJoin(baseDir, requestPath) {
-  const decoded = decodeURIComponent(requestPath)
-  const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '')
-  return path.join(baseDir, normalized)
-}
+import { resolveStaticPath } from '../shared/staticPath.mjs'
 
 const LONG_CACHE_EXT = new Set([
   '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
@@ -203,21 +199,23 @@ function serveFile(res, filePath, { admin = false, req = null } = {}) {
 }
 
 function serveSpa(reqPath, res, { basePath, baseDir, admin = false, req = null }) {
-  const relativePath = basePath ? reqPath.slice(basePath.length) || '/' : reqPath
-  let filePath = safeJoin(baseDir, relativePath)
+  const suffix = basePath ? reqPath.slice(basePath.length) : reqPath
+  const filePath = resolveStaticPath(baseDir, suffix)
 
-  if (!filePath.startsWith(baseDir)) {
+  if (!filePath) {
     res.writeHead(403)
     res.end('Forbidden')
     return
   }
 
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, 'index.html')
+  let target = filePath
+
+  if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
+    target = path.join(target, 'index.html')
   }
 
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    serveFile(res, filePath, { admin, req })
+  if (fs.existsSync(target) && fs.statSync(target).isFile()) {
+    serveFile(res, target, { admin, req })
     return
   }
 

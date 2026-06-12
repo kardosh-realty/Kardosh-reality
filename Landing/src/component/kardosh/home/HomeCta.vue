@@ -21,7 +21,7 @@
               fluid
             />
             <a
-              :href="whatsAppLink()"
+              :href="whatsAppHref"
               target="_blank"
               rel="noopener"
               class="btn border border-white/40 hover:bg-white hover:text-slate-900 text-white rounded-lg px-8 inline-flex items-center gap-2"
@@ -39,13 +39,15 @@
 import { computed } from 'vue'
 import KardoshSlideButton from '@/components/ui/KardoshSlideButton.vue'
 import ResponsiveCoverImage from '@/component/kardosh/ResponsiveCoverImage.vue'
-import { whatsAppLink } from '@/config/marketing'
+import { whatsAppLink } from '@/composables/useSiteSettings'
 import { SECTION_IMAGES } from '@/config/dubai-images'
 import { useT } from '@/composables/useT'
 import { useMessages } from '@/composables/useMessages'
 
 const t = useT()
 const messages = useMessages()
+
+const whatsAppHref = computed(() => whatsAppLink())
 
 const ctaBody = computed(
   () => messages.value.home?.cta?.subheading || messages.value.home?.cta?.body || ''
