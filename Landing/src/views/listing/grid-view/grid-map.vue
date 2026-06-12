@@ -42,7 +42,7 @@
         <aside class="map-page__sidebar">
           <p class="map-page__sidebar-head">{{ t('map.projects') }}</p>
           <div ref="listRef" class="map-page__list" role="list">
-            <div v-if="markersLoading" class="space-y-2" role="status" :aria-label="t('map.loadingListings')">
+            <div v-if="mapBootstrapping || markersLoading" class="space-y-2" role="status" :aria-label="t('map.loadingListings')">
               <PropertyListItemSkeleton v-for="n in 6" :key="n" />
             </div>
             <p v-else-if="!filteredMarkers.length" class="text-slate-400 text-sm px-2 py-4">
@@ -103,7 +103,7 @@
         </aside>
 
         <div class="map-page__map">
-          <MapSkeleton v-if="markersLoading" class="absolute inset-0 h-full" />
+          <MapSkeleton v-if="mapBootstrapping || markersLoading" class="absolute inset-0 h-full" />
           <ReellyMap
             v-else
             :markers="filteredMarkers"
@@ -187,6 +187,7 @@ const hero = usePageHero('map')
 const isMobile = useMediaQuery('(max-width: 767px)')
 
 const { markers, markersLoading, loadMarkers } = useReelly()
+const mapBootstrapping = ref(true)
 const selectedId = ref(null)
 const searchQuery = ref('')
 const cardRefs = ref({})
@@ -249,7 +250,11 @@ const { sentinel: scrollSentinel, reconnect: reconnectScrollSentinel } = useScro
   loadMoreSidebar,
   {
     rootRef: listRef,
-    enabled: () => sidebarHasMore.value && !searchQuery.value.trim() && !markersLoading.value,
+    enabled: () =>
+      sidebarHasMore.value &&
+      !searchQuery.value.trim() &&
+      !markersLoading.value &&
+      !mapBootstrapping.value,
     rootMargin: '160px',
   }
 )
@@ -370,10 +375,17 @@ function dockSummary(m) {
 
 onMounted(async () => {
   sidebarLimit.value = initialBatch.value
-  await loadMarkers()
-  if (filteredMarkers.value.length) {
-    selectedId.value = filteredMarkers.value[0].id
+  try {
+    await loadMarkers()
+    if (!filteredMarkers.value.length) {
+      await loadMarkers(true)
+    }
+    if (filteredMarkers.value.length) {
+      selectedId.value = filteredMarkers.value[0].id
+    }
+    await ensureListFilled()
+  } finally {
+    mapBootstrapping.value = false
   }
-  await ensureListFilled()
 })
 </script>

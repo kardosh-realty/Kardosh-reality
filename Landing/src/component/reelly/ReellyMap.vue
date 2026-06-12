@@ -284,16 +284,22 @@ onMounted(() => {
 
 watch(() => props.markers, () => {
   renderMarkers()
-  if (props.selectedId != null) nextTick(updateAnchor)
+  nextTick(() => {
+    map?.invalidateSize()
+    if (props.selectedId != null) updateAnchor()
+  })
 })
 
 watch(
   () => props.suppressPreview,
   () => {
     updateAnchor()
-    if (props.selectedId != null) {
-      nextTick(() => focusMarker(props.selectedId, { animate: false }))
-    }
+    nextTick(() => {
+      map?.invalidateSize()
+      if (props.selectedId != null) {
+        focusMarker(props.selectedId, { animate: false })
+      }
+    })
   }
 )
 

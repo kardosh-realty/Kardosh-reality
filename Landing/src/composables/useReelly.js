@@ -9,6 +9,7 @@ import {
   fetchDeveloperById,
 } from '@/services/reelly/client'
 import { mapReellyProject, mapReellyMarker } from '@/services/reelly/mapProject'
+import { enrichMapMarker } from '@/services/reelly/mapMarker'
 import { enrichProjectsWithAmenities, clearAmenitiesDetailCache } from '@/services/reelly/enrichAmenities'
 import { enrichLiveUnitsWithPlans } from '@/services/reelly/media'
 import { properties as localProperties } from '@/component/data/data'
@@ -52,6 +53,49 @@ import {
 
 function applyVisibility(list) {
   return list.filter((p) => !isProjectHiddenCascade(p))
+}
+
+function pickVisibleMarkers(list) {
+  return applyVisibility(list).filter((m) => m.latitude && m.longitude)
+}
+
+function markerFromProject(project) {
+  const raw = {
+    id: project.id,
+    name: project.title || project.name,
+    slug_name: project.slug,
+    developer: project.developer,
+    developer_id: project.developerId,
+    location: project.location || {
+      latitude: project.latitude,
+      longitude: project.longitude,
+    },
+    latitude: project.latitude,
+    longitude: project.longitude,
+    min_price: project.minPrice,
+    cover_image: project.image ? { url: project.image } : undefined,
+    completion_date: project.completionDate,
+    sale_status: project.saleStatus,
+    available_unit_types: project.availableUnitTypes,
+    typical_units: project._raw?.typical_units,
+    payment_plans: project._raw?.payment_plans,
+  }
+  return localizeCatalogItem(enrichMapMarker(raw), getLocaleId())
+}
+
+function markersFromProjectsCache(locale) {
+  const hit = readBrowserCatalogueCache(reellyProjectsCacheKey(locale), {
+    arrayOnly: true,
+    allowStale: true,
+  })
+  if (!hit?.data?.length) return []
+  return pickVisibleMarkers(hit.data.map((project) => markerFromProject(project)))
+}
+
+function readVisibleMarkersCache(cacheKey) {
+  const hit = readBrowserCatalogueCache(cacheKey, { arrayOnly: true, allowStale: true })
+  if (!hit?.data?.length) return { hit: null, visible: [] }
+  return { hit, visible: pickVisibleMarkers(hit.data) }
 }
 
 async function applyProjectPipeline(mapped) {
@@ -125,14 +169,30 @@ async function fetchProjectsFromNetwork(locale, cacheKey) {
 }
 
 async function fetchMarkersFromNetwork(locale, cacheKey) {
-  const query = reellyQueryParams(locale)
-  const { results: markerRows } = await fetchAllProjectMarkers(query)
-  const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
-  const visible = applyVisibility(merged).filter((m) => m.latitude && m.longitude)
-  if (visible.length) writeBrowserCatalogueCache(cacheKey, visible)
-  markers.value = visible
-  loadedLocale = locale
-  return markers.value
+  try {
+    const query = reellyQueryParams(locale)
+    const { results: markerRows } = await fetchAllProjectMarkers(query)
+    const merged = markerRows.map((row) => mapAndLocalizeMarker(row))
+    const visible = pickVisibleMarkers(merged)
+    if (visible.length) writeBrowserCatalogueCache(cacheKey, visible)
+    markers.value = visible
+    loadedLocale = locale
+    return markers.value
+  } catch (e) {
+    const { visible } = readVisibleMarkersCache(cacheKey)
+    if (visible.length) {
+      markers.value = visible
+      loadedLocale = locale
+      return markers.value
+    }
+    const fromProjects = markersFromProjectsCache(locale)
+    if (fromProjects.length) {
+      markers.value = fromProjects
+      loadedLocale = locale
+      return markers.value
+    }
+    throw e
+  }
 }
 
 export async function loadProjects(force = false) {
@@ -200,28 +260,45 @@ export async function loadMarkers(force = false) {
   if (markers.value.length && loadedLocale === locale && !force) return markers.value
   if (markersPromise && !force && loadedLocale === locale) return markersPromise
 
+  const cacheKey = reellyMarkersCacheKey(locale)
+  const cached = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
+
+  markersLoading.value = true
+
   await loadVisibility()
 
-  const cacheKey = reellyMarkersCacheKey(locale)
-  const hit = !force ? readBrowserCatalogueCache(cacheKey, { arrayOnly: true }) : null
-  if (hit?.data?.length) {
-    markers.value = applyVisibility(hit.data).filter((m) => m.latitude && m.longitude)
+  const visibleFromCache = cached?.data?.length ? pickVisibleMarkers(cached.data) : []
+  const hasUsableCache = visibleFromCache.length > 0
+
+  if (hasUsableCache) {
+    markers.value = visibleFromCache
     loadedLocale = locale
-    if (hit.fresh) return markers.value
-    if (!markersPromise) {
-      markersPromise = fetchMarkersFromNetwork(locale, cacheKey)
-        .catch(() => markers.value)
-        .finally(() => {
-          markersPromise = null
-          markersLoading.value = false
-        })
+    if (cached.fresh) {
+      markersLoading.value = false
+      return markers.value
     }
+  }
+
+  if (hasUsableCache && !markersPromise) {
+    markersLoading.value = false
+    markersPromise = fetchMarkersFromNetwork(locale, cacheKey)
+      .catch(() => markers.value)
+      .finally(() => {
+        markersPromise = null
+        markersLoading.value = false
+      })
     return markers.value
   }
 
-  markersLoading.value = true
   markersPromise = fetchMarkersFromNetwork(locale, cacheKey)
     .catch(() => {
+      if (markers.value.length) return markers.value
+      const fromProjects = markersFromProjectsCache(locale)
+      if (fromProjects.length) {
+        markers.value = fromProjects
+        loadedLocale = locale
+        return markers.value
+      }
       markers.value = []
       return []
     })

@@ -23,7 +23,7 @@ export function reellyLogosCacheKey(locale = getLocaleId()) {
 }
 
 export function reellyMarkersCacheKey(locale = getLocaleId()) {
-  return `kardosh-reelly-markers-v1-${locale}`
+  return `kardosh-reelly-markers-v2-${locale}`
 }
 
 export function reellyProjectDetailCacheKey(id, locale = getLocaleId()) {

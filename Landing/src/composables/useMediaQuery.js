@@ -9,9 +9,14 @@ export function useMediaQuery(query) {
   let mq = null
   let onChange = null
 
+  if (typeof window !== 'undefined') {
+    mq = window.matchMedia(query)
+    matches.value = mq.matches
+  }
+
   onMounted(() => {
     if (typeof window === 'undefined') return
-    mq = window.matchMedia(query)
+    if (!mq) mq = window.matchMedia(query)
     onChange = () => {
       matches.value = mq.matches
     }
