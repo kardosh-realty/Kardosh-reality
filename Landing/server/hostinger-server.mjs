@@ -221,7 +221,7 @@ const server = http.createServer(async (req, res) => {
   serveFile(res, path.join(distDir, 'index.html'), req)
 })
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`[hostinger] serving ${distDir}`)
-  console.log(`[hostinger] listening on :${PORT}`)
+  console.log(`[hostinger] listening on 0.0.0.0:${PORT}`)
 })

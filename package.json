@@ -1,13 +1,15 @@
 {
   "name": "kardosh-realty",
   "private": true,
+  "type": "module",
   "description": "Kardosh Realty — Landing (public site) and Dashboard (admin)",
   "main": "index.js",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "build": "npm install --prefix Landing && npm install --prefix Dashboard && npm run build --prefix Landing && npm run build:hostinger --prefix Dashboard && node scripts/compose-dist.mjs",
+    "build": "node scripts/hostinger-build.mjs",
+    "build:combined": "node scripts/hostinger-build.mjs combined",
     "start": "node index.js",
     "dev:landing": "npm run dev --prefix Landing",
     "dev:dashboard": "npm run dev --prefix Dashboard",
