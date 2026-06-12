@@ -259,7 +259,7 @@ const server = http.createServer(async (req, res) => {
   serveSpa(pathname, res, { basePath: '', baseDir: distDir, req })
 })
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`[hostinger] serving Landing from ${distDir}`)
   console.log(`[hostinger] serving Dashboard from ${adminDir}`)
   console.log(`[hostinger] listening on :${PORT}`)

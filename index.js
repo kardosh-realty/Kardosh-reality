@@ -1,9 +1,9 @@
 /**
  * Hostinger entry — separate app per domain via HOSTINGER_APP.
- * landing   → kardoshrealty.ae      (Landing/server)
- * dashboard → admin.kardoshrealty.ae (Dashboard/server)
+ * landing   → kardoshrealty.ae
+ * dashboard → admin.kardoshrealty.ae
  *
- * Do NOT load server/hostinger-server.mjs here — that is the combined /admin site.
+ * Combined single-site (/admin) is server/hostinger-server.mjs — use build:combined only.
  */
 console.log('[boot]', {
   app: process.env.HOSTINGER_APP || process.env.KARDOSH_DEPLOY || 'landing',
@@ -18,4 +18,7 @@ const entry = isDashboard
   ? './Dashboard/server/hostinger-server.mjs'
   : './Landing/server/hostinger-server.mjs'
 
-await import(entry)
+import(entry).catch((err) => {
+  console.error('[boot] failed:', err?.stack || err)
+  process.exit(1)
+})

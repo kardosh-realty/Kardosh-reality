@@ -25,9 +25,11 @@ console.log(`[hostinger-build] HOSTINGER_APP=${app}`)
 if (app === 'dashboard' || app === 'admin') {
   run('npm', ['install', '--prefix', 'Dashboard'])
   run('npm', ['run', 'build', '--prefix', 'Dashboard'])
+  run('node', ['scripts/copy-dashboard-dist.mjs'])
 } else if (app === 'landing' || app === 'public') {
   run('npm', ['install', '--prefix', 'Landing'])
   run('npm', ['run', 'build', '--prefix', 'Landing'])
+  run('node', ['scripts/copy-landing-dist.mjs'])
 } else if (app === 'combined') {
   run('npm', ['install', '--prefix', 'Landing'])
   run('npm', ['install', '--prefix', 'Dashboard'])

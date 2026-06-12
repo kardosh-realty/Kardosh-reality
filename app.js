@@ -1,2 +1,2 @@
-// Hostinger entry alias — same routing as index.js (not the combined /admin server).
-await import('./index.js')
+// Hostinger entry alias — same as index.js
+import('./index.js')

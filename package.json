@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node scripts/hostinger-build.mjs",
     "build:combined": "node scripts/hostinger-build.mjs combined",
+    "prestart": "node -e \"console.log('[prestart]', { cwd: process.cwd(), port: process.env.PORT, app: process.env.HOSTINGER_APP || '(auto)' })\"",
     "start": "node index.js",
     "dev:landing": "npm run dev --prefix Landing",
     "dev:dashboard": "npm run dev --prefix Dashboard",
