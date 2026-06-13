@@ -89,7 +89,7 @@ export default {
   home: {
     hero: {
       eyebrow: 'Kardosh Realty · Emirados Árabes Unidos',
-      titleLead: 'Descubra imóveis excecionais',
+      titleLead: 'Descubra imóveis excepcionais',
       titleWords: ['imóveis', 'moradias', 'apartamentos'],
       titleSuffix: 'nos EAU',
       lead:

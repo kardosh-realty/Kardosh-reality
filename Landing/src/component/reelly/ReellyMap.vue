@@ -258,9 +258,10 @@ function renderMarkers() {
 
 onMounted(() => {
   map = L.map(mapEl.value, { scrollWheelZoom: true }).setView([25.2048, 55.2708], 10)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap',
-    maxZoom: 19,
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20,
   }).addTo(map)
 
   layerGroup = L.layerGroup().addTo(map)
