@@ -295,7 +295,6 @@ export function buildDeveloperSchema(developer, path) {
     description: truncateDescription(description, 500),
     url,
     ...(developer.logo?.url ? { logo: absoluteUrl(developer.logo.url) } : {}),
-    ...(developer.website ? { sameAs: [developer.website] } : {}),
   }
 
   const routeLike = { name: 'developer-detail', path }

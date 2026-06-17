@@ -62,20 +62,6 @@
                 {{ developer.name }}
               </h2>
 
-              <div class="mt-5 flex flex-col gap-2">
-                <a
-                  v-if="developer.website"
-                  :href="developer.website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center justify-center gap-2 text-sm font-medium text-primary hover:underline"
-                >
-                  <Globe class="size-4 shrink-0" aria-hidden="true" />
-                  Official website
-                  <ExternalLink class="size-3.5 opacity-60" aria-hidden="true" />
-                </a>
-              </div>
-
               <ul
                 v-if="developer.regions?.length"
                 class="mt-6 flex flex-wrap justify-center gap-1.5 list-none p-0"
@@ -90,11 +76,11 @@
               </ul>
 
               <ul
-                v-if="developer.socialLinks?.length"
+                v-if="visibleSocialLinks.length"
                 class="mt-6 flex flex-wrap justify-center gap-2 list-none p-0"
               >
                 <li
-                  v-for="(link, i) in developer.socialLinks"
+                  v-for="(link, i) in visibleSocialLinks"
                   :key="i"
                 >
                   <a
@@ -201,7 +187,6 @@
 <script setup>
 import { ref, computed, onMounted, watch, provide } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { Globe, ExternalLink } from 'lucide-vue-next'
 import Navbar from '@/component/navbar.vue'
 import Footer from '@/component/footer.vue'
 import Switcher from '@/component/switcher.vue'
@@ -301,6 +286,21 @@ function socialLabel(link) {
   if (typeof link === 'string') return 'Link'
   return link?.platform || link?.type || link?.name || 'Social'
 }
+
+function isOfficialWebsiteLink(link, website) {
+  const platform = socialLabel(link).toLowerCase()
+  if (platform === 'website' || platform === 'official website') return true
+  if (!website) return false
+  const url = socialUrl(link).replace(/\/$/, '')
+  const site = website.replace(/\/$/, '')
+  return url === site || url.startsWith(`${site}/`)
+}
+
+const visibleSocialLinks = computed(() => {
+  const d = developer.value
+  if (!d?.socialLinks?.length) return []
+  return d.socialLinks.filter((link) => !isOfficialWebsiteLink(link, d.website))
+})
 
 async function loadPage() {
   const param = route.params.slug
