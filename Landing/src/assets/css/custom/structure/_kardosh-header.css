@@ -32,12 +32,12 @@
 /* Logo contrast — override legacy #topnav:not(.nav-sticky) invert rules */
 #topnav.kardosh-header .kardosh-header__logo .kardosh-brand-img--nav {
     filter: none;
-    max-height: 2.5rem;
+    max-height: 3rem;
 }
 
 @media (min-width: 1024px) {
     #topnav.kardosh-header .kardosh-header__logo .kardosh-brand-img--nav {
-        max-height: 3rem;
+        max-height: 3.75rem;
     }
 }
 
