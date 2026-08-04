@@ -220,14 +220,29 @@ function revealMp4IfPlaying() {
   tryRevealHeroVideo()
 }
 
+function offerPlayPromptIfNeeded(err) {
+  // Windows/Chrome muted autoplay works — never show the tap overlay there.
+  // Only Safari/iOS Low Power Mode typically needs an explicit play control.
+  if (!isAppleSafariFamily()) return
+  if (heroMediaReady.value) return
+  const name = err?.name || ''
+  if (name && name !== 'NotAllowedError' && name !== 'AbortError') return
+  showPlayPrompt.value = true
+}
+
 function startVideoWatchdog() {
   clearVideoWatchdog()
   if (useMp4.value) {
-    // If autoplay stays blocked, offer a tap control instead of hiding the poster
+    // Do not flash a play button on desktop while the MP4 is still buffering.
+    // Safari may get a late prompt only after play() is actually blocked.
+    if (!isAppleSafariFamily()) return
     clearPlayPromptTimer()
     playPromptTimer = window.setTimeout(() => {
-      if (!heroMediaReady.value && embedVideo.value) showPlayPrompt.value = true
-    }, 2500)
+      const el = videoEl.value
+      if (!heroMediaReady.value && embedVideo.value && el?.paused) {
+        showPlayPrompt.value = true
+      }
+    }, 5000)
     return
   }
   videoWatchdog = window.setTimeout(() => {
@@ -356,8 +371,8 @@ async function startMp4WhenReady() {
     playInFlight = true
     await el.play()
     revealMp4IfPlaying()
-  } catch {
-    /* Safari / Low Power Mode — gesture + prompt handle it */
+  } catch (err) {
+    offerPlayPromptIfNeeded(err)
   } finally {
     playInFlight = false
   }
@@ -372,7 +387,7 @@ function kickMp4Playback() {
   if (playPromise?.then) {
     playPromise
       .then(() => revealMp4IfPlaying())
-      .catch(() => {})
+      .catch((err) => offerPlayPromptIfNeeded(err))
       .finally(() => {
         playInFlight = false
       })
