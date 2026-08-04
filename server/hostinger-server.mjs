@@ -148,8 +148,6 @@ async function proxyImage(req, res, requestUrl) {
   }
 }
 
-import { resolveStaticPath } from '../shared/staticPath.mjs'
-
 const LONG_CACHE_EXT = new Set([
   '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
 ])
