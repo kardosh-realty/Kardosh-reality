@@ -69,10 +69,11 @@
         muted
         loop
         playsinline
+        webkit-playsinline
         disablepictureinpicture
         disableremoteplayback
         controlslist="nodownload nofullscreen noremoteplayback"
-        preload="auto"
+        preload="metadata"
         aria-hidden="true"
         @playing="onVideoPlaying"
         @canplay="onVideoCanPlay"
@@ -182,9 +183,22 @@ function forceRevealHeroVideo() {
   heroMediaReady.value = true
 }
 
+/**
+ * Reveal the MP4 layer only when frames are actually painting.
+ * iPad Safari (esp. Low Power Mode) often fires canplay but never autoplays —
+ * hiding the poster then leaves a frozen/black video instead of the still.
+ */
+function revealMp4IfPlaying() {
+  const el = videoEl.value
+  if (!el || el.paused || el.ended) return
+  tryRevealHeroVideo()
+}
+
 function startVideoWatchdog() {
   clearVideoWatchdog()
-  const timeoutMs = useMp4.value ? 5000 : 8000
+  // Never force-hide the poster for MP4 when autoplay is blocked.
+  if (useMp4.value) return
+  const timeoutMs = 8000
   videoWatchdog = window.setTimeout(() => {
     if (!heroMediaReady.value) forceRevealHeroVideo()
   }, timeoutMs)
@@ -218,7 +232,6 @@ function onPageVisible() {
   if (!embedVideo.value) return
   if (useMp4.value) {
     kickMp4Playback()
-    if (!heroMediaReady.value) tryRevealHeroVideo()
     return
   }
   kickEmbedPlayback()
@@ -253,7 +266,7 @@ function onPosterImageLoad() {
 function afterPosterReady() {
   if (!embedVideo.value) return
   if (embedIframeUrl.value) return
-  tryRevealHeroVideo()
+  // Do not reveal yet — wait for `playing` so iPad keeps the poster if autoplay fails
   startMp4WhenReady()
 }
 
@@ -265,11 +278,14 @@ function onEmbedIframeLoad() {
 }
 
 function onVideoPlaying() {
-  tryRevealHeroVideo()
+  clearPlaybackKickTimer()
+  clearVideoWatchdog()
+  revealMp4IfPlaying()
 }
 
 function onVideoCanPlay() {
-  tryRevealHeroVideo()
+  // Ready ≠ playing. Kick playback; reveal only from `playing`.
+  kickMp4Playback()
 }
 
 function onVideoError() {
@@ -283,27 +299,42 @@ watch(posterGateReady, (ready) => {
   afterPosterReady()
 })
 
+function prepareMp4Element(el) {
+  if (!el) return
+  el.muted = true
+  el.defaultMuted = true
+  el.volume = 0
+  el.setAttribute('muted', '')
+  el.setAttribute('playsinline', '')
+  el.setAttribute('webkit-playsinline', '')
+  el.playsInline = true
+}
+
 async function startMp4WhenReady() {
   await nextTick()
   const el = videoEl.value
   if (!el) return
-  el.muted = true
-  el.defaultMuted = true
-  el.setAttribute('muted', '')
-  el.setAttribute('playsinline', '')
+  prepareMp4Element(el)
   try {
     await el.play()
-    tryRevealHeroVideo()
+    revealMp4IfPlaying()
   } catch {
-    /* Safari may block first attempt — watchdog + retries handle it */
+    /* Safari / Low Power Mode may block — gesture + interval retries handle it */
   }
 }
 
 function kickMp4Playback() {
   const el = videoEl.value
   if (!el) return
-  el.muted = true
-  el.play().then(() => tryRevealHeroVideo()).catch(() => {})
+  prepareMp4Element(el)
+  el.play()
+    .then(() => revealMp4IfPlaying())
+    .catch(() => {})
+}
+
+function onUserGestureUnlock() {
+  if (!useMp4.value || heroMediaReady.value) return
+  kickMp4Playback()
 }
 
 function startMp4PlaybackKick() {
@@ -356,6 +387,9 @@ onMounted(async () => {
 
   document.addEventListener('visibilitychange', onPageVisible)
   window.addEventListener('pageshow', onPageVisible)
+  // iPad Low Power Mode blocks muted autoplay until a user gesture
+  window.addEventListener('touchstart', onUserGestureUnlock, { passive: true })
+  window.addEventListener('pointerdown', onUserGestureUnlock, { passive: true })
 })
 
 onUnmounted(() => {
@@ -364,5 +398,7 @@ onUnmounted(() => {
   clearPlaybackKickTimer()
   document.removeEventListener('visibilitychange', onPageVisible)
   window.removeEventListener('pageshow', onPageVisible)
+  window.removeEventListener('touchstart', onUserGestureUnlock)
+  window.removeEventListener('pointerdown', onUserGestureUnlock)
 })
 </script>
