@@ -151,10 +151,49 @@ function cacheControlFor(filePath, ext) {
 
 function serveFile(res, filePath, req) {
   const ext = path.extname(filePath).toLowerCase()
+  const extraHeaders = {}
+  if (ext === '.html') {
+    // Explicitly allow muted autoplay — Hostinger CDN challenge pages send autoplay=()
+    extraHeaders['Permissions-Policy'] = 'autoplay=(self)'
+  }
   serveStaticFile(res, filePath, {
     req,
     mime: MIME,
     cacheControl: cacheControlFor(filePath, ext),
+    extraHeaders,
+  })
+}
+
+function resolveHeroVideoPath() {
+  const candidates = [
+    path.join(distDir, 'videos', 'dubai-hero.mp4'),
+    path.join(landingRoot, 'public', 'videos', 'dubai-hero.mp4'),
+    path.join(repoRoot, 'Landing', 'public', 'videos', 'dubai-hero.mp4'),
+  ]
+  return candidates.find((p) => fs.existsSync(p)) || null
+}
+
+/** Safari-safe MP4 stream — bypasses Hostinger CDN static cache that strips Range. */
+function serveHeroVideo(req, res) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { Allow: 'GET, HEAD' })
+    res.end('Method not allowed')
+    return
+  }
+
+  const filePath = resolveHeroVideoPath()
+  if (!filePath) {
+    sendJson(res, 404, { error: 'Hero video not found' })
+    return
+  }
+
+  serveStaticFile(res, filePath, {
+    req,
+    mime: MIME,
+    cacheControl: 'public, max-age=86400',
+    extraHeaders: {
+      'Permissions-Policy': 'autoplay=(self)',
+    },
   })
 }
 
@@ -162,7 +201,16 @@ const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`)
 
   if (requestUrl.pathname === '/api/health') {
-    sendJson(res, 200, { ok: true, app: 'kardosh-landing', routes: ['/', '/api/reelly/*', '/api/reelly/catalogue/*', '/api/proxy-image'] })
+    sendJson(res, 200, {
+      ok: true,
+      app: 'kardosh-landing',
+      routes: ['/', '/api/hero-video', '/api/reelly/*', '/api/reelly/catalogue/*', '/api/proxy-image'],
+    })
+    return
+  }
+
+  if (requestUrl.pathname === '/api/hero-video') {
+    serveHeroVideo(req, res)
     return
   }
 
@@ -188,6 +236,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    // Also route static hero MP4 through range-aware handler
+    if (filePath.endsWith(`${path.sep}dubai-hero.mp4`)) {
+      serveHeroVideo(req, res)
+      return
+    }
     serveFile(res, filePath, req)
     return
   }

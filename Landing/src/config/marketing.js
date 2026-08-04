@@ -62,6 +62,7 @@ export function parseVimeoId(value) {
 }
 
 /** True for direct MP4/WebM files — not YouTube/Vimeo page links */
+/** True for direct MP4/WebM files — not YouTube/Vimeo page links */
 export function isDirectVideoUrl(value) {
   if (!value) return false
   const trimmed = String(value).trim()
@@ -70,6 +71,7 @@ export function isDirectVideoUrl(value) {
   return (
     /\.(mp4|webm|ogg)(\?|$)/i.test(lower) ||
     lower.startsWith('/videos/') ||
+    lower.startsWith('/api/hero-video') ||
     lower.startsWith('/assets/') ||
     (lower.startsWith('blob:') && lower.includes('mp4'))
   )
@@ -109,18 +111,27 @@ const HERO_DISABLE_LOCAL = ['false', '0', 'no'].includes(
   String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
 )
 
-/** Bundled poster lives in src/assets; MP4 is served from public/videos/. */
-export const DEFAULT_LOCAL_HERO_MP4 = '/videos/dubai-hero.mp4'
+/** Bundled poster lives in src/assets; MP4 is streamed via Node (/api/hero-video)
+ *  so Hostinger CDN cannot strip byte-range support that Safari requires. */
+export const DEFAULT_LOCAL_HERO_MP4 = '/api/hero-video'
 
 /**
- * Prefer env URL; otherwise always fall back to the shipped MP4 unless local
- * video is explicitly disabled. Hostinger builds often omit VITE_HERO_* and
- * previously fell through to the Ken Burns still — looking like a slideshow.
+ * Prefer env URL; rewrite local public path to the range-aware API route.
+ * Hostinger CDN serves /videos/* without Accept-Ranges — Safari then won't play.
  */
-const HERO_VIDEO_URL = String(
-  import.meta.env.VITE_HERO_VIDEO_URL ||
-    (HERO_DISABLE_LOCAL ? '' : DEFAULT_LOCAL_HERO_MP4)
-).trim()
+function resolveHeroMp4Url(raw) {
+  const value = String(raw || '').trim()
+  if (!value) return HERO_DISABLE_LOCAL ? '' : DEFAULT_LOCAL_HERO_MP4
+  // Always stream local hero files through Node so Safari gets byte-range responses
+  if (/^\/videos\/.+\.mp4(\?|$)/i.test(value) || /\/dubai-hero\.mp4(\?|$)/i.test(value)) {
+    return DEFAULT_LOCAL_HERO_MP4
+  }
+  return value
+}
+
+const HERO_VIDEO_URL = resolveHeroMp4Url(
+  import.meta.env.VITE_HERO_VIDEO_URL || (HERO_DISABLE_LOCAL ? '' : DEFAULT_LOCAL_HERO_MP4)
+)
 
 const HERO_VIMEO_ID_FROM_ENV =
   parseVimeoId(HERO_VIDEO_URL) ||

@@ -29,6 +29,7 @@ export function serveStaticFile(res, filePath, {
   extraHeaders = {},
 } = {}) {
   const ext = path.extname(filePath).toLowerCase()
+  const method = String(req?.method || 'GET').toUpperCase()
   const headers = {
     'Content-Type': mime[ext] || 'application/octet-stream',
     'Cache-Control': cacheControl,
@@ -44,6 +45,11 @@ export function serveStaticFile(res, filePath, {
     return
   }
 
+  const sendEmpty = (status, hdrs) => {
+    res.writeHead(status, hdrs)
+    res.end()
+  }
+
   if (RANGE_MEDIA_EXT.has(ext)) {
     headers['Accept-Ranges'] = 'bytes'
     const size = stat.size
@@ -52,28 +58,34 @@ export function serveStaticFile(res, filePath, {
     if (rangeHeader) {
       const match = String(rangeHeader).match(/^bytes=(\d*)-(\d*)$/i)
       if (!match) {
-        res.writeHead(416, { 'Content-Range': `bytes */${size}` })
-        res.end()
+        sendEmpty(416, { 'Content-Range': `bytes */${size}` })
         return
       }
 
       let start = match[1] === '' ? 0 : Number(match[1])
       let end = match[2] === '' ? size - 1 : Number(match[2])
       if (Number.isNaN(start) || Number.isNaN(end) || start < 0 || end < start || start >= size) {
-        res.writeHead(416, { 'Content-Range': `bytes */${size}` })
-        res.end()
+        sendEmpty(416, { 'Content-Range': `bytes */${size}` })
         return
       }
       end = Math.min(end, size - 1)
 
       headers['Content-Range'] = `bytes ${start}-${end}/${size}`
       headers['Content-Length'] = String(end - start + 1)
+      if (method === 'HEAD') {
+        sendEmpty(206, headers)
+        return
+      }
       res.writeHead(206, headers)
       fs.createReadStream(filePath, { start, end }).pipe(res)
       return
     }
 
     headers['Content-Length'] = String(size)
+    if (method === 'HEAD') {
+      sendEmpty(200, headers)
+      return
+    }
     res.writeHead(200, headers)
     fs.createReadStream(filePath).pipe(res)
     return
@@ -83,12 +95,20 @@ export function serveStaticFile(res, filePath, {
   if (encoder) {
     headers['Content-Encoding'] = encoder[0]
     headers['Vary'] = 'Accept-Encoding'
+    if (method === 'HEAD') {
+      sendEmpty(200, headers)
+      return
+    }
     res.writeHead(200, headers)
     fs.createReadStream(filePath).pipe(encoder[1]).pipe(res)
     return
   }
 
   headers['Content-Length'] = String(stat.size)
+  if (method === 'HEAD') {
+    sendEmpty(200, headers)
+    return
+  }
   res.writeHead(200, headers)
   fs.createReadStream(filePath).pipe(res)
 }
