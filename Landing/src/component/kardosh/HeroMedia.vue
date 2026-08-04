@@ -87,7 +87,7 @@
 
     <div
       v-else
-      class="image-wrap kenburn"
+      class="image-wrap"
       :style="{ backgroundImage: `url(${heroPosterFullUrl})` }"
       aria-hidden="true"
     />
@@ -301,7 +301,8 @@ function onVideoCanPlay() {
 function onVideoError() {
   console.warn('[hero] MP4 failed to load — check VITE_HERO_VIDEO_URL is a direct .mp4 link')
   clearPlaybackKickTimer()
-  useMp4.value = false
+  // Keep the static poster — do NOT fall through to Ken Burns "slideshow"
+  embedVideo.value = false
 }
 
 watch(posterGateReady, (ready) => {

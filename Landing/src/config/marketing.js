@@ -104,12 +104,22 @@ const HERO_FORCE_DIRECT = ['true', '1', 'yes'].includes(
   String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
 )
 
-/** Bundled poster lives in src/assets; MP4 is served from public/videos/ (not in git). */
+/** Explicitly disable local MP4 (rare — use YouTube/Vimeo only). */
+const HERO_DISABLE_LOCAL = ['false', '0', 'no'].includes(
+  String(import.meta.env.VITE_HERO_USE_LOCAL_VIDEO || '').toLowerCase()
+)
+
+/** Bundled poster lives in src/assets; MP4 is served from public/videos/. */
 export const DEFAULT_LOCAL_HERO_MP4 = '/videos/dubai-hero.mp4'
 
+/**
+ * Prefer env URL; otherwise always fall back to the shipped MP4 unless local
+ * video is explicitly disabled. Hostinger builds often omit VITE_HERO_* and
+ * previously fell through to the Ken Burns still — looking like a slideshow.
+ */
 const HERO_VIDEO_URL = String(
   import.meta.env.VITE_HERO_VIDEO_URL ||
-    (HERO_FORCE_DIRECT ? DEFAULT_LOCAL_HERO_MP4 : '')
+    (HERO_DISABLE_LOCAL ? '' : DEFAULT_LOCAL_HERO_MP4)
 ).trim()
 
 const HERO_VIMEO_ID_FROM_ENV =
@@ -129,7 +139,7 @@ export const HERO_VIMEO_ID = HERO_VIMEO_ID_FROM_ENV
 
 /** YouTube embed when configured and no MP4/Vimeo hero URL is in use */
 export const HERO_YOUTUBE_ID =
-  HERO_USE_DIRECT_VIDEO || HERO_VIMEO_ID || HERO_FORCE_DIRECT
+  HERO_USE_DIRECT_VIDEO || HERO_VIMEO_ID
     ? null
     : HERO_YOUTUBE_ID_FROM_ENV || null
 
