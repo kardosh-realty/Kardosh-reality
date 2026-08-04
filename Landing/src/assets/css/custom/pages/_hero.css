@@ -274,6 +274,40 @@
     @apply opacity-0 pointer-events-none;
 }
 
+.hero-play-prompt {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.hero-play-prompt__icon {
+    width: 4.25rem;
+    height: 4.25rem;
+    border-radius: 9999px;
+    background: rgb(15 23 42 / 0.55);
+    border: 2px solid rgb(255 255 255 / 0.85);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+    position: relative;
+}
+
+.hero-play-prompt__icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0.7rem 0 0.7rem 1.15rem;
+    border-color: transparent transparent transparent #fff;
+}
+
 .image-wrap {
     @apply absolute inset-0 bg-cover bg-center bg-no-repeat overflow-hidden;
 }

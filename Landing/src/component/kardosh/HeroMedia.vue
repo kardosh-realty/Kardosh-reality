@@ -59,7 +59,6 @@
         @load="onPosterImageLoad"
         @error="onPosterImageError"
       />
-      <!-- src on <video> (not <source>) + muted/playsinline attrs: Safari autoplay requirements -->
       <video
         v-if="embedVideo"
         ref="videoEl"
@@ -83,6 +82,15 @@
         @loadeddata="onVideoCanPlay"
         @error="onVideoError"
       />
+      <button
+        v-if="showPlayPrompt"
+        type="button"
+        class="hero-play-prompt"
+        aria-label="Play background video"
+        @click="onTapPlay"
+      >
+        <span class="hero-play-prompt__icon" aria-hidden="true" />
+      </button>
     </template>
 
     <div
@@ -111,7 +119,6 @@ import {
   deferUntilIdle,
   shouldDeferHeroVideo,
   heroVideoDeferMs,
-  isMobileViewport,
 } from '@/composables/useDeferUntilIdle'
 import {
   DEFAULT_HERO_POSTER,
@@ -121,7 +128,6 @@ import {
 
 const props = defineProps({
   mediaClass: { type: String, default: '' },
-  /** No poster / thumbnail flash — dark fill until video plays (welcome page) */
   hidePoster: { type: Boolean, default: false },
 })
 
@@ -133,8 +139,8 @@ const { iframeStyle: youtubeIframeStyle, updateCover: updateYoutubeCover } =
   useHeroVideoCover(youtubeWrapRef)
 const useMp4 = ref(!HERO_YOUTUBE_ID && !HERO_VIMEO_ID && !!HERO_VIDEO.src)
 const heroMediaReady = ref(false)
-/** Video embed loads after idle so it does not compete with poster LCP */
 const embedVideo = ref(false)
+const showPlayPrompt = ref(false)
 
 const { posterGateReady, posterImageReady, youtubeIframeReady, heroPosterFullUrl } =
   useHeroPosterGate({ hidePoster: props.hidePoster })
@@ -155,13 +161,18 @@ const embedIframeUrl = computed(() => {
 let revealTimer = null
 let videoWatchdog = null
 let playbackKickTimer = null
-let playAttempt = 0
+let playPromptTimer = null
+let playInFlight = false
+let didLoadOnce = false
 
 function isAppleSafariFamily() {
   if (typeof navigator === 'undefined') return false
   const ua = navigator.userAgent || ''
-  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  const isSafariDesktop = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox|CriOS|FxiOS|EdgiOS/.test(ua)
+  const isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  const isSafariDesktop =
+    /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox|CriOS|FxiOS|EdgiOS/.test(ua)
   return isIOS || isSafariDesktop
 }
 
@@ -186,6 +197,13 @@ function clearPlaybackKickTimer() {
   }
 }
 
+function clearPlayPromptTimer() {
+  if (playPromptTimer) {
+    window.clearTimeout(playPromptTimer)
+    playPromptTimer = null
+  }
+}
+
 function forceRevealHeroVideo() {
   clearRevealTimer()
   clearVideoWatchdog()
@@ -194,26 +212,27 @@ function forceRevealHeroVideo() {
   heroMediaReady.value = true
 }
 
-/**
- * Reveal the MP4 layer only when frames are actually painting.
- * iPad Safari (esp. Low Power Mode) often fires canplay but never autoplays —
- * hiding the poster then leaves a frozen/black video instead of the still.
- */
 function revealMp4IfPlaying() {
   const el = videoEl.value
   if (!el || el.paused || el.ended) return
-  if (el.readyState < 2) return
+  showPlayPrompt.value = false
+  clearPlayPromptTimer()
   tryRevealHeroVideo()
 }
 
 function startVideoWatchdog() {
   clearVideoWatchdog()
-  // Never force-hide the poster for MP4 when autoplay is blocked.
-  if (useMp4.value) return
-  const timeoutMs = 8000
+  if (useMp4.value) {
+    // If autoplay stays blocked, offer a tap control instead of hiding the poster
+    clearPlayPromptTimer()
+    playPromptTimer = window.setTimeout(() => {
+      if (!heroMediaReady.value && embedVideo.value) showPlayPrompt.value = true
+    }, 2500)
+    return
+  }
   videoWatchdog = window.setTimeout(() => {
     if (!heroMediaReady.value) forceRevealHeroVideo()
-  }, timeoutMs)
+  }, 8000)
 }
 
 function kickEmbedPlayback() {
@@ -262,7 +281,7 @@ function tryRevealHeroVideo() {
   clearRevealTimer()
   revealTimer = window.setTimeout(() => {
     heroMediaReady.value = true
-  }, 400)
+  }, 300)
 }
 
 function markPosterReady() {
@@ -291,6 +310,8 @@ function onEmbedIframeLoad() {
 function onVideoPlaying() {
   clearPlaybackKickTimer()
   clearVideoWatchdog()
+  clearPlayPromptTimer()
+  showPlayPrompt.value = false
   revealMp4IfPlaying()
 }
 
@@ -301,7 +322,8 @@ function onVideoCanPlay() {
 function onVideoError() {
   console.warn('[hero] MP4 failed to load — check VITE_HERO_VIDEO_URL is a direct .mp4 link')
   clearPlaybackKickTimer()
-  // Keep the static poster — do NOT fall through to Ken Burns "slideshow"
+  clearPlayPromptTimer()
+  showPlayPrompt.value = false
   embedVideo.value = false
 }
 
@@ -327,40 +349,48 @@ async function startMp4WhenReady() {
   if (!el) return
   prepareMp4Element(el)
   try {
-    // Safari often needs an explicit load() after mount before play() succeeds
-    if (el.readyState < 2) el.load()
+    if (!didLoadOnce && el.readyState < 2) {
+      el.load()
+      didLoadOnce = true
+    }
+    playInFlight = true
     await el.play()
     revealMp4IfPlaying()
   } catch {
-    /* Safari / Low Power Mode may block — gesture + interval retries handle it */
+    /* Safari / Low Power Mode — gesture + prompt handle it */
+  } finally {
+    playInFlight = false
   }
 }
 
 function kickMp4Playback() {
   const el = videoEl.value
-  if (!el || heroMediaReady.value) return
+  if (!el || heroMediaReady.value || playInFlight) return
   prepareMp4Element(el)
-  playAttempt += 1
-  // Periodic load() helps Safari after deferred mount
-  if (playAttempt === 1 || playAttempt % 3 === 0) {
-    try {
-      if (el.readyState < 2) el.load()
-    } catch {
-      /* ignore */
-    }
-  }
+  playInFlight = true
   const playPromise = el.play()
   if (playPromise?.then) {
-    playPromise.then(() => revealMp4IfPlaying()).catch(() => {})
+    playPromise
+      .then(() => revealMp4IfPlaying())
+      .catch(() => {})
+      .finally(() => {
+        playInFlight = false
+      })
+  } else {
+    playInFlight = false
   }
+}
+
+function onTapPlay() {
+  if (!embedVideo.value) embedVideo.value = true
+  nextTick(() => {
+    kickMp4Playback()
+  })
 }
 
 function onUserGestureUnlock() {
   if (!useMp4.value && !embedIframeUrl.value) return
-  // If idle defer hasn't enabled the video yet, enable now from the gesture
-  if (!embedVideo.value) {
-    embedVideo.value = true
-  }
+  if (!embedVideo.value) embedVideo.value = true
   if (heroMediaReady.value) return
   nextTick(() => {
     if (useMp4.value) kickMp4Playback()
@@ -372,7 +402,8 @@ function startMp4PlaybackKick() {
   if (!useMp4.value) return
   clearPlaybackKickTimer()
   kickMp4Playback()
-  playbackKickTimer = window.setInterval(kickMp4Playback, 1500)
+  // Gentle retries only — do not call load() again (resets Safari buffering)
+  playbackKickTimer = window.setInterval(kickMp4Playback, 2000)
 }
 
 function scheduleHeroVideo() {
@@ -381,17 +412,17 @@ function scheduleHeroVideo() {
     embedVideo.value = true
     return
   }
-  // Phones keep the poster only — the multi-MB hero video is desktop/tablet.
-  if (isMobileViewport() || shouldDeferHeroVideo()) return
+  // Save-data only — Safari/iPhone/iPad must still get the MP4 (tap unlocks if needed)
+  if (shouldDeferHeroVideo()) return
   if (!embedIframeUrl.value && !useMp4.value) return
 
   const enableVideo = () => {
     embedVideo.value = true
   }
 
-  // Safari: start sooner — long idle defer makes muted autoplay less reliable
   if (isAppleSafariFamily()) {
-    window.setTimeout(enableVideo, 200)
+    // Enable immediately so Safari can start buffered download ASAP
+    enableVideo()
     return
   }
 
@@ -423,20 +454,18 @@ onMounted(async () => {
 
   document.addEventListener('visibilitychange', onPageVisible)
   window.addEventListener('pageshow', onPageVisible)
-  // iPad / Safari Low Power Mode: muted autoplay often needs a user gesture
   window.addEventListener('touchstart', onUserGestureUnlock, { passive: true })
   window.addEventListener('pointerdown', onUserGestureUnlock, { passive: true })
-  window.addEventListener('scroll', onUserGestureUnlock, { passive: true, once: true })
 })
 
 onUnmounted(() => {
   clearRevealTimer()
   clearVideoWatchdog()
   clearPlaybackKickTimer()
+  clearPlayPromptTimer()
   document.removeEventListener('visibilitychange', onPageVisible)
   window.removeEventListener('pageshow', onPageVisible)
   window.removeEventListener('touchstart', onUserGestureUnlock)
   window.removeEventListener('pointerdown', onUserGestureUnlock)
-  window.removeEventListener('scroll', onUserGestureUnlock)
 })
 </script>
