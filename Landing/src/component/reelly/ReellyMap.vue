@@ -20,6 +20,7 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MapMarkerPreview from '@/component/reelly/MapMarkerPreview.vue'
+import { MAP_TILES } from '@/config/mapTiles'
 const props = defineProps({
   markers: { type: Array, default: () => [] },
   selectedId: { type: [Number, String], default: null },
@@ -258,10 +259,9 @@ function renderMarkers() {
 
 onMounted(() => {
   map = L.map(mapEl.value, { scrollWheelZoom: true }).setView([25.2048, 55.2708], 10)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 20,
+  L.tileLayer(MAP_TILES.url, {
+    attribution: MAP_TILES.attribution,
+    maxZoom: MAP_TILES.maxZoom,
   }).addTo(map)
 
   layerGroup = L.layerGroup().addTo(map)
