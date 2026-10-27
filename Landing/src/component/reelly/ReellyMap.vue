@@ -20,7 +20,7 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MapMarkerPreview from '@/component/reelly/MapMarkerPreview.vue'
-import { MAP_TILES } from '@/config/mapTiles'
+import { MAP_TILES, ENGLISH_LABEL } from '@/config/mapTiles'
 const props = defineProps({
   markers: { type: Array, default: () => [] },
   selectedId: { type: [Number, String], default: null },
@@ -257,12 +257,52 @@ function renderMarkers() {
   addBatch()
 }
 
-onMounted(() => {
-  map = L.map(mapEl.value, { scrollWheelZoom: true }).setView([25.2048, 55.2708], 10)
+function addRasterBasemap() {
+  if (!map) return
   L.tileLayer(MAP_TILES.url, {
     attribution: MAP_TILES.attribution,
     maxZoom: MAP_TILES.maxZoom,
   }).addTo(map)
+}
+
+function useEnglishLabels(glMap) {
+  for (const layer of glMap.getStyle()?.layers || []) {
+    if (layer.type !== 'symbol') continue
+    const field = glMap.getLayoutProperty(layer.id, 'text-field')
+    if (field && JSON.stringify(field).includes('"name')) {
+      glMap.setLayoutProperty(layer.id, 'text-field', ENGLISH_LABEL)
+    }
+  }
+}
+
+async function addVectorBasemap() {
+  try {
+    const [{ maplibreGL }] = await Promise.all([
+      import('@maplibre/maplibre-gl-leaflet'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ])
+    if (!map) return
+    const layer = maplibreGL({ style: MAP_TILES.vectorStyle, attribution: MAP_TILES.attribution })
+    layer.addTo(map)
+    const glMap = layer.getMaplibreMap()
+    if (glMap.isStyleLoaded()) useEnglishLabels(glMap)
+    glMap.on('style.load', () => useEnglishLabels(glMap))
+    glMap.once('error', (e) => {
+      if (glMap.isStyleLoaded() || !map) return
+      console.warn('[map] vector style failed, using raster tiles', e?.error || e)
+      map.removeLayer(layer)
+      addRasterBasemap()
+    })
+  } catch (err) {
+    console.warn('[map] vector basemap unavailable, using raster tiles', err)
+    addRasterBasemap()
+  }
+}
+
+onMounted(() => {
+  map = L.map(mapEl.value, { scrollWheelZoom: true }).setView([25.2048, 55.2708], 10)
+  if (MAP_TILES.vectorStyle) addVectorBasemap()
+  else addRasterBasemap()
 
   layerGroup = L.layerGroup().addTo(map)
   map.on('move zoom zoomend moveend', updateAnchor)

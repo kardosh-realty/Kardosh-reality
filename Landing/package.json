@@ -12,6 +12,7 @@
     "audit:reelly": "node scripts/audit-reelly-apis.mjs"
   },
   "dependencies": {
+    "@maplibre/maplibre-gl-leaflet": "^0.1.4",
     "@supabase/supabase-js": "^2.106.1",
     "@tailwindcss/vite": "^4.3.0",
     "@unhead/vue": "^3.1.1",
@@ -20,6 +21,7 @@
     "leaflet": "^1.9.4",
     "libphonenumber-js": "^1.13.4",
     "lucide-vue-next": "^1.0.0",
+    "maplibre-gl": "^6.16.0",
     "sharp": "^0.34.5",
     "swiper": "^12.1.4",
     "tailwindcss": "^4.3.0",

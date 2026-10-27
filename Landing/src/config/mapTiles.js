@@ -1,7 +1,8 @@
 /**
  * Leaflet basemap.
- * - VITE_MAP_TILE_URL (+ VITE_MAP_TILE_ATTRIBUTION): any custom provider.
- * - VITE_CARTO_API_KEY: CARTO Voyager (English labels). Free key: https://carto.com/basemaps/apikey
+ * - VITE_MAP_TILE_URL (+ VITE_MAP_TILE_ATTRIBUTION): any custom raster provider.
+ * - VITE_CARTO_API_KEY: CARTO Voyager vector style rendered with English labels
+ *   (raster Voyager as fallback). Free key: https://carto.com/basemaps/apikey
  * - Neither: OpenStreetMap standard tiles (local-language labels, Arabic in Dubai).
  */
 const OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -14,22 +15,28 @@ const cartoKey = String(import.meta.env.VITE_CARTO_API_KEY || '').trim()
 
 function resolveTiles() {
   if (envUrl) {
-    return { url: envUrl, attribution: OSM_ATTRIBUTION, maxZoom: 20 }
+    return { url: envUrl, vectorStyle: '', attribution: OSM_ATTRIBUTION, maxZoom: 20 }
   }
   if (cartoKey) {
+    const key = encodeURIComponent(cartoKey)
     return {
-      url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${encodeURIComponent(cartoKey)}`,
+      url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${key}`,
+      vectorStyle: `https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json?key=${key}`,
       attribution: CARTO_ATTRIBUTION,
       maxZoom: 20,
     }
   }
-  return { url: OSM_URL, attribution: OSM_ATTRIBUTION, maxZoom: 19 }
+  return { url: OSM_URL, vectorStyle: '', attribution: OSM_ATTRIBUTION, maxZoom: 19 }
 }
 
 const tiles = resolveTiles()
 
 export const MAP_TILES = {
   url: tiles.url,
+  vectorStyle: tiles.vectorStyle,
   attribution: String(import.meta.env.VITE_MAP_TILE_ATTRIBUTION || '').trim() || tiles.attribution,
   maxZoom: Number(import.meta.env.VITE_MAP_TILE_MAX_ZOOM) || tiles.maxZoom,
 }
+
+/** Label expression: English name only, so Arabic-only features stay unlabeled. */
+export const ENGLISH_LABEL = ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], '']
