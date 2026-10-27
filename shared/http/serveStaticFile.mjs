@@ -5,7 +5,7 @@ import zlib from 'node:zlib'
 const RANGE_MEDIA_EXT = new Set(['.mp4', '.webm', '.ogg', '.m4v'])
 
 const COMPRESSIBLE_EXT = new Set([
-  '.css', '.html', '.js', '.json', '.svg', '.txt', '.webmanifest', '.xml',
+  '.css', '.html', '.js', '.mjs', '.json', '.svg', '.txt', '.webmanifest', '.xml',
 ])
 
 function pickEncoder(req, ext) {

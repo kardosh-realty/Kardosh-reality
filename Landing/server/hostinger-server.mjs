@@ -25,6 +25,7 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.mp4': 'video/mp4',
   '.png': 'image/png',
@@ -140,7 +141,7 @@ async function proxyImage(req, res, requestUrl) {
 }
 
 const LONG_CACHE_EXT = new Set([
-  '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
+  '.css', '.gif', '.ico', '.jpg', '.jpeg', '.js', '.mjs', '.mp4', '.png', '.svg', '.webp', '.woff', '.woff2',
 ])
 
 function cacheControlFor(filePath, ext) {

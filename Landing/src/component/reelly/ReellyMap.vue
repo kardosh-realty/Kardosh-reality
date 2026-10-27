@@ -277,11 +277,15 @@ function useEnglishLabels(glMap) {
 
 async function addVectorBasemap() {
   try {
-    const [{ maplibreGL }] = await Promise.all([
+    const [{ maplibreGL }, { setWorkerUrl }, { default: workerUrl }] = await Promise.all([
       import('@maplibre/maplibre-gl-leaflet'),
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl-worker.mjs?url'),
       import('maplibre-gl/dist/maplibre-gl.css'),
     ])
     if (!map) return
+    // MapLibre resolves its worker next to its own module, which bundling breaks.
+    setWorkerUrl(new URL(workerUrl, window.location.href).href)
     const layer = maplibreGL({ style: MAP_TILES.vectorStyle, attribution: MAP_TILES.attribution })
     layer.addTo(map)
     const glMap = layer.getMaplibreMap()
