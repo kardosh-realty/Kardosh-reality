@@ -2,6 +2,16 @@ import { normalizeList } from './normalize'
 import { reellyQueryParams } from './locale'
 
 const BASE = '/api/reelly'
+
+// The Node SEO server (src/seo/serverEntry.js) serves /api/reelly in-process; read lazily
+// because the server installs it after this module loads.
+function apiFetch(url, init) {
+  if (!import.meta.env.SSR) return fetch(url, init)
+  const ssrFetch = globalThis.__KARDOSH_SSR_FETCH__
+  if (!ssrFetch) throw new Error('SSR API fetch is not initialised')
+  return ssrFetch(url, init)
+}
+
 const RETRYABLE = new Set([429, 502, 503, 504])
 
 function buildQuery(params = {}) {
@@ -27,7 +37,7 @@ async function reellyFetch(path, params = {}, { retries = 3, timeoutMs } = {}) {
   try {
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
           headers: { Accept: 'application/json' },
           signal: controller.signal,
         })

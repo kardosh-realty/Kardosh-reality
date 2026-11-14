@@ -27,6 +27,8 @@ export function serveStaticFile(res, filePath, {
   mime = {},
   cacheControl = 'no-cache',
   extraHeaders = {},
+  /** Response status for full (non-range) responses — e.g. 404 for SPA fallback on unknown routes. */
+  status = 200,
 } = {}) {
   const ext = path.extname(filePath).toLowerCase()
   const method = String(req?.method || 'GET').toUpperCase()
@@ -96,19 +98,19 @@ export function serveStaticFile(res, filePath, {
     headers['Content-Encoding'] = encoder[0]
     headers['Vary'] = 'Accept-Encoding'
     if (method === 'HEAD') {
-      sendEmpty(200, headers)
+      sendEmpty(status, headers)
       return
     }
-    res.writeHead(200, headers)
+    res.writeHead(status, headers)
     fs.createReadStream(filePath).pipe(encoder[1]).pipe(res)
     return
   }
 
   headers['Content-Length'] = String(stat.size)
   if (method === 'HEAD') {
-    sendEmpty(200, headers)
+    sendEmpty(status, headers)
     return
   }
-  res.writeHead(200, headers)
+  res.writeHead(status, headers)
   fs.createReadStream(filePath).pipe(res)
 }

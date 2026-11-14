@@ -220,11 +220,15 @@
 import { ref, computed, watch, onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSeo } from '@/composables/useSeo'
-import { truncateDescription } from '@/config/seo'
-import { buildPropertySchema } from '@/config/schema'
+import { propertySeo, propertyLocationLabel } from '@/seo/pageSeo'
 import { formatAedInMillions, formatArea } from '@/config/uae'
 import { getListingById, fetchProjectUnitsSafe, loadDeveloperLogos } from '@/composables/useReelly'
-import { developerDetailPath, projectDetailPath, isNumericRouteParam } from '@/utils/seoRoutes'
+import {
+  developerDetailPath,
+  projectDetailPath,
+  isNumericRouteParam,
+  slugRedirectTarget,
+} from '@/utils/seoRoutes'
 import PropertyGallery from '@/component/kardosh/PropertyGallery.vue'
 import PropertyGallerySkeleton from '@/component/kardosh/skeleton/PropertyGallerySkeleton.vue'
 import PropertyDetailContentSkeleton from '@/component/kardosh/skeleton/PropertyDetailContentSkeleton.vue'
@@ -332,36 +336,11 @@ const overviewFaqItems = computed(() => {
 })
 
 const locationLabel = computed(() => {
-  const loc = property.value?.location
-  if (!loc) return property.value?.name?.includes(',') ? property.value.name.split(',').slice(1).join(',').trim() : null
-  if (typeof loc === 'string') return loc
-  return [loc.district, loc.region, loc.city, loc.country].filter(Boolean).join(', ') || null
+  return propertyLocationLabel(property.value)
 })
 
 useSeo(() => {
-  const p = property.value
-  const title = p?.title || p?.name || 'Property'
-  const loc = locationLabel.value
-  const desc =
-    (typeof p?.overview === 'string' ? p.overview.slice(0, 300) : null) ||
-    p?.description ||
-    (loc
-      ? `${title} — ${loc}. Off-plan and UAE property details from Kardosh Realty.`
-      : `${title} — UAE property details from Kardosh Realty.`)
-  const image =
-    p?.image ||
-    p?.gallery?.[0]?.url ||
-    p?.images?.[0]?.url ||
-    p?.detail?.[0]
-  return {
-    title: `${title} | Kardosh Realty`,
-    description: truncateDescription(desc),
-    path: route.path,
-    image,
-    ogType: 'article',
-    robots: isEmbed.value ? 'noindex, nofollow' : 'index, follow',
-    schema: isEmbed.value ? null : buildPropertySchema(p, route.path),
-  }
+  return propertySeo(property.value, route.path, { isEmbed: isEmbed.value })
 })
 
 const displayUnits = computed(() => {
@@ -438,10 +417,8 @@ async function loadProperty(slugParam) {
   }
 
   if (property.value && isNumericRouteParam(slugParam)) {
-    const canonical = projectDetailPath(property.value)
-    if (route.path !== canonical) {
-      router.replace(canonical)
-    }
+    const target = slugRedirectTarget(route.path, projectDetailPath(property.value))
+    if (target) router.replace({ path: target, query: route.query })
   }
 
   if (property.value?.source === 'reelly' && property.value.id) {

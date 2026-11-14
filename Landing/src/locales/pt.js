@@ -1066,12 +1066,12 @@ export default {
     index: {
       title: 'Projetos off-plan Dubai e imóveis UAE | Kardosh Realty',
       description:
-        'Compre imóveis off-plan em Dubai e em todo o UAE — explore projetos off-plan em Dubai, lançamentos novos e em breve, e fale com a Kardosh Realty para aconselhamento de investimento imobiliário em Dubai.',
+        'Compre imóveis off-plan em Dubai e nos EAU — explore lançamentos novos e em breve, com aconselhamento de investimento imobiliário da Kardosh Realty.',
     },
     'off-plan': {
       title: 'Projetos off-plan Dubai — Lançamentos novos e em breve | Kardosh Realty',
       description:
-        'Explore projetos off-plan em Dubai e nos EAU — lançamentos novos, planos de pagamento e oportunidades de investimento off-plan da Emaar, DAMAC, Sobha e promotores de referência.',
+        'Explore projetos off-plan em Dubai e nos EAU — lançamentos, planos de pagamento e oportunidades de investimento da Emaar, DAMAC, Sobha e outros.',
     },
     rent: {
       title: 'Imóveis para arrendar nos EAU | Kardosh Realty',
@@ -1081,27 +1081,27 @@ export default {
     sell: {
       title: 'Venda o seu imóvel nos EAU | Kardosh Realty',
       description:
-        'Anuncie o seu imóvel nos EAU com a Kardosh Realty. Avaliação de mercado, correspondência com compradores e apoio integral à venda por corretagem licenciada.',
+        'Anuncie o seu imóvel nos EAU com a Kardosh Realty. Avaliação de mercado, correspondência com compradores e apoio completo à venda.',
     },
     developers: {
       title: 'Promotores imobiliários Dubai — Emaar, DAMAC, Sobha e mais | Kardosh Realty',
       description:
-        'Compare projetos Emaar, DAMAC, Sobha, Binghatti, Meraas e Nakheel em Dubai — pipelines off-plan em tempo real, planos de pagamento e perfis de promotores na Kardosh Realty.',
+        'Compare projetos Emaar, DAMAC, Sobha, Binghatti, Meraas e Nakheel em Dubai — pipelines off-plan em tempo real, planos de pagamento e perfis de promotores.',
     },
     communities: {
       title: 'Melhores zonas para investir em Dubai — Guias de comunidades | Kardosh Realty',
       description:
-        'Downtown Dubai, Business Bay, Dubai Hills, Palm Jumeirah, JVC, Dubai Creek Harbour e mais — projetos off-plan por comunidade com anúncios em tempo real nos EAU.',
+        'Downtown Dubai, Business Bay, Dubai Hills, Palm Jumeirah, JVC, Dubai Creek Harbour e mais — projetos off-plan por comunidade com anúncios em tempo real.',
     },
     'why-dubai': {
       title: 'Guia de investimento imobiliário Dubai e Golden Visa | Kardosh Realty',
       description:
-        'O seu guia de investimento imobiliário em Dubai — melhores zonas para investir, off-plan em Dubai, regras Golden Visa e comunidades de ROI elevado explicadas pela Kardosh Realty.',
+        'O seu guia de investimento imobiliário em Dubai — melhores zonas para investir, off-plan, regras Golden Visa e comunidades de ROI elevado.',
     },
     aboutus: {
       title: 'Sobre a Kardosh Realty',
       description:
-        'Conheça a Kardosh Realty — corretora focada nos EAU para compra, arrendamento, venda e aconselhamento off-plan com serviço transparente e centrado no cliente.',
+        'Conheça a Kardosh Realty — corretora nos EAU para compra, arrendamento, venda e aconselhamento off-plan, com serviço transparente e centrado no cliente.',
     },
     contact: {
       title: 'Contacte a Kardosh Realty',

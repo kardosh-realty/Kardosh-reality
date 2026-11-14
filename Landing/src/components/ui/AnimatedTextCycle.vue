@@ -4,7 +4,8 @@
     :class="[customClass, { 'animated-text-cycle--fade': motion === 'fade' }]"
     aria-live="polite"
   >
-    <!-- Hidden measurement — same typography as visible word -->
+    <!-- Hidden measurement — same typography as visible word. Words render via CSS
+         `content: attr()` so they stay out of the DOM text (keeps headings clean for SEO). -->
     <span
       ref="measureRef"
       class="animated-text-cycle__measure"
@@ -15,9 +16,8 @@
         :key="`measure-${i}`"
         class="animated-text-cycle__word animated-text-cycle__word--measure"
         :class="wordClass"
-      >
-        {{ word }}
-      </span>
+        :data-word="word"
+      />
     </span>
 
     <span
@@ -137,6 +137,10 @@ onUnmounted(() => {
 
 .animated-text-cycle__measure .animated-text-cycle__word--measure {
   display: inline-block;
+}
+
+.animated-text-cycle__word--measure::before {
+  content: attr(data-word);
 }
 
 .animated-text-cycle__slot {

@@ -1090,12 +1090,12 @@ export default {
     index: {
       title: 'Off Plan Projects Dubai & UAE Property | Kardosh Realty',
       description:
-        'Buy off plan property in Dubai and across the UAE — browse Dubai off plan projects, new launch and upcoming developments, and speak with Kardosh Realty for dubai property investment advice.',
+        'Buy off plan property in Dubai and the UAE — browse new launch and upcoming projects, and get Dubai property investment advice from Kardosh Realty.',
     },
     'off-plan': {
       title: 'Off Plan Projects Dubai — New & Upcoming Launches | Kardosh Realty',
       description:
-        'Explore off plan projects in Dubai and the UAE — new launch projects, payment plans, and off plan investment opportunities from Emaar, DAMAC, Sobha, and leading developers.',
+        'Explore off plan projects in Dubai and the UAE — new launches, payment plans, and investment opportunities from Emaar, DAMAC, Sobha, and more.',
     },
     rent: {
       title: 'Properties for Rent in the UAE | Kardosh Realty',
@@ -1110,7 +1110,7 @@ export default {
     developers: {
       title: 'Dubai Property Developers — Emaar, DAMAC, Sobha & More | Kardosh Realty',
       description:
-        'Compare Emaar, DAMAC, Sobha, Binghatti, Meraas, and Nakheel projects in Dubai — live off plan pipelines, payment plans, and developer profiles on Kardosh Realty.',
+        'Compare Emaar, DAMAC, Sobha, Binghatti, Meraas, and Nakheel projects in Dubai — live off plan pipelines, payment plans, and developer profiles.',
     },
     communities: {
       title: 'Best Areas to Invest in Dubai — Community Guides | Kardosh Realty',
@@ -1120,7 +1120,7 @@ export default {
     'why-dubai': {
       title: 'Dubai Property Investment Guide & Golden Visa | Kardosh Realty',
       description:
-        'Your dubai property investment guide — best areas to invest, off plan investment dubai, golden visa property rules, and high ROI communities explained by Kardosh Realty.',
+        'Your Dubai property investment guide — best areas to invest, off plan investing, golden visa property rules, and high ROI communities explained.',
     },
     aboutus: {
       title: 'About Kardosh Realty',

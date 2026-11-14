@@ -1,4 +1,5 @@
 import { slugify } from '@/services/visibility'
+import { localeFromPath, localePath } from '@/config/i18n'
 
 /** URL slug for a developer name (Reelly has no /developers/slug API — id resolved server-side in proxy). */
 export function developerSlug(dev) {
@@ -39,6 +40,15 @@ export function projectDetailPath(item) {
 
 export function isNumericRouteParam(param) {
   return /^\d+$/.test(normalizeRouteSlug(param))
+}
+
+/**
+ * Where a numeric-id detail URL should redirect: the slug path in the current
+ * page's locale, or null when `currentPath` already is that path.
+ */
+export function slugRedirectTarget(currentPath, slugPath) {
+  const target = localePath(slugPath, localeFromPath(currentPath))
+  return target === currentPath ? null : target
 }
 
 /** Parse slug param that may end with -{id} for fallback lookup. */

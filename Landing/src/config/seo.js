@@ -9,7 +9,7 @@ export const SITE_URL = (
 export const SITE_NAME = BRAND.name
 
 const DEFAULT_DESCRIPTION =
-  'Buy off plan property in Dubai and across the UAE — browse Dubai off plan projects, new launch and upcoming developments, and speak with Kardosh Realty for dubai property investment advice.'
+  'Buy off plan property in Dubai and the UAE — browse new launch and upcoming projects, and get Dubai property investment advice from Kardosh Realty.'
 
 export const DEFAULT_OG_IMAGE = `${SITE_URL}${BRAND_ICON}`
 
@@ -22,7 +22,7 @@ export const ROUTE_SEO = {
   'off-plan': {
     title: `Off Plan Projects Dubai — New & Upcoming Launches | ${SITE_NAME}`,
     description:
-      'Explore off plan projects in Dubai and the UAE — new launch projects, payment plans, and off plan investment opportunities from Emaar, DAMAC, Sobha, and leading developers.',
+      'Explore off plan projects in Dubai and the UAE — new launches, payment plans, and investment opportunities from Emaar, DAMAC, Sobha, and more.',
   },
   rent: {
     title: `Properties for Rent in the UAE | ${SITE_NAME}`,
@@ -37,7 +37,7 @@ export const ROUTE_SEO = {
   developers: {
     title: `Dubai Property Developers — Emaar, DAMAC, Sobha & More | ${SITE_NAME}`,
     description:
-      'Compare Emaar, DAMAC, Sobha, Binghatti, Meraas, and Nakheel projects in Dubai — live off plan pipelines, payment plans, and developer profiles on Kardosh Realty.',
+      'Compare Emaar, DAMAC, Sobha, Binghatti, Meraas, and Nakheel projects in Dubai — live off plan pipelines, payment plans, and developer profiles.',
   },
   communities: {
     title: `Best Areas to Invest in Dubai — Community Guides | ${SITE_NAME}`,
@@ -47,7 +47,7 @@ export const ROUTE_SEO = {
   'why-dubai': {
     title: `Dubai Property Investment Guide & Golden Visa | ${SITE_NAME}`,
     description:
-      'Your dubai property investment guide — best areas to invest, off plan investment dubai, golden visa property rules, and high ROI communities explained by Kardosh Realty.',
+      'Your Dubai property investment guide — best areas to invest, off plan investing, golden visa property rules, and high ROI communities explained.',
   },
   aboutus: {
     title: `About ${SITE_NAME}`,
@@ -108,10 +108,26 @@ export function absoluteUrl(path = '/') {
   return `${SITE_URL}${normalized}`
 }
 
-export function truncateDescription(text, max = 160) {
-  const clean = String(text || '')
+/** Plain text from Markdown/HTML snippets (Reelly overviews start with `##### Project General Facts`). */
+export function stripMarkup(text) {
+  return String(text || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+[^\n]*\n/gm, ' ')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/^\s*(?:[-*+]|\d+\.|>)\s+/gm, '')
+    .replace(/(\*\*|__|\*|_|`|~~)(\S[^]*?\S|\S)\1/g, '$2')
+    .replace(/&nbsp;/g, ' ')
+}
+
+export function truncateDescription(text, max = 155) {
+  const clean = stripMarkup(text)
     .replace(/\s+/g, ' ')
     .trim()
   if (clean.length <= max) return clean
-  return `${clean.slice(0, max - 1).trim()}…`
+  const cut = clean.slice(0, max - 1)
+  const lastSpace = cut.lastIndexOf(' ')
+  const head = lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut
+  return `${head.replace(/[\s,;:—–-]+$/, '')}…`
 }

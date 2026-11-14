@@ -84,8 +84,7 @@ import ListingGridSkeleton from '@/component/kardosh/skeleton/ListingGridSkeleto
 import { communityHeroImage } from '@/config/dubai-images'
 import { loadVisibility, isCommunityHidden } from '@/services/visibility'
 import { useSeo } from '@/composables/useSeo'
-import { buildCommunitySchema } from '@/config/schema'
-import { truncateDescription } from '@/config/seo'
+import { communitySeo } from '@/seo/pageSeo'
 
 const route = useRoute()
 const visibilityReady = ref(false)
@@ -104,19 +103,7 @@ provide(
   computed(() => community.value?.name || 'Community')
 )
 
-useSeo(() => {
-  const c = community.value
-  const name = c?.name || 'Community'
-  return {
-    title: `${name} — ${emirateName.value} | Kardosh Realty`,
-    description: truncateDescription(
-      c?.blurb || c?.tagline || `Off-plan projects and area guide for ${name}, UAE.`
-    ),
-    path: route.path,
-    robots: c ? 'index, follow' : 'noindex, follow',
-    schema: c ? buildCommunitySchema(c, route.path, emirateName.value) : null,
-  }
-})
+useSeo(() => communitySeo(community.value, route.path, emirateName.value))
 
 const { projects, loading, loadProjects } = useReelly()
 

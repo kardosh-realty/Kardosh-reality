@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "npm install && node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build",
+    "build": "npm install && node scripts/generate-sitemap.mjs && node scripts/optimize-images.mjs && vite build && npm run build:seo",
+    "build:seo": "vite build --ssr src/seo/serverEntry.js --outDir dist-ssr --emptyOutDir",
     "start": "node server/hostinger-server.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview --host",

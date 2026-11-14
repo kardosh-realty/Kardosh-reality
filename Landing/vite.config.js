@@ -71,7 +71,7 @@ function viteClientEnv(env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, isSsrBuild }) => {
   const env = loadEnv(mode, envDir, '')
 
   return {
@@ -82,8 +82,10 @@ export default defineConfig(({ mode }) => {
       target: 'es2020',
       cssCodeSplit: true,
       modulePreload: { polyfill: false },
+      copyPublicDir: !isSsrBuild,
       rollupOptions: {
-        output: {
+        // SSR build (src/seo/serverEntry.js) runs in Node — no browser chunk splitting.
+        output: isSsrBuild ? {} : {
           manualChunks(id) {
             if (id.includes('node_modules/swiper')) return 'swiper'
             if (id.includes('node_modules/vue-router')) return 'vue-vendor'

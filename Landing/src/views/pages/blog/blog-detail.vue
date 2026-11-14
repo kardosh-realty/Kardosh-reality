@@ -68,7 +68,7 @@ import { PAGE_HERO_IMAGES } from '@/config/dubai-images'
 import { fetchBlogBySlug } from '@/services/blogs'
 import { formatBlogBodyForDisplay } from '@/utils/renderBlogBody'
 import { useSeo } from '@/composables/useSeo'
-import { buildBlogPostingSchema } from '@/config/schema'
+import { blogSeo } from '@/seo/pageSeo'
 import BlogDetailSkeleton from '@/component/kardosh/skeleton/BlogDetailSkeleton.vue'
 
 const route = useRoute()
@@ -78,18 +78,7 @@ const notFound = ref(false)
 
 const bodyHtml = computed(() => formatBlogBodyForDisplay(post.value?.body))
 
-useSeo(() => {
-  const p = post.value
-  return {
-    title: p?.title ? `${p.title} | Kardosh Realty` : 'Blog | Kardosh Realty',
-    description: p?.excerpt || 'Insights from Kardosh Realty.',
-    path: route.path,
-    image: p?.image,
-    ogType: 'article',
-    robots: notFound.value ? 'noindex, follow' : 'index, follow',
-    schema: p && !notFound.value ? buildBlogPostingSchema(p, route.path) : null,
-  }
-})
+useSeo(() => blogSeo(post.value, route.path, { notFound: notFound.value }))
 
 async function loadPost() {
   loading.value = true

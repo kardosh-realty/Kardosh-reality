@@ -12,16 +12,14 @@
             <h1 class="home-hero__title">
               <span class="home-hero__title-row home-hero__title-row--lead">
                 {{ t('home.hero.titleLead') }}
-              </span>
-              <span class="home-hero__title-row home-hero__title-row--accent">
+              </span>{{ ' ' }}<span class="home-hero__title-row home-hero__title-row--accent">
                 <AnimatedTextCycle
                   :words="heroRotatingWords"
                   :interval="3000"
                   motion="fade"
                   word-class="home-hero__title-accent"
                 />
-              </span>
-              <span class="home-hero__title-row home-hero__title-row--suffix">
+              </span>{{ ' ' }}<span class="home-hero__title-row home-hero__title-row--suffix">
                 {{ t('home.hero.titleSuffix') }}
               </span>
             </h1>
